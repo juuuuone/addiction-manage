@@ -183,7 +183,7 @@ fun GaugeGraph(
             )
         }
 
-        // 목표랑 현재 기록량
+        // 목표 & 현재 기록량
         Row(
             modifier = Modifier
                 .fillMaxWidth()
