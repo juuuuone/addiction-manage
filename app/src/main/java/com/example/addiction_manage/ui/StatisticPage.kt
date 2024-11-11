@@ -88,7 +88,7 @@ fun StatisticPage() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // Timeframe Selector
+            // 기간 선택
             TimeframeSelector(
                 options = listOf("하루", "일주일", "한달"),
                 selectedOption = selectedOption,
@@ -97,7 +97,7 @@ fun StatisticPage() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Statistics based on selected option
+            // 통계 페이지
             AlcoholStatistic(
                 progress = 0.3f,
                 selectedOption = selectedOption
@@ -116,9 +116,9 @@ fun StatisticPage() {
 
 @Composable
 fun TimeframeSelector(
-    options: List<String>, // Options to select from
-    selectedOption: String, // Currently selected option
-    onOptionSelected: (String) -> Unit // Callback when an option is selected
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -155,7 +155,7 @@ fun TimeframeSelector(
 @Composable
 fun GaugeGraph(
     modifier: Modifier = Modifier,
-    progress: Float, // Current progress (0.0f to 1.0f)
+    progress: Float,
     goalText: String,
     achievedText: String,
     backgroundColor: Color = Color.LightGray,
@@ -168,7 +168,7 @@ fun GaugeGraph(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Progress Bar
+        // 진행 바
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,7 +183,7 @@ fun GaugeGraph(
             )
         }
 
-        // Goal Text
+        // 목표랑 현재 기록량
         Row(
             modifier = Modifier
                 .fillMaxWidth()
