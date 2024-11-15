@@ -18,3 +18,6 @@ val LightRed=Color(0xFFE77272)
 val LightGrey=Color(0xFFD9D9D9)
 
 val Black=Color(0xFF000000)
+
+val MediumGrey=Color(0xFFC4C4C4)
+val DarkRed=Color(0xFFAE2B2B)

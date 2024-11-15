@@ -13,6 +13,93 @@
         android:contentDescription="myPageButton"
         android:layout_centerInParent="true"/>
 
+    <Button
+        android:id="@+id/button_beer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="beer"
+        android:drawableLeft="@drawable/beer"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="beer"
+        />
+
+    <Button
+        android:id="@+id/button_cham"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="cham"
+        android:drawableLeft="@drawable/cham"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="cham"
+        />
+
+    <Button
+        android:id="@+id/button_mgl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="mgl"
+        android:drawableLeft="@drawable/mgl"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="mgl"
+        />
+
+    <Button
+        android:id="@+id/button_soju"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="soju"
+        android:drawableLeft="@drawable/soju"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="soju"
+        />
+
+    <Button
+        android:id="@+id/button_wine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="wine"
+        android:drawableLeft="@drawable/wine"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="wine"
+        />
+
+    <Button
+        android:id="@+id/button_coffee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="coffee"
+        android:drawableLeft="@drawable/coffee"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="coffee"
+        />
+
+    <Button
+        android:id="@+id/button_energy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="energy"
+        android:drawableLeft="@drawable/energy"
+        android:padding="10dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="energy"
+        />
+
+
+
+
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
