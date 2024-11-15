@@ -45,18 +45,22 @@ import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.LightRed
 import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.Black
-import java.util.Calendar
-import android.app.DatePickerDialog
+import com.example.addiction_manage.ui.theme.MediumGrey
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.RectangleShape
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.temporal.WeekFields
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.window.Dialog
 import java.util.*
 
 
@@ -93,13 +97,22 @@ fun MainPage(
         }
     }
 
+
+
+/*달력 생성 함수*/
 @Composable
 fun SimpleCalendar() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var showDialog by remember { mutableStateOf(false) }  // Dialog를 보여줄지 여부를 결정하는 상태
     val currentMonth = YearMonth.now()
     val daysInMonth = currentMonth.lengthOfMonth()
-    val firstOfMonth = currentMonth.atDay(1)
-    val dayOfWeek = firstOfMonth.get(WeekFields.of(Locale.getDefault()).dayOfWeek())
+
+    // 선택된 날짜에 대한 대화상자
+    if (showDialog) {
+        DateDialog(selectedDate) {
+            showDialog = false  // 대화상자를 닫을 때 호출
+        }
+    }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
@@ -110,7 +123,10 @@ fun SimpleCalendar() {
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(40.dp)
-                    .clickable { selectedDate = currentMonth.atDay(day) }
+                    .clickable {
+                        selectedDate = currentMonth.atDay(day)
+                        showDialog = true  // 날짜를 클릭하면 Dialog를 열기
+                    }
                     .padding(4.dp)
             ) {
                 Text(
@@ -122,6 +138,63 @@ fun SimpleCalendar() {
     }
 }
 
+/*날짜 클릭하면 뜨는 창 (어떤거 기록할건지)*/
+@Composable
+fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        // Dialog의 내용을 Card로 감싸서 디자인을 추가
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f),
+            shape = RoundedCornerShape(8.dp),
+            color = MediumGrey
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(600.dp)
+                        .height(70.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
+                    shape = RectangleShape
+                ) {
+                   Text("나의 음주 기록하기", color = LightRed, fontSize = 24.sp)
+                }
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(500.dp)
+                        .height(70.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
+                    shape = RectangleShape
+                ) {
+                    Text("나의 흡연 기록하기", color = LightRed, fontSize = 24.sp)
+                }
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .width(600.dp)
+                        .height(70.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
+                    shape = RectangleShape
+                ) {
+                    Text("나의 카페인 기록하기", color = LightRed, fontSize = 24.sp)
+                }
+            }
+        }
+    }
+}
+
+
+
+/*탑바*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBarComponent(){
@@ -157,6 +230,7 @@ fun TopAppBarComponent(){
 }
 
 
+/*바텀바*/
 @Composable
 fun BottomAppBarComponent() {
     var selectedItem by remember { mutableStateOf(0) }  // 초기 선택 인덱스를 0으로 설정
@@ -190,6 +264,7 @@ fun BottomAppBarComponent() {
     }
 }
 
+/*캘린더 탭*/
 @Composable
 fun TabItem1(
     title: String,
@@ -212,6 +287,7 @@ fun TabItem1(
     }
 }
 
+/*통계 탭*/
 @Composable
 fun TabItem2(
     title: String,
