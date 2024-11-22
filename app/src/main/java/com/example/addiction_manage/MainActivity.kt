@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.addiction_manage.ui.AlcoholPage
 import com.example.addiction_manage.ui.CaffeinePage
+import com.example.addiction_manage.ui.HomePage
 import com.example.addiction_manage.ui.MainPage
 import com.example.addiction_manage.ui.StatisticPage
 import com.example.addiction_manage.ui.SmokingPage
@@ -24,7 +25,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Addiction_manageTheme {
-                    StatisticPage()
+                    HomePage()
+
                 }
             }
         }
