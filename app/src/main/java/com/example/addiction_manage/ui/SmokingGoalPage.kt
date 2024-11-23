@@ -55,8 +55,8 @@ fun SmokingGoalPage() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘 목표 흡연량을 선택하거나 \n흡연하지 않는다면\n'흡연하지 않습니다'를 체크하세요.",
-                fontSize = 20.sp,
+                text = "오늘 목표 흡연량을 선택하거나\n'흡연하지 않습니다'를 체크하세요.",
+                fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 textAlign = TextAlign.Center
@@ -80,7 +80,7 @@ fun SmokingGoalPage() {
                         onOptionSelected = { selectedOption = it }
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
                     // 체크박스
                     CheckboxWithBorder(

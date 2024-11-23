@@ -1,8 +1,6 @@
 package com.example.addiction_manage.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,6 +19,7 @@ import com.example.addiction_manage.ui.theme.*
 fun AlcoholGoalPage() {
     var dailyGoal by remember { mutableStateOf("") }
     var weeklyGoal by remember { mutableStateOf("") }
+    var isNoAlcoholChecked by remember { mutableStateOf(false) } // 음주하지 않습니다 체크박스 상태
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -55,8 +54,8 @@ fun AlcoholGoalPage() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘과 일주일의 음주량 목표를 설정하세요.",
-                fontSize = 20.sp,
+                text = "오늘과 일주일의 음주량 목표를 설정하거나\n'음주하지 않습니다'를 체크하세요.",
+                fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 textAlign = TextAlign.Center
@@ -89,6 +88,15 @@ fun AlcoholGoalPage() {
                         selectedOption = weeklyGoal,
                         onOptionSelected = { weeklyGoal = it }
                     )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // 체크박스: 음주하지 않습니다
+                    CheckboxWithBorder(
+                        label = "음주하지 않습니다",
+                        isChecked = isNoAlcoholChecked,
+                        onCheckedChange = { isNoAlcoholChecked = it }
+                    )
                 }
             }
 
@@ -108,3 +116,4 @@ fun AlcoholGoalPage() {
         }
     }
 }
+
