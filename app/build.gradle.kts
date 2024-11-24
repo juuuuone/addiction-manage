@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 
@@ -61,6 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.auth.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -75,6 +77,10 @@ dependencies {
     implementation ("androidx.compose.ui:ui-tooling-preview:1.0.0")  // UI 프리뷰 도구
     implementation ("androidx.navigation:navigation-compose:2.4.0-alpha10")  // 네비게이션 컴포넌트
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
+
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
 
 }
