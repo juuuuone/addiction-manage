@@ -61,21 +61,38 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
 import java.util.*
-
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StatisticPage() {
+fun StatisticPage(
+    navigateToCalendar: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToStatistic: () -> Unit,
+    navigateToMyPage: () -> Unit,
+    navController: NavController,
+) {
     var selectedOption by remember { mutableStateOf("일주일") } // Default selected option
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BackgroundColor,
-        topBar = { TopAppBarComponent() },
-        bottomBar = { BottomAppBarComponent() }
+        topBar = {
+            TopAppBarComponent(
+                navigateUp = { navController.navigateUp() },
+                navigateToMyPage = navigateToMyPage,
+            )
+        },
+        bottomBar = {
+            BottomAppBarComponent(
+                navigateToCalendar = navigateToCalendar,
+                navigateToHome = navigateToHome,
+                navigateToStatistic = navigateToStatistic,
+                isStatisticPage = true,
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -216,7 +233,7 @@ fun AlcoholStatistic(
         else -> "달성치 없음"
     }
 
-    val goalText = when (selectedOption){
+    val goalText = when (selectedOption) {
         "하루" -> "오늘: 1잔"
         "일주일" -> "이번주: 5잔"
         "한달" -> "이번달: 20잔"
@@ -261,7 +278,7 @@ fun SmokingStatistic(
         "한달" -> "이번달: 36개피"
         else -> "달성치 없음"
     }
-    val goalText = when (selectedOption){
+    val goalText = when (selectedOption) {
         "하루" -> "오늘: 5개피"
         "일주일" -> "이번주: 30개피"
         "한달" -> "이번달: 100개피"
@@ -306,7 +323,7 @@ fun CaffeineStatistic(
         "한달" -> "이번달: 12잔"
         else -> "달성치 없음"
     }
-    val goalText = when (selectedOption){
+    val goalText = when (selectedOption) {
         "하루" -> "오늘: 1잔"
         "일주일" -> "이번주: 5잔"
         "한달" -> "이번달: 20잔"
