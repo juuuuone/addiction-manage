@@ -1,8 +1,5 @@
 package com.example.addiction_manage.ui
 
-import android.content.Context
-import android.widget.DatePicker
-import android.widget.ImageButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomAppBar
@@ -22,7 +17,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,56 +40,65 @@ import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.MediumGrey
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.RectangleShape
 import java.time.LocalDate
 import java.time.YearMonth
 import androidx.compose.ui.window.Dialog
-import java.util.*
-
-
+import androidx.navigation.NavController
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(
-){
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = BackgroundColor,
-            topBar = {     TopAppBarComponent()       },
-            bottomBar={    BottomAppBarComponent()        }
-//---------------탑바, 바텀바----------------
-        ) { innerPadding ->
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(0.8f)
-                    .padding(innerPadding)
-                    .padding(horizontal = 8.dp)
-                    .padding(top = 150.dp)
-                    .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val currentMonth = YearMonth.now()
-                Text(text = currentMonth.toString(), fontSize = 32.sp)
-                SimpleCalendar()
-            }
-
+fun CalendarPage(
+    navigateToCalendar: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToStatistic: () -> Unit,
+    navigateToMyPage: () -> Unit,
+    navController: NavController,
+) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = BackgroundColor,
+        topBar = {
+            TopAppBarComponent(
+                navigateUp = { navController.navigateUp() },
+                navigateToMyPage = navigateToMyPage,
+            )
+        },
+        bottomBar = {
+            BottomAppBarComponent(
+                navigateToCalendar = navigateToCalendar,
+                navigateToHome = navigateToHome,
+                navigateToStatistic = navigateToStatistic,
+                isCalendarPage = true,
+            )
         }
-    }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f)
+                .padding(innerPadding)
+                .padding(horizontal = 8.dp)
+                .padding(top = 150.dp)
+                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val currentMonth = YearMonth.now()
+            Text(text = currentMonth.toString(), fontSize = 32.sp)
+            SimpleCalendar()
+        }
 
+    }
+}
 
 
 /*달력 생성 함수*/
@@ -163,7 +165,7 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                     colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
                     shape = RectangleShape
                 ) {
-                   Text("나의 음주 기록하기", color = LightRed, fontSize = 24.sp)
+                    Text("나의 음주 기록하기", color = LightRed, fontSize = 24.sp)
                 }
                 Button(
                     onClick = { /*TODO*/ },
@@ -193,16 +195,21 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
 }
 
 
-
 /*탑바*/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarComponent(){
+fun TopAppBarComponent(
+    navigateUp: () -> Unit,
+    navigateToMyPage: () -> Unit,
+) {
     TopAppBar(
-        title = { Text(text = "중독 관리 어플",
-        ) },
+        title = {
+            Text(
+                text = "중독 관리 어플",
+            )
+        },
         navigationIcon = {
-            IconButton(onClick = {/*뒤로가기*/ }) {
+            IconButton(onClick = navigateUp) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
@@ -212,7 +219,7 @@ fun TopAppBarComponent(){
         },
         actions = {
             // 여기에 사용자 정의 아이콘을 추가
-            IconButton(onClick = { /* 아이콘 클릭 시 수행할 동작 */ }) {
+            IconButton(onClick = navigateToMyPage) {
                 Icon(
                     painter = painterResource(id = R.drawable.account_circle_24px),
                     contentDescription = "MypageButton",
@@ -232,14 +239,21 @@ fun TopAppBarComponent(){
 
 /*바텀바*/
 @Composable
-fun BottomAppBarComponent() {
-    var selectedItem by remember { mutableStateOf(0) }  // 초기 선택 인덱스를 0으로 설정
+fun BottomAppBarComponent(
+    navigateToCalendar: () -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToStatistic: () -> Unit,
+    isCalendarPage: Boolean = false,
+    isHomePage: Boolean = false,
+    isStatisticPage: Boolean = false,
+) {
+    var selectedItem by remember { mutableStateOf(1) }  // 초기 선택 인덱스를 0으로 설정
 
     BottomAppBar(
         modifier = Modifier
             .padding(0.dp)
             .fillMaxWidth(), // 하단 바를 전체 너비로 설정
-        containerColor =  BackgroundColor, // 기본 하단 바의 배경색 설정
+        containerColor = BackgroundColor, // 기본 하단 바의 배경색 설정
         contentColor = Black // 아이콘 및 텍스트 색상
     ) {
         Row(
@@ -248,17 +262,26 @@ fun BottomAppBarComponent() {
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            TabItem1(
+            TabItem(
                 title = "캘린더",
-                icon = {  },
-                isSelected = selectedItem == 0,
-                onSelect = { selectedItem = 0 }
+                icon = { },
+                isSelected = isCalendarPage,
+                onSelect = navigateToCalendar,
+                modifier = Modifier.weight(1f)
             )
-            TabItem2(
+            TabItem(
+                title = "홈",
+                icon = {},
+                isSelected = isHomePage,
+                onSelect = navigateToHome,
+                modifier = Modifier.weight(1f)
+            )
+            TabItem(
                 title = "통계",
-                icon = {  },
-                isSelected = selectedItem == 1,
-                onSelect = { selectedItem = 1 }
+                icon = { },
+                isSelected = isStatisticPage,
+                onSelect = navigateToStatistic,
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -266,37 +289,15 @@ fun BottomAppBarComponent() {
 
 /*캘린더 탭*/
 @Composable
-fun TabItem1(
+fun TabItem(
     title: String,
     icon: @Composable () -> Unit,
     isSelected: Boolean,
-    onSelect: () -> Unit
+    onSelect: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .padding(0.dp)
-            .fillMaxHeight()
-            .fillMaxWidth(0.5f)
-            .clickable(onClick = onSelect)
-            .background(if (isSelected) LightRed else LightGrey),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        icon()
-        Text(text = title, color = Black, fontSize = 20.sp)
-    }
-}
-
-/*통계 탭*/
-@Composable
-fun TabItem2(
-    title: String,
-    icon: @Composable () -> Unit,
-    isSelected: Boolean,
-    onSelect: () -> Unit
-) {
-    Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(0.dp)
             .fillMaxHeight()
             .fillMaxWidth()
@@ -309,3 +310,4 @@ fun TabItem2(
         Text(text = title, color = Black, fontSize = 20.sp)
     }
 }
+

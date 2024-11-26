@@ -14,13 +14,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+
+import com.example.addiction_manage.ui.AlcoholGoalPage
 import com.example.addiction_manage.ui.AlcoholPage
+import com.example.addiction_manage.ui.CaffeineGoalPage
 import com.example.addiction_manage.ui.CaffeinePage
+import com.example.addiction_manage.ui.CalendarPage
 import com.example.addiction_manage.ui.HomePage
 import com.example.addiction_manage.ui.LoginPage
 import com.example.addiction_manage.ui.MainPage
 import com.example.addiction_manage.ui.RegisterPage
 import com.example.addiction_manage.ui.SetNamePage
+import com.example.addiction_manage.ui.MyPage
+import com.example.addiction_manage.ui.SetNamePage
+import com.example.addiction_manage.ui.SmokingGoalPage
 import com.example.addiction_manage.ui.StatisticPage
 import com.example.addiction_manage.ui.SmokingPage
 import com.example.addiction_manage.ui.StartButton
@@ -60,8 +67,60 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
-
-                }
+                    
+                    composable(route = "Home") {
+                        HomePage(
+                            navigateToCalendar = { navController.navigate(route = "Calendar") },
+                            navigateToHome = { navController.navigate(route = "Home") },
+                            navigateToStatistic = { navController.navigate(route = "Statistic") },
+                            navigateToMyPage = { navController.navigate(route = "MyPage") },
+                            navigateToAlcohol = { navController.navigate(route = "Alcohol") },
+                            navigateToCaffeine = { navController.navigate(route = "Caffeine") },
+                            navigateToSmoking = { navController.navigate(route = "Smoking") },
+                            navController = navController
+                        )
+                    }
+                    composable(route = "Calendar") {
+                        CalendarPage(
+                            navigateToCalendar = { navController.navigate(route = "Calendar") },
+                            navigateToHome = { navController.navigate(route = "Home") },
+                            navigateToStatistic = { navController.navigate(route = "Statistic") },
+                            navigateToMyPage = { navController.navigate(route = "MyPage") },
+                            navController = navController
+                        )
+                    }
+                    composable(route = "Statistic") {
+                        StatisticPage(
+                            navigateToCalendar = { navController.navigate(route = "Calendar") },
+                            navigateToHome = { navController.navigate(route = "Home") },
+                            navigateToStatistic = { navController.navigate(route = "Statistic") },
+                            navigateToMyPage = { navController.navigate(route = "MyPage") },
+                            navController = navController
+                        )
+                    }
+                    composable(route = "MyPage") {
+                        MyPage(
+                            navController = navController
+                        )
+                    }
+                    composable(route = "Alcohol") {
+                        AlcoholPage(
+                            navigateToMyPage = { navController.navigate(route = "MyPage") },
+                            navController = navController,
+                        )
+                    }
+                    composable(route = "Caffeine") {
+                        CaffeinePage(
+                            navigateToMyPage = { navController.navigate(route = "MyPage") },
+                            navController = navController
+                        )
+                    }
+                    composable(route = "Smoking") {
+                        SmokingPage(
+                            navigateToMyPage = { navController.navigate(route = "MyPage") },
+                            navController = navController
+                        )
+                    }
             }
         }
     }

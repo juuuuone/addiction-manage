@@ -19,11 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyPage() {
+fun MyPage(
+    navController: NavController
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = LightGrey,
@@ -38,7 +41,7 @@ fun MyPage() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* 뒤로가기 동작 */ }) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",

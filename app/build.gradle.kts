@@ -75,12 +75,12 @@ dependencies {
     implementation ("androidx.compose.ui:ui:1.0.0")  // 기본 UI 요소
     implementation ("androidx.compose.material:material:1.0.0")  // Material 디자인 요소
     implementation ("androidx.compose.ui:ui-tooling-preview:1.0.0")  // UI 프리뷰 도구
-    implementation ("androidx.navigation:navigation-compose:2.4.0-alpha10")  // 네비게이션 컴포넌트
+    implementation("androidx.navigation:navigation-compose:2.8.3")  // 네비게이션 컴포넌트
     implementation ("androidx.recyclerview:recyclerview:1.2.1")
 
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("com.google.firebase:firebase-analytics")
-
-
+    
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
 }
