@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import com.example.addiction_manage.R
 import com.example.addiction_manage.ui.theme.BackgroundColor
 import com.example.addiction_manage.ui.theme.Black
@@ -46,30 +47,38 @@ import com.example.addiction_manage.ui.theme.MediumGrey
 import java.time.YearMonth
 
 @Composable
-fun CaffeinePage() {
+fun CaffeinePage(
+    navigateToMyPage: () -> Unit,
+    navController: NavController
+) {
+    val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BackgroundColor,
-        topBar = { TopAppBarComponent() },
-        bottomBar = { BottomAppBarComponent() }
+        topBar = {
+            TopAppBarComponent(
+                navigateToMyPage = navigateToMyPage,
+                navigateUp = { navController.navigateUp() }
+            )
+        },
     ) { innerPadding ->
-        val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.8f)
-                .padding(innerPadding)
-                .padding(horizontal = 8.dp)
-                .padding(top = 150.dp)
-                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val currentMonth = YearMonth.now()
-            Text(text = currentMonth.toString(), fontSize = 32.sp)
-            SimpleCalendar()
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight(0.8f)
+//                .padding(innerPadding)
+//                .padding(horizontal = 8.dp)
+//                .padding(top = 150.dp)
+//                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//        ) {
+//            val currentMonth = YearMonth.now()
+//            Text(text = currentMonth.toString(), fontSize = 32.sp)
+//            SimpleCalendar()
+//        }
 
         if (showDialog.value) {  // 상태 변수를 확인하여 대화상자를 표시
             CaffeineDialog1(onDismiss = { showDialog.value = false })  // onDismiss에서 대화상자를 숨김
@@ -166,7 +175,7 @@ fun CaffeineDialog1(onDismiss: () -> Unit) {
 
 
 @Composable
-fun CaffeineDialog2(onDismiss: () -> Unit){
+fun CaffeineDialog2(onDismiss: () -> Unit) {
 
     val alcoholOptions = listOf("반 잔", "한 잔", "두 잔", "세 잔")
     var expanded by remember { mutableStateOf(false) }
@@ -187,20 +196,31 @@ fun CaffeineDialog2(onDismiss: () -> Unit){
                 Spacer(modifier = Modifier.height(32.dp))
                 Text("오늘의 섭취량은 어떻게 되나요?", color = DarkRed, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(32.dp))
-                Row(){
+                Row() {
                     Text("나의 목표 섭취량   ", fontSize = 18.sp)
-                    Text("한 잔", color = DarkRed, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        "한 잔",
+                        color = DarkRed,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                     Text("(300mg)", color = DarkRed, fontSize = 18.sp)
 
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
-                Button(onClick = { expanded = true },
+                Button(
+                    onClick = { expanded = true },
                     modifier = Modifier.width(250.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
                     shape = RectangleShape
                 ) {
-                    Text("                             ∨", color = Black, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        "                             ∨",
+                        color = Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                 }
                 DropdownMenu(
                     modifier = Modifier.width(250.dp),
