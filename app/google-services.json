@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "454957271036",
+    "project_id": "moapp-92b68",
+    "storage_bucket": "moapp-92b68.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:454957271036:android:770c21c10013173a349479",
+        "android_client_info": {
+          "package_name": "com.example.addiction_manage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDEhwGx2cDcFG2InajyTz62k3H7f2BAu0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
