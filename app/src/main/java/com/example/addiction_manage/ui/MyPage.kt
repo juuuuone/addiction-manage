@@ -21,12 +21,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.addiction_manage.ui.theme.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPage(
     navController: NavController
 ) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    var nickname: String = currentUser?.let { checkUser(it) }.toString()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = LightGrey,
@@ -69,7 +73,7 @@ fun MyPage(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "금연팽이", // 닉네임 값 -> 초기에 설정했던 닉네임 가져와야함. 지금은 임시 데이터.
+                text = nickname,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black
@@ -146,4 +150,8 @@ fun GoalSection(title: String, goals: List<String>) {
             )
         }
     }
+}
+
+fun checkUser(currentUser : FirebaseUser) : String {
+    return currentUser.displayName ?: "Unknown User"
 }
