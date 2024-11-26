@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">addiction_manage</string>
+    <string name="signin">Sign in</string>
+    <string name="signintext">Don\'t have an account? Sign up!</string>
+    <string name="signup">Sign Up</string>
+    <string name="signuptext">Already have an account? Sign in!</string>
 </resources>
