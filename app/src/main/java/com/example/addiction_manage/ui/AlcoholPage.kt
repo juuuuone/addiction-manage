@@ -40,9 +40,13 @@ import com.example.addiction_manage.ui.theme.DarkRed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,36 +61,42 @@ import androidx.compose.ui.unit.DpOffset
 import java.time.LocalDate
 import java.time.YearMonth
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
 import java.util.*
 
 
-
-
 @Composable
-fun AlcoholPage() {
+fun AlcoholPage(
+    navigateToMyPage: () -> Unit,
+    navController: NavController,
+) {
+    val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BackgroundColor,
-        topBar = { TopAppBarComponent() },
-        bottomBar = { BottomAppBarComponent() }
+        topBar = {
+            TopAppBarComponent(
+                navigateToMyPage = navigateToMyPage,
+                navigateUp = { navController.navigateUp() }
+            )
+        },
     ) { innerPadding ->
-        val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.8f)
-                .padding(innerPadding)
-                .padding(horizontal = 8.dp)
-                .padding(top = 150.dp)
-                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            val currentMonth = YearMonth.now()
-            Text(text = currentMonth.toString(), fontSize = 32.sp)
-            SimpleCalendar()
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight(0.8f)
+//                .padding(innerPadding)
+//                .padding(horizontal = 8.dp)
+//                .padding(top = 150.dp)
+//                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
+//            verticalArrangement = Arrangement.Center,
+//            horizontalAlignment = Alignment.CenterHorizontally,
+//        ) {
+//            val currentMonth = YearMonth.now()
+//            Text(text = currentMonth.toString(), fontSize = 32.sp)
+//            SimpleCalendar()
+//        }
 
         if (showDialog.value) {  // 상태 변수를 확인하여 대화상자를 표시
             AlcoholDialog1(onDismiss = { showDialog.value = false })  // onDismiss에서 대화상자를 숨김
@@ -95,7 +105,9 @@ fun AlcoholPage() {
 }
 
 @Composable
-fun AlcoholDialog1(onDismiss: () -> Unit) {
+fun AlcoholDialog1(
+    onDismiss: () -> Unit
+) {
     Dialog(onDismissRequest = { onDismiss() }) {
         val showDialog = remember { mutableStateOf(true) }
         val showNextDialog = remember { mutableStateOf(false) }
@@ -121,10 +133,9 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Text("오늘 어떤 술을 마셨나요?", color = DarkRed, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(48.dp))
-                Row (
+                Row(
                     horizontalArrangement = Arrangement.SpaceEvenly
-                ){
-
+                ) {
                     Button(
                         onClick = {
                             showDialog.value = false
@@ -143,12 +154,14 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                             modifier = Modifier.size(150.dp)
                         )
                     }
-                    
+
                     Spacer(modifier = Modifier.width(20.dp))
 
                     Button(
-                        onClick = { showDialog.value = false
-                            showNextDialog.value = true },
+                        onClick = {
+                            showDialog.value = false
+                            showNextDialog.value = true
+                        },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
@@ -166,8 +179,10 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.width(20.dp))
 
                     Button(
-                        onClick = { showDialog.value = false
-                            showNextDialog.value = true },
+                        onClick = {
+                            showDialog.value = false
+                            showNextDialog.value = true
+                        },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
@@ -183,9 +198,9 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                     }
                 }
 
-                Row (
-                    modifier = Modifier.padding(top=4.dp, bottom=16.dp),
-                ){
+                Row(
+                    modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
+                ) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "맥주", color = LightRed, fontSize = 18.sp)
                     Spacer(modifier = Modifier.width(64.dp))
@@ -194,12 +209,14 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                     Text(text = "막걸리", color = LightRed, fontSize = 18.sp)
                 }
 
-                Row (
+                Row(
                     horizontalArrangement = Arrangement.SpaceEvenly
-                ){
+                ) {
                     Button(
-                        onClick = { showDialog.value = false
-                            showNextDialog.value = true },
+                        onClick = {
+                            showDialog.value = false
+                            showNextDialog.value = true
+                        },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
@@ -217,8 +234,10 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.width(20.dp))
 
                     Button(
-                        onClick = { showDialog.value = false
-                            showNextDialog.value = true },
+                        onClick = {
+                            showDialog.value = false
+                            showNextDialog.value = true
+                        },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
@@ -236,8 +255,10 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.width(20.dp))
 
                     Button(
-                        onClick = { showDialog.value = false
-                            showNextDialog.value = true },
+                        onClick = {
+                            showDialog.value = false
+                            showNextDialog.value = true
+                        },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
@@ -248,9 +269,9 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
 
                     }
                 }
-                Row (
-                    modifier = Modifier.padding(top=4.dp, bottom=16.dp),
-                ){
+                Row(
+                    modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
+                ) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(text = "와인", color = LightRed, fontSize = 18.sp)
                     Spacer(modifier = Modifier.width(64.dp))
@@ -265,7 +286,9 @@ fun AlcoholDialog1(onDismiss: () -> Unit) {
 
 
 @Composable
-fun AlcoholDialog2(onDismiss: () -> Unit){
+fun AlcoholDialog2(
+    onDismiss: () -> Unit
+) {
 
     val alcoholOptions = listOf("1~2잔", "반 병", "한 병", "한 병 반", "두 병")
     var expanded by remember { mutableStateOf(false) }
@@ -286,18 +309,29 @@ fun AlcoholDialog2(onDismiss: () -> Unit){
                 Spacer(modifier = Modifier.height(32.dp))
                 Text("오늘의 음주량은 어떻게 되나요?", color = DarkRed, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(32.dp))
-                Row(){
+                Row() {
                     Text("나의 목표 음주량 ", fontSize = 20.sp)
-                    Text("소주 반 병", color = DarkRed, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                    Text(
+                        "소주 반 병",
+                        color = DarkRed,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
-                Button(onClick = { expanded = true },
+                Button(
+                    onClick = { expanded = true },
                     modifier = Modifier.width(250.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
                     shape = RectangleShape
-                    ) {
-                    Text("                             ∨", color = Black, fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+                ) {
+                    Text(
+                        "                             ∨",
+                        color = Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
                 }
                 DropdownMenu(
                     modifier = Modifier.width(250.dp),
@@ -318,3 +352,4 @@ fun AlcoholDialog2(onDismiss: () -> Unit){
         }
     }
 }
+
