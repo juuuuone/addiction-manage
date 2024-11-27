@@ -31,7 +31,7 @@ fun MyPage(
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = LightGrey,
+        containerColor = White,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {

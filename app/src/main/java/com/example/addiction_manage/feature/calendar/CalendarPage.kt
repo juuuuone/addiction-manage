@@ -1,6 +1,7 @@
 package com.example.addiction_manage.feature.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,22 +37,32 @@ import com.example.addiction_manage.R
 import com.example.addiction_manage.ui.theme.BackgroundColor
 import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.LightRed
-import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.Black
-import com.example.addiction_manage.ui.theme.MediumGrey
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.painter.Painter
 import java.time.LocalDate
 import java.time.YearMonth
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.addiction_manage.ui.theme.LightBlue
+import com.example.addiction_manage.ui.theme.WhiteBlue
+import com.example.addiction_manage.ui.theme.LightGrey
+import com.example.addiction_manage.ui.theme.MediumBlue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,9 +99,9 @@ fun CalendarPage(
                 .fillMaxWidth()
                 .fillMaxHeight(0.8f)
                 .padding(innerPadding)
-                .padding(horizontal = 8.dp)
-                .padding(top = 150.dp)
-                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
+                .padding(horizontal = 16.dp)
+                .padding(top = 120.dp)
+                .background(color = WhiteBlue, shape = RoundedCornerShape(10.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -104,6 +115,7 @@ fun CalendarPage(
 
 
 /*달력 생성 함수*/
+/* 달력 생성 함수 */
 @Composable
 fun SimpleCalendar() {
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
@@ -123,24 +135,30 @@ fun SimpleCalendar() {
         modifier = Modifier.padding(16.dp)
     ) {
         items((1..daysInMonth).toList()) { day ->
+            val isSelected = selectedDate.dayOfMonth == day && selectedDate.month == currentMonth.month
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(50.dp)
                     .clickable {
                         selectedDate = currentMonth.atDay(day)
                         showDialog = true  // 날짜를 클릭하면 Dialog를 열기
                     }
                     .padding(4.dp)
+                    .background(
+                        color = if (isSelected) MediumBlue else Color.Transparent,
+                        shape = CircleShape,
+                    )
             ) {
                 Text(
                     text = day.toString(),
-                    color = if (selectedDate.dayOfMonth == day && selectedDate.month == currentMonth.month) LightRed else Black
+                    color = if (isSelected) Color.White else Color.Black
                 )
             }
         }
     }
 }
+
 
 /*날짜 클릭하면 뜨는 창 (어떤거 기록할건지)*/
 @Composable
@@ -149,10 +167,10 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
         // Dialog의 내용을 Card로 감싸서 디자인을 추가
         Surface(
             modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f),
+                .fillMaxWidth(0.9f)
+                .fillMaxHeight(0.6f),
             shape = RoundedCornerShape(8.dp),
-            color = MediumGrey
+            color = LightBlue
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -223,7 +241,8 @@ fun TopAppBarComponent(
             // 여기에 사용자 정의 아이콘을 추가
             IconButton(onClick = navigateToMyPage) {
                 Icon(
-                    painter = painterResource(id = R.drawable.account_circle_24px),
+                    //painter = painterResource(id = R.drawable.account_circle_24px),
+                    imageVector = Icons.Filled.AccountCircle,
                     contentDescription = "MypageButton",
                     modifier = Modifier.size(36.dp)
                 )
@@ -231,9 +250,9 @@ fun TopAppBarComponent(
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = BackgroundColor, // TopAppBar의 배경색
-            titleContentColor = White, // 제목의 색상
-            actionIconContentColor = White, // 액션 아이콘 색상
-            navigationIconContentColor = White
+            titleContentColor = Black, // 제목의 색상
+            actionIconContentColor = Black, // 액션 아이콘 색상
+            navigationIconContentColor = Black
         )
     )
 }
@@ -253,6 +272,8 @@ fun BottomAppBarComponent(
 ) {
     var selectedItem by remember { mutableStateOf(1) }  // 초기 선택 인덱스를 0으로 설정
 
+    val painter: Painter = painterResource(id = R.drawable.bar_chart_24px)  // Drawable 리소스 ID
+
     BottomAppBar(
         modifier = Modifier
             .padding(0.dp)
@@ -268,23 +289,32 @@ fun BottomAppBarComponent(
         ) {
             TabItem(
                 title = "캘린더",
-                icon = { },
-                isSelected = isCalendarPage,
-                onSelect = navigateToCalendar,
+                icon = { Icon(painter = painterResource(id = R.drawable.calendar_month_24px), contentDescription = "Calender", tint = if (selectedItem == 0) Black else LightGray) },
+                isSelected = selectedItem == 0,
+                onSelect = {
+                    selectedItem = 0
+                    navigateToCalendar()
+                },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
                 title = "홈",
-                icon = {},
-                isSelected = isHomePage,
-                onSelect = navigateToHome,
+                icon = { Icon(painter = painterResource(id = R.drawable.home_24px), contentDescription = "Home", tint = if (selectedItem == 1) Black else LightGray) },
+                isSelected = selectedItem == 1,
+                onSelect = {
+                    selectedItem = 1
+                    navigateToHome()
+                },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
                 title = "통계",
-                icon = { },
-                isSelected = isStatisticPage,
-                onSelect = navigateToStatistic,
+                icon = { Icon(painter = painterResource(id = R.drawable.bar_chart_24px), contentDescription = "Bar Chart", tint = if (selectedItem == 2) Black else LightGray) },
+                isSelected = selectedItem == 2,
+                onSelect = {
+                    selectedItem = 2
+                    navigateToStatistic()
+                },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
@@ -313,12 +343,12 @@ fun TabItem(
             .fillMaxHeight()
             .fillMaxWidth()
             .clickable(onClick = onSelect)
-            .background(if (isSelected) LightRed else LightGrey),
+            .background(if (isSelected) White else White),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         icon()
-        Text(text = title, color = Black, fontSize = 20.sp)
+        Text(text = title, color = if (isSelected) Black else LightGrey, fontSize = 12.sp)
     }
 }
 

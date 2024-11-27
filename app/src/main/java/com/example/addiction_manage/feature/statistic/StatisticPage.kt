@@ -33,6 +33,11 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.example.addiction_manage.ui.theme.LightBlue
+import com.example.addiction_manage.ui.theme.MediumBlue
+import com.example.addiction_manage.ui.theme.WhiteBlue
+import java.util.*
+
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 
@@ -73,7 +78,7 @@ fun StatisticPage(
                 .fillMaxWidth()
                 .fillMaxHeight(0.8f)
                 .padding(innerPadding)
-                .background(color = LightGrey, shape = RoundedCornerShape(10.dp))
+                .background(color = White, shape = RoundedCornerShape(10.dp))
                 .padding(horizontal = 25.dp),
 
             verticalArrangement = Arrangement.Center,
@@ -126,12 +131,12 @@ fun TimeframeSelector(
                         onClick = { onOptionSelected(option) }
                     )
                     .background(
-                        color = if (option == selectedOption) LightRed else LightGrey,
+                        color = if (option == selectedOption) MediumBlue else LightBlue,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 shape = RoundedCornerShape(16.dp),
-                color = if (option == selectedOption) LightRed else LightGrey
+                color = if (option == selectedOption) MediumBlue else LightBlue
             ) {
                 Text(
                     text = option,
@@ -149,8 +154,8 @@ fun GaugeGraph(
     progress: Float,
     goalText: String,
     achievedText: String,
-    backgroundColor: Color = Color.LightGray,
-    progressColor: Color = Color.Red
+    backgroundColor: Color = WhiteBlue,
+    progressColor: Color = MediumBlue
 ) {
     Column(
         modifier = modifier
@@ -229,8 +234,11 @@ fun AlcoholStatistic(
             progress = progress,
             goalText = goalText,
             achievedText = achievedText,
-            backgroundColor = Color.LightGray,
-            progressColor = Red
+
+            backgroundColor = WhiteBlue,
+            progressColor = MediumBlue
+
+
         )
     }
 }
@@ -274,8 +282,9 @@ fun SmokingStatistic(
             progress = progress,
             goalText = goalText,
             achievedText = achievedText,
-            backgroundColor = Color.LightGray,
-            progressColor = Red
+            backgroundColor = WhiteBlue,
+            progressColor = MediumBlue
+
         )
     }
 }
@@ -319,8 +328,8 @@ fun CaffeineStatistic(
             progress = progress,
             goalText = goalText,
             achievedText = achievedText,
-            backgroundColor = Color.LightGray,
-            progressColor = Red
+            backgroundColor = WhiteBlue,
+            progressColor = MediumBlue
         )
     }
 }
