@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature.smoking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,9 +18,9 @@ import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaffeineGoalPage() {
+fun SmokingGoalPage() {
     var selectedOption by remember { mutableStateOf("") }
-    var isNoCaffeineChecked by remember { mutableStateOf(false) }
+    var isNoSmokingChecked by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -29,7 +29,7 @@ fun CaffeineGoalPage() {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "카페인 목표 설정",
+                        text = "흡연 목표 설정",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -48,14 +48,14 @@ fun CaffeineGoalPage() {
         ) {
             // 제목 및 설명
             Text(
-                text = "카페인 목표를 설정하세요",
+                text = "흡연 목표를 설정하세요",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘 목표 카페인 섭취량을 선택하거나\n'카페인을 섭취하지 않습니다'를 체크하세요.",
+                text = "오늘 목표 흡연량을 선택하거나\n'흡연하지 않습니다'를 체크하세요.",
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -75,7 +75,7 @@ fun CaffeineGoalPage() {
                     // 드롭다운 메뉴
                     GoalDropdown(
                         label = "하루 목표 설정",
-                        options = listOf("반 잔", "한 잔", "두 잔", "세 잔"),
+                        options = listOf("1~2개피", "3~5개피", "반 갑", "한 갑"),
                         selectedOption = selectedOption,
                         onOptionSelected = { selectedOption = it }
                     )
@@ -84,9 +84,9 @@ fun CaffeineGoalPage() {
 
                     // 체크박스
                     CheckboxWithBorder(
-                        label = "카페인을 섭취하지 않습니다",
-                        isChecked = isNoCaffeineChecked,
-                        onCheckedChange = { isNoCaffeineChecked = it }
+                        label = "흡연하지 않습니다",
+                        isChecked = isNoSmokingChecked,
+                        onCheckedChange = { isNoSmokingChecked = it }
                     )
                 }
             }
@@ -107,3 +107,89 @@ fun CaffeineGoalPage() {
         }
     }
 }
+
+
+@Composable
+fun GoalDropdown(label: String, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = label,
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            modifier = Modifier.padding(bottom = 4.dp),
+            color = Black
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(White, RoundedCornerShape(8.dp))
+                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
+                .padding(12.dp)
+                .clickable { expanded = true }
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = selectedOption.ifEmpty { "선택하세요" },
+                    color = Black,
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "∨",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = {
+                        Text(option, color = Black)
+                    },
+                    onClick = {
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun CheckboxWithBorder(label: String, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(White, shape = RoundedCornerShape(8.dp))
+            .border(1.dp, Color.Gray, shape = RoundedCornerShape(8.dp))
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            colors = CheckboxDefaults.colors(
+                checkedColor = LightRed,
+                uncheckedColor = Color.Gray
+            )
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = label, color = Black, fontSize = 16.sp)
+    }
+}
+
+

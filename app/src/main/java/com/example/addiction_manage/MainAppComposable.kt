@@ -1,103 +1,134 @@
 package com.example.addiction_manage
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.addiction_manage.ui.AlcoholPage
-import com.example.addiction_manage.ui.CaffeinePage
-import com.example.addiction_manage.ui.CalendarPage
-import com.example.addiction_manage.ui.HomePage
-import com.example.addiction_manage.ui.MyPage
-import com.example.addiction_manage.ui.SmokingPage
-import com.example.addiction_manage.ui.StartPage
-import com.example.addiction_manage.ui.StatisticPage
+import com.example.addiction_manage.feature.alcohol.AlcoholPage
+import com.example.addiction_manage.feature.caffeine.CaffeinePage
+import com.example.addiction_manage.feature.calendar.CalendarPage
+import com.example.addiction_manage.feature.graph.GraphPage
+import com.example.addiction_manage.feature.HomePage
+import com.example.addiction_manage.feature.mypage.MyPage
+import com.example.addiction_manage.feature.RegisterPage
+import com.example.addiction_manage.feature.smoking.SmokingPage
+import com.example.addiction_manage.feature.StartPage
+import com.example.addiction_manage.feature.statistic.StatisticPage
+import com.google.firebase.auth.FirebaseAuth
 import com.example.addiction_manage.ui.auth.signin.SignInScreen
 import com.example.addiction_manage.ui.auth.signup.SignUpScreen
 
 @Composable
-fun MainApp(){
-    val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = "start"
-    ) {
-        composable(route = "start"){
-            StartPage(
-                onLoginClick = {
-                    navController.navigate(route = "signin")
-                },
-                onRegisterClick = {
-                    navController.navigate(route = "signup")
-                }
-            )
-        }
+fun MainApp() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        val navController = rememberNavController()
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val start = if (currentUser != null) "home" else "login"
 
-        composable(route = "signin"){
-            SignInScreen(navController)
-        }
+        NavHost(
+            navController = navController,
+            startDestination = "home"
+        ) {
+            composable(route = "start") {
+                StartPage(
+                    onLoginClick = {
+                        navController.navigate(route = "login")
+                    },
+                    onRegisterClick = {
+                        navController.navigate(route = "register")
+                    }
+                )
+            }
 
-        composable(route = "signup"){
-            SignUpScreen(
-                backToMainPage = {
+            composable(route = "signin") {
+                SignInScreen(navController)
+            }
+
+            composable(route = "signup") {
+                SignUpScreen(
+                    backToMainPage = {
+                        navController.navigate(route = "start")
+                    },
+                    navController = navController
+                )
+            }
+            composable(route = "register") {
+                RegisterPage(
+                    backToLoginPage = {
                     navController.navigate(route = "start")
-                },
-                navController = navController
-            )
-        }
+                    }
+                )
+            }
+            composable(route = "home") {
+                HomePage(
+                    navigateToCalendar = { navController.navigate(route = "calendar") },
+                    navigateToHome = { navController.navigate(route = "home") },
+                    navigateToStatistic = { navController.navigate(route = "statistic") },
+                    navigateToGraph = { navController.navigate(route = "graph") },
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navigateToAlcohol = { navController.navigate(route = "alcohol") },
+                    navigateToCaffeine = { navController.navigate(route = "caffeine") },
+                    navigateToSmoking = { navController.navigate(route = "smoking") },
+                    navController = navController
+                )
+            }
+            composable(route = "calendar") {
+                CalendarPage(
+                    navigateToCalendar = { navController.navigate(route = "calendar") },
+                    navigateToHome = { navController.navigate(route = "home") },
+                    navigateToStatistic = { navController.navigate(route = "statistic") },
+                    navigateToGraph = { navController.navigate(route = "graph") },
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController
+                )
+            }
+            composable(route = "statistic") {
+                StatisticPage(
+                    navigateToCalendar = { navController.navigate(route = "calendar") },
+                    navigateToHome = { navController.navigate(route = "home") },
+                    navigateToStatistic = { navController.navigate(route = "statistic") },
+                    navigateToGraph = { navController.navigate(route = "graph") },
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController
+                )
+            }
+            composable(route = "graph") {
+                GraphPage(
+                    navigateToCalendar = { navController.navigate(route = "calendar") },
+                    navigateToHome = { navController.navigate(route = "home") },
+                    navigateToStatistic = { navController.navigate(route = "statistic") },
+                    navigateToGraph = { navController.navigate(route = "graph") },
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController,
+                )
+            }
 
-        composable(route = "Home") {
-            HomePage(
-                navigateToCalendar = { navController.navigate(route = "Calendar") },
-                navigateToHome = { navController.navigate(route = "Home") },
-                navigateToStatistic = { navController.navigate(route = "Statistic") },
-                navigateToMyPage = { navController.navigate(route = "MyPage") },
-                navigateToAlcohol = { navController.navigate(route = "Alcohol") },
-                navigateToCaffeine = { navController.navigate(route = "Caffeine") },
-                navigateToSmoking = { navController.navigate(route = "Smoking") },
-                navController = navController
-            )
-        }
-        composable(route = "Calendar") {
-            CalendarPage(
-                navigateToCalendar = { navController.navigate(route = "Calendar") },
-                navigateToHome = { navController.navigate(route = "Home") },
-                navigateToStatistic = { navController.navigate(route = "Statistic") },
-                navigateToMyPage = { navController.navigate(route = "MyPage") },
-                navController = navController
-            )
-        }
-        composable(route = "Statistic") {
-            StatisticPage(
-                navigateToCalendar = { navController.navigate(route = "Calendar") },
-                navigateToHome = { navController.navigate(route = "Home") },
-                navigateToStatistic = { navController.navigate(route = "Statistic") },
-                navigateToMyPage = { navController.navigate(route = "MyPage") },
-                navController = navController
-            )
-        }
-        composable(route = "MyPage") {
-            MyPage(
-                navController = navController
-            )
-        }
-        composable(route = "Alcohol") {
-            AlcoholPage(
-                navigateToMyPage = { navController.navigate(route = "MyPage") },
-                navController = navController,
-            )
-        }
-        composable(route = "Caffeine") {
-            CaffeinePage(
-                navigateToMyPage = { navController.navigate(route = "MyPage") },
-                navController = navController
-            )
-        }
-        composable(route = "Smoking") {
-            SmokingPage(
-                navigateToMyPage = { navController.navigate(route = "MyPage") },
-                navController = navController
-            )
+            composable(route = "mypage") {
+                MyPage(
+                    navController = navController
+                )
+            }
+            composable(route = "alcohol") {
+                AlcoholPage(
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController,
+                )
+            }
+            composable(route = "caffeine") {
+                CaffeinePage(
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController
+                )
+            }
+            composable(route = "smoking") {
+                SmokingPage(
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController
+                )
+            }
         }
     }
 }

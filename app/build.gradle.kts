@@ -6,8 +6,6 @@ plugins {
     id("com.google.dagger.hilt.android") //4
 }
 
-
-
 android {
     namespace = "com.example.addiction_manage"
     compileSdk = 35
@@ -89,6 +87,16 @@ dependencies {
     implementation ("com.google.dagger:hilt-android:2.51.1") // 1
     kapt("com.google.dagger:hilt-android-compiler:2.51.1") // 3
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.22")
+
+//    implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.23")
+//    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.23")
+//    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.23")
+//    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.23")
 
 }
 
