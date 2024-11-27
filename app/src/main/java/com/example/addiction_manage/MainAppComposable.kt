@@ -13,7 +13,6 @@ import com.example.addiction_manage.feature.calendar.CalendarPage
 import com.example.addiction_manage.feature.graph.GraphPage
 import com.example.addiction_manage.feature.HomePage
 import com.example.addiction_manage.feature.mypage.MyPage
-import com.example.addiction_manage.feature.RegisterPage
 import com.example.addiction_manage.feature.smoking.SmokingPage
 import com.example.addiction_manage.feature.StartPage
 import com.example.addiction_manage.feature.statistic.StatisticPage
@@ -30,15 +29,15 @@ fun MainApp() {
 
         NavHost(
             navController = navController,
-            startDestination = "home"
+            startDestination = "start"
         ) {
             composable(route = "start") {
                 StartPage(
                     onLoginClick = {
-                        navController.navigate(route = "login")
+                        navController.navigate(route = "signin")
                     },
                     onRegisterClick = {
-                        navController.navigate(route = "register")
+                        navController.navigate(route = "signup")
                     }
                 )
             }
@@ -53,13 +52,6 @@ fun MainApp() {
                         navController.navigate(route = "start")
                     },
                     navController = navController
-                )
-            }
-            composable(route = "register") {
-                RegisterPage(
-                    backToLoginPage = {
-                    navController.navigate(route = "start")
-                    }
                 )
             }
             composable(route = "home") {
