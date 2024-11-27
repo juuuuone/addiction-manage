@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,8 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
+import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.ui.theme.BackgroundColor
 import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.LightGrey
@@ -37,6 +37,7 @@ fun HomePage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
     navigateToAlcohol: () -> Unit,
     navigateToCaffeine: () -> Unit,
@@ -57,6 +58,7 @@ fun HomePage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
+                navigateToGraph = navigateToGraph,
                 isHomePage = true,
             )
         }

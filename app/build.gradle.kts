@@ -2,9 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
+    id ("kotlin-kapt") // 2
+    id("com.google.dagger.hilt.android") //4
 }
-
-
 
 android {
     namespace = "com.example.addiction_manage"
@@ -81,6 +81,25 @@ dependencies {
     // firebase
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("com.google.firebase:firebase-analytics")
-    
+
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1")
+
+    implementation ("com.google.dagger:hilt-android:2.51.1") // 1
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1") // 3
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.22")
+    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.22")
+
+//    implementation("com.patrykandpatrick.vico:compose-m2:2.0.0-alpha.23")
+//    implementation("com.patrykandpatrick.vico:compose-m3:2.0.0-alpha.23")
+//    implementation("com.patrykandpatrick.vico:core:2.0.0-alpha.23")
+//    implementation("com.patrykandpatrick.vico:views:2.0.0-alpha.23")
+
+}
+
+kapt {//5
+    correctErrorTypes = true
 }

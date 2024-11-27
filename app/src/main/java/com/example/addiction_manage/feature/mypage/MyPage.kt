@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature.mypage
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,25 +8,27 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.addiction_manage.ui.theme.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPage(
     navController: NavController
 ) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    var nickname: String = currentUser?.let { checkUser(it) }.toString()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = White,
@@ -69,7 +71,7 @@ fun MyPage(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "금연팽이", // 닉네임 값 -> 초기에 설정했던 닉네임 가져와야함. 지금은 임시 데이터.
+                text = nickname,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black
@@ -146,4 +148,8 @@ fun GoalSection(title: String, goals: List<String>) {
             )
         }
     }
+}
+
+fun checkUser(currentUser : FirebaseUser) : String {
+    return currentUser.displayName ?: "Unknown User"
 }

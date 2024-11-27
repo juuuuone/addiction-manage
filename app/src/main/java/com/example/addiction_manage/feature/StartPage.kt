@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

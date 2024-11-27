@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature.caffeine
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,14 +12,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
+import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlcoholGoalPage() {
-    var dailyGoal by remember { mutableStateOf("") }
-    var weeklyGoal by remember { mutableStateOf("") }
-    var isNoAlcoholChecked by remember { mutableStateOf(false) } // 음주하지 않습니다 체크박스 상태
+fun CaffeineGoalPage() {
+    var selectedOption by remember { mutableStateOf("") }
+    var isNoCaffeineChecked by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -28,7 +29,7 @@ fun AlcoholGoalPage() {
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "음주 목표 설정",
+                        text = "카페인 목표 설정",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = White
@@ -47,14 +48,14 @@ fun AlcoholGoalPage() {
         ) {
             // 제목 및 설명
             Text(
-                text = "음주 목표를 설정하세요",
+                text = "카페인 목표를 설정하세요",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘과 일주일의 음주량 목표를 설정하거나\n'음주하지 않습니다'를 체크하세요.",
+                text = "오늘 목표 카페인 섭취량을 선택하거나\n'카페인을 섭취하지 않습니다'를 체크하세요.",
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -67,35 +68,25 @@ fun AlcoholGoalPage() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightBlue, shape = RoundedCornerShape(16.dp))
+                    .background(LightGrey, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // 하루 목표 드롭다운
+                    // 드롭다운 메뉴
                     GoalDropdown(
                         label = "하루 목표 설정",
-                        options = listOf("반 잔", "한 잔", "2~3 잔", "한 병"),
-                        selectedOption = dailyGoal,
-                        onOptionSelected = { dailyGoal = it }
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 일주일 목표 드롭다운
-                    GoalDropdown(
-                        label = "일주일 목표 설정 (횟수)",
-                        options = listOf("1회", "2회", "3회", "4회 이상"),
-                        selectedOption = weeklyGoal,
-                        onOptionSelected = { weeklyGoal = it }
+                        options = listOf("반 잔", "한 잔", "두 잔", "세 잔"),
+                        selectedOption = selectedOption,
+                        onOptionSelected = { selectedOption = it }
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // 체크박스: 음주하지 않습니다
+                    // 체크박스
                     CheckboxWithBorder(
-                        label = "음주하지 않습니다",
-                        isChecked = isNoAlcoholChecked,
-                        onCheckedChange = { isNoAlcoholChecked = it }
+                        label = "카페인을 섭취하지 않습니다",
+                        isChecked = isNoCaffeineChecked,
+                        onCheckedChange = { isNoCaffeineChecked = it }
                     )
                 }
             }
@@ -116,4 +107,3 @@ fun AlcoholGoalPage() {
         }
     }
 }
-

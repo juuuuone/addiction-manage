@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

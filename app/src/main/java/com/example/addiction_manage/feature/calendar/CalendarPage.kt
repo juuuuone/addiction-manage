@@ -1,4 +1,4 @@
-package com.example.addiction_manage.ui
+package com.example.addiction_manage.feature.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -71,6 +71,7 @@ fun CalendarPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
     navController: NavController,
 ) {
@@ -88,6 +89,7 @@ fun CalendarPage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
+                navigateToGraph = navigateToGraph,
                 isCalendarPage = true,
             )
         }
@@ -262,9 +264,11 @@ fun BottomAppBarComponent(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToGraph: () -> Unit,
     isCalendarPage: Boolean = false,
     isHomePage: Boolean = false,
     isStatisticPage: Boolean = false,
+    isGraphPage: Boolean = false,
 ) {
     var selectedItem by remember { mutableStateOf(1) }  // 초기 선택 인덱스를 0으로 설정
 
@@ -311,6 +315,13 @@ fun BottomAppBarComponent(
                     selectedItem = 2
                     navigateToStatistic()
                 },
+                modifier = Modifier.weight(1f)
+            )
+            TabItem(
+                title = "그래프",
+                icon = {},
+                isSelected = isGraphPage,
+                onSelect = navigateToGraph,
                 modifier = Modifier.weight(1f)
             )
         }
