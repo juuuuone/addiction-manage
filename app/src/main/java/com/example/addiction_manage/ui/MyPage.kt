@@ -29,7 +29,7 @@ fun MyPage(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = LightGrey,
+        containerColor = White,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {

@@ -22,7 +22,6 @@ import com.example.addiction_manage.ui.CaffeinePage
 import com.example.addiction_manage.ui.CalendarPage
 import com.example.addiction_manage.ui.HomePage
 import com.example.addiction_manage.ui.LoginPage
-import com.example.addiction_manage.ui.MainPage
 import com.example.addiction_manage.ui.RegisterPage
 import com.example.addiction_manage.ui.SetNamePage
 import com.example.addiction_manage.ui.MyPage
@@ -42,32 +41,32 @@ class MainActivity : ComponentActivity() {
             Addiction_manageTheme {
                 val navController = rememberNavController()
                 NavHost(
-                   navController = navController,
-                    startDestination = "start"
+                    navController = navController,
+                    startDestination = "Home"
                 ) {
-                    composable(route = "start"){
+                    composable(route = "start") {
                         StartPage(
                             onLoginClick = {
                                 navController.navigate(route = "login")
                             },
                             onRegisterClick = {
-                            navController.navigate(route = "register")
-                        }
+                                navController.navigate(route = "register")
+                            }
                         )
                     }
 
-                    composable(route = "login"){
+                    composable(route = "login") {
                         LoginPage(navController)
                     }
 
-                    composable(route = "register"){
+                    composable(route = "register") {
                         RegisterPage(
                             backToLoginPage = {
                                 navController.navigate(route = "start")
                             }
                         )
                     }
-                    
+
                     composable(route = "Home") {
                         HomePage(
                             navigateToCalendar = { navController.navigate(route = "Calendar") },
@@ -121,6 +120,7 @@ class MainActivity : ComponentActivity() {
                             navController = navController
                         )
                     }
+                }
             }
         }
     }
