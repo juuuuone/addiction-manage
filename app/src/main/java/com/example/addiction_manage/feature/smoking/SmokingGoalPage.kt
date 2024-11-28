@@ -24,8 +24,8 @@ fun SmokingGoalPage(
     navController: NavController
 ) {
     var selectedOption by remember { mutableStateOf("") }
-    var isNoSmokingChecked by remember { mutableStateOf(false) }
     val viewModel: SmokingGoalViewModel = hiltViewModel()
+    val isNoSmokingChecked by viewModel.isNoSmokingChecked.collectAsState()
     var smokingDayGoal by remember { mutableStateOf("") }
 
     Scaffold(
@@ -112,13 +112,7 @@ fun SmokingGoalPage(
             // 다음 버튼
             Button(
                 onClick = {
-                    navController.navigate("home"){
-                        popUpTo("signin") { inclusive = true }//  홈 화면 밑에 깔린 로그인 페이지를 스택에서 제거하는거
-                        popUpTo("signup") { inclusive = true }
-                        popUpTo("alcohol-goal") { inclusive = true }
-                        popUpTo("smoking-goal") { inclusive = true }
-                        popUpTo("caffeine-goal") { inclusive = true }
-                    }
+                    navController.navigate(route = "caffeine-goal")
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)

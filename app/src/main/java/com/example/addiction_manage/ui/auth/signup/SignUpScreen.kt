@@ -62,11 +62,7 @@ fun SignUpScreen(
     LaunchedEffect(key1 = uiState.value) { // key 값이 바뀌면 이걸 먼저 수행
         when(uiState.value){
             is SignUpState.Success -> {
-//                navController.navigate("alcohol-goal")
-                navController.navigate("smoking-goal"){
-                    popUpTo("signup") { inclusive = true }
-                }
-//                navController.navigate("caffeine-goal")
+                navController.navigate("alcohol-goal")
             }
             is SignUpState.Error -> {
                 Toast.makeText(context, "Sign Up Failed", Toast.LENGTH_SHORT).show()

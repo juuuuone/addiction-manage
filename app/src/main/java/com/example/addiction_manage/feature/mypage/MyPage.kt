@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.feature.alcohol.AlcoholGoalViewModel
+import com.example.addiction_manage.feature.caffeine.CaffeineGoalViewModel
 import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
 import com.example.addiction_manage.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
@@ -34,10 +36,10 @@ fun MyPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
-    val viewModel: SmokingGoalViewModel = hiltViewModel()
-    val smokingGoals = viewModel.goal.collectAsState().value
-    val isNotSmoking = viewModel.isNoSmokingChecked
-    val isLoading = viewModel.isLoading.collectAsState().value
+    val smokingGoalViewModel: SmokingGoalViewModel = hiltViewModel()
+    val alcoholGoalViewModel: AlcoholGoalViewModel = hiltViewModel()
+//    val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
+    val isLoading = smokingGoalViewModel.isLoading.collectAsState().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -89,22 +91,37 @@ fun MyPage(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 음주 목표 섹션 -> 이 섹션들은 초기에 목표 설정했던 것을 가져와야함. 지금은 임시 데이터.
-            GoalSection(
-                title = "나의 음주 목표",
-                goals = listOf("1주일 2회 이하", "음주량 1병 이하")
-            )
+            // 음주 목표 섹션
+            val alcoholGoal = alcoholGoalViewModel.goal.collectAsState().value
+            val isNotAlcohol = alcoholGoalViewModel.isNoAlcoholChecked
+            if(isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            else if (alcoholGoal.isNotEmpty() && !isNotAlcohol.value) {
+                GoalSection(
+                    title = "나의 음주 목표",
+                    goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하")
+                )
+            } else {
+                GoalSection(
+                    title = "나의 음주 목표",
+                    goals = listOf("목표가 없습니다.")
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // 흡연 목표 섹션
+            val smokingGoals = smokingGoalViewModel.goal.collectAsState().value
+            val isNotSmoking = smokingGoalViewModel.isNoSmokingChecked
+
             if(isLoading){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
             else if (smokingGoals.isNotEmpty() && !isNotSmoking.value) {
                 GoalSection(
                     title = "나의 흡연 목표",
-                    goals = listOf(smokingGoals.joinToString{it.goal} + "개피")
+                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하")
                 )
             } else {
                 GoalSection(
@@ -160,7 +177,7 @@ fun GoalSection(title: String, goals: List<String>) {
         Spacer(modifier = Modifier.height(8.dp))
         goals.forEach { goal ->
             Text(
-                text = "$goal 이하",
+                text = goal,
                 fontSize = 25.sp,
                 color = DarkRed,
                 fontWeight = FontWeight.Bold,

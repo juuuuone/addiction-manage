@@ -1,4 +1,6 @@
-package com.example.addiction_manage.feature.smoking
+package com.example.addiction_manage.feature.alcohol
+
+import com.example.addiction_manage.feature.model.AlcoholGoal
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -17,19 +19,19 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class SmokingGoalViewModel @Inject constructor() : ViewModel() {
+class AlcoholGoalViewModel @Inject constructor() : ViewModel() {
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
-    private val _goal = MutableStateFlow<List<SmokingGoal>>(emptyList())
+    private val _goal = MutableStateFlow<List<AlcoholGoal>>(emptyList())
     val goal = _goal.asStateFlow()
 
-    private val _isNoSmokingChecked = MutableStateFlow(false)
-    val isNoSmokingChecked = _isNoSmokingChecked.asStateFlow()
+    private val _isNoAlcoholChecked = MutableStateFlow(false)
+    val isNoAlcoholChecked = _isNoAlcoholChecked.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
-    private val databaseReference = firebaseDatabase.getReference("SmokingGoal")
+    private val databaseReference = firebaseDatabase.getReference("AlcoholGoal")
     private var valueEventListener: ValueEventListener? = null
 
     init {
@@ -44,11 +46,11 @@ class SmokingGoalViewModel @Inject constructor() : ViewModel() {
             val uid = user.uid
             valueEventListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<SmokingGoal>()
+                    val list = mutableListOf<AlcoholGoal>()
                     snapshot.children.forEach { data ->
-                        val smokingGoal = data.getValue(SmokingGoal::class.java)
-                        if (smokingGoal?.userId == uid) {
-                            list.add(smokingGoal)
+                        val alcoholGoal = data.getValue(AlcoholGoal::class.java)
+                        if (alcoholGoal?.userId == uid) {
+                            list.add(alcoholGoal)
                         }
                     }
                     _goal.value = list // Flow 상태 업데이트
@@ -72,16 +74,16 @@ class SmokingGoalViewModel @Inject constructor() : ViewModel() {
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
-    fun setNoSmokingChecked(checked: Boolean) { _isNoSmokingChecked.value = checked }
+    fun setNoAlcoholChecked(checked: Boolean) { _isNoAlcoholChecked.value = checked }
 
     fun addGoal(newGoal: String){
         val currentUser = firebaseAuth.currentUser
-        val key = firebaseDatabase.reference.child("SmokingGoal").push().key ?: UUID.randomUUID().toString()
-        val smokingGoal = SmokingGoal(
+        val key = firebaseDatabase.reference.child("AlcoholGoal").push().key ?: UUID.randomUUID().toString()
+        val alcoholGoal = AlcoholGoal(
             id = key,
             userId = currentUser?.uid?: "",
             goal = newGoal
         )
-        firebaseDatabase.reference.child("SmokingGoal").push().setValue(smokingGoal)
+        firebaseDatabase.reference.child("AlcoholGoal").push().setValue(alcoholGoal)
     }
 }
