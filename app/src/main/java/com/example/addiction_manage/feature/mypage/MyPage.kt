@@ -38,7 +38,7 @@ fun MyPage(
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
     val smokingGoalViewModel: SmokingGoalViewModel = hiltViewModel()
     val alcoholGoalViewModel: AlcoholGoalViewModel = hiltViewModel()
-//    val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
+    val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
     val isLoading = smokingGoalViewModel.isLoading.collectAsState().value
 
     Scaffold(
@@ -133,11 +133,23 @@ fun MyPage(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 카페인 목표 섹션
-            GoalSection(
-                title = "나의 카페인 목표",
-                goals = listOf("하루 2잔 이하 (300mg)")
-            )
+            val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
+            val isNotCaffeine = caffeineGoalViewModel.isNoCaffeineChecked
 
+            if(isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            else if (caffeineGoals.isNotEmpty() && !isNotCaffeine.value) {
+                GoalSection(
+                    title = "나의 카페인 목표",
+                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "잔 이하")
+                )
+            } else {
+                GoalSection(
+                    title = "나의 카페인 목표",
+                    goals = listOf("목표가 없습니다.")
+                )
+            }
             Spacer(modifier = Modifier.weight(1f))
 
             // 편집 버튼 -> 목표 설정 페이지 재사용...?
