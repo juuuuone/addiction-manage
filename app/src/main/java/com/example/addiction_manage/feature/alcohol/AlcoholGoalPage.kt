@@ -69,7 +69,7 @@ fun AlcoholGoalPage() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightGrey, shape = RoundedCornerShape(16.dp))
+                    .background(LightBlue, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {

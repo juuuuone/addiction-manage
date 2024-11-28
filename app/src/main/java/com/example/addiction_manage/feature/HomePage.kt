@@ -25,9 +25,12 @@ import androidx.navigation.NavController
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.ui.theme.BackgroundColor
+import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.LightRed
+import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.MediumGrey
+import com.example.addiction_manage.ui.theme.White
 
 @Composable
 fun HomePage(
@@ -67,7 +70,7 @@ fun HomePage(
                 .padding(innerPadding)
                 .padding(horizontal = 8.dp)
                 .padding(top = 150.dp)
-                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
+                .background(color = MediumBlue, shape = RoundedCornerShape(10.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -91,7 +94,7 @@ fun SelectingPage(
             .fillMaxWidth()
             .fillMaxHeight(),
         shape = RoundedCornerShape(8.dp),
-        color = MediumGrey
+        color = BackgroundColor
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -103,10 +106,10 @@ fun SelectingPage(
                     .padding(8.dp)
                     .width(600.dp)
                     .height(70.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
-                shape = RectangleShape
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
+                shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 음주 기록하기", color = LightRed, fontSize = 24.sp)
+                Text("나의 음주 기록하기", color = White, fontSize = 24.sp)
             }
             Button(
                 onClick = navigateToSmoking,
@@ -114,10 +117,10 @@ fun SelectingPage(
                     .padding(8.dp)
                     .width(500.dp)
                     .height(70.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
-                shape = RectangleShape
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
+                shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 흡연 기록하기", color = LightRed, fontSize = 24.sp)
+                Text("나의 흡연 기록하기", color = White, fontSize = 24.sp)
             }
             Button(
                 onClick = navigateToCaffeine,
@@ -125,10 +128,10 @@ fun SelectingPage(
                     .padding(8.dp)
                     .width(600.dp)
                     .height(70.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
-                shape = RectangleShape
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
+                shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 카페인 기록하기", color = LightRed, fontSize = 24.sp)
+                Text("나의 카페인 기록하기", color = White, fontSize = 24.sp)
             }
         }
     }
