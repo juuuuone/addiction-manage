@@ -12,13 +12,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
 import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaffeineGoalPage() {
+fun CaffeineGoalPage(
+    navController: NavController
+) {
     var selectedOption by remember { mutableStateOf("") }
     var isNoCaffeineChecked by remember { mutableStateOf(false) }
 

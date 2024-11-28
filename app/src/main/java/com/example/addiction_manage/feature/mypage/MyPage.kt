@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.mypage
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,11 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
 import com.example.addiction_manage.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPage(
@@ -29,6 +34,11 @@ fun MyPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+    val viewModel: SmokingGoalViewModel = hiltViewModel()
+    val smokingGoals = viewModel.goal.collectAsState().value
+    val isNotSmoking = viewModel.isNoSmokingChecked
+    val isLoading = viewModel.isLoading.collectAsState().value
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = White,
@@ -88,10 +98,20 @@ fun MyPage(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 흡연 목표 섹션
-            GoalSection(
-                title = "나의 흡연 목표",
-                goals = listOf("하루 반 갑 이하")
-            )
+            if(isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            else if (smokingGoals.isNotEmpty() && !isNotSmoking.value) {
+                GoalSection(
+                    title = "나의 흡연 목표",
+                    goals = listOf(smokingGoals.joinToString{it.goal} + "개피")
+                )
+            } else {
+                GoalSection(
+                    title = "나의 흡연 목표",
+                    goals = listOf("목표가 없습니다.")
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -140,7 +160,7 @@ fun GoalSection(title: String, goals: List<String>) {
         Spacer(modifier = Modifier.height(8.dp))
         goals.forEach { goal ->
             Text(
-                text = goal,
+                text = "$goal 이하",
                 fontSize = 25.sp,
                 color = DarkRed,
                 fontWeight = FontWeight.Bold,

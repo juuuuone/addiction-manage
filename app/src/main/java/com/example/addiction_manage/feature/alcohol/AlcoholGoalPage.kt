@@ -12,13 +12,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
 import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlcoholGoalPage() {
+fun AlcoholGoalPage(
+    navController: NavController
+) {
     var dailyGoal by remember { mutableStateOf("") }
     var weeklyGoal by remember { mutableStateOf("") }
     var isNoAlcoholChecked by remember { mutableStateOf(false) } // 음주하지 않습니다 체크박스 상태
