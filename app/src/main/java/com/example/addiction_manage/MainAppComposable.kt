@@ -33,7 +33,7 @@ fun MainApp() {
 
         NavHost(
             navController = navController,
-            startDestination = "start"
+            startDestination = start // 로그인 스킵
         ) {
             composable(route = "start") {
                 StartPage(
