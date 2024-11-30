@@ -55,7 +55,6 @@ fun HomePage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
-                navigateToGraph = navigateToGraph,
                 isHomePage = true,
             )
         }

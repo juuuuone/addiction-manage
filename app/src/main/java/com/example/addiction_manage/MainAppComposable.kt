@@ -10,10 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.addiction_manage.feature.alcohol.AlcoholPage
 import com.example.addiction_manage.feature.caffeine.CaffeinePage
 import com.example.addiction_manage.feature.calendar.CalendarPage
-import com.example.addiction_manage.feature.graph.GraphPage
 import com.example.addiction_manage.feature.HomePage
 import com.example.addiction_manage.feature.mypage.MyPage
-import com.example.addiction_manage.feature.RegisterPage
 import com.example.addiction_manage.feature.smoking.SmokingPage
 import com.example.addiction_manage.feature.StartPage
 import com.example.addiction_manage.feature.statistic.StatisticPage
@@ -55,13 +53,7 @@ fun MainApp() {
                     navController = navController
                 )
             }
-            composable(route = "register") {
-                RegisterPage(
-                    backToLoginPage = {
-                    navController.navigate(route = "start")
-                    }
-                )
-            }
+
             composable(route = "home") {
                 HomePage(
                     navigateToCalendar = { navController.navigate(route = "calendar") },
@@ -90,19 +82,8 @@ fun MainApp() {
                     navigateToCalendar = { navController.navigate(route = "calendar") },
                     navigateToHome = { navController.navigate(route = "home") },
                     navigateToStatistic = { navController.navigate(route = "statistic") },
-                    navigateToGraph = { navController.navigate(route = "graph") },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     navController = navController
-                )
-            }
-            composable(route = "graph") {
-                GraphPage(
-                    navigateToCalendar = { navController.navigate(route = "calendar") },
-                    navigateToHome = { navController.navigate(route = "home") },
-                    navigateToStatistic = { navController.navigate(route = "statistic") },
-                    navigateToGraph = { navController.navigate(route = "graph") },
-                    navigateToMyPage = { navController.navigate(route = "mypage") },
-                    navController = navController,
                 )
             }
 

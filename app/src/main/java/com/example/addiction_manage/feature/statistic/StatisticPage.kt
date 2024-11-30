@@ -30,11 +30,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
+import com.example.addiction_manage.feature.graph.ColumnGraph
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,11 +45,16 @@ fun StatisticPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
     navController: NavController,
 ) {
-    var selectedOption by remember { mutableStateOf("일주일") } // Default selected option
+    var selectedOption by remember { mutableStateOf("음주") } // Default selected option
+    val currentAlcohol by remember { mutableFloatStateOf(0f) }
+    val currentSmoking by remember { mutableFloatStateOf(0f) }
+    val currentCaffeine by remember { mutableFloatStateOf(0f) }
+    val goalAlcohol by remember { mutableFloatStateOf(3f) }
+    val goalSmoking by remember { mutableFloatStateOf(3f) }
+    val goalCaffeine by remember { mutableFloatStateOf(3f) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -63,7 +70,6 @@ fun StatisticPage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
-                navigateToGraph = navigateToGraph,
                 isStatisticPage = true,
             )
         }
@@ -79,9 +85,9 @@ fun StatisticPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            // 기간 선택
+            // 카테고리 선택
             TimeframeSelector(
-                options = listOf("하루", "일주일", "한달"),
+                options = listOf("음주", "흡연", "카페인"),
                 selectedOption = selectedOption,
                 onOptionSelected = { selectedOption = it }
             )
@@ -89,18 +95,28 @@ fun StatisticPage(
             Spacer(modifier = Modifier.height(16.dp))
 
             // 통계 페이지
-            AlcoholStatistic(
-                progress = 0.3f,
-                selectedOption = selectedOption
-            )
-            SmokingStatistic(
-                progress = 0.7f,
-                selectedOption = selectedOption
-            )
-            CaffeineStatistic(
-                progress = 0.5f,
-                selectedOption = selectedOption
-            )
+            if (selectedOption == "음주") {
+                AlcoholStatistic(
+                    progress = 0.3f,
+                    currentAlcohol = currentAlcohol,
+                    goalAlcohol = goalAlcohol,
+                )
+                ColumnGraph(unit = "잔", threshold = goalAlcohol)
+            } else if (selectedOption == "흡연") {
+                SmokingStatistic(
+                    progress = 0.7f,
+                    currentSmoking = currentSmoking,
+                    goalSmoking = goalSmoking
+                )
+                ColumnGraph(unit = "개피", threshold = goalSmoking)
+            } else if (selectedOption == "카페인") {
+                CaffeineStatistic(
+                    progress = 0.5f,
+                    currentCaffeine = currentCaffeine,
+                    goalCaffeine = goalCaffeine
+                )
+                ColumnGraph(unit = "잔", threshold = goalCaffeine)
+            }
         }
     }
 }
@@ -182,8 +198,8 @@ fun GaugeGraph(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = achievedText, fontSize = 14.sp, color = Color.Black)
-            Text(text = goalText, fontSize = 14.sp, color = Color.Black)
+            Text(text = "현재 : $achievedText", fontSize = 14.sp, color = Color.Black)
+//            Text(text = "목표 : $goalText", fontSize = 14.sp, color = Color.Black)
         }
     }
 }
@@ -191,28 +207,13 @@ fun GaugeGraph(
 @Composable
 fun AlcoholStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
-    selectedOption: String // 옵션마다 텍스트
+    currentAlcohol: Float,
+    goalAlcohol: Float,
 ) {
-    val alcoholTitle = when (selectedOption) {
-        "하루" -> "오늘의 음주 통계"
-        "일주일" -> "이번주의 음주 통계"
-        "한달" -> "이번달의 음주 통계"
-        else -> "음주 통계"
-    }
+    val alcoholTitle = "일주일 음주 통계"
+    val current = currentAlcohol.toInt().toString() + "잔"
+    val goal = goalAlcohol.toInt().toString() + "잔"
 
-    val achievedText = when (selectedOption) {
-        "하루" -> "오늘: 1잔"
-        "일주일" -> "이번주: 2잔"
-        "한달" -> "이번달: 12잔"
-        else -> "달성치 없음"
-    }
-
-    val goalText = when (selectedOption) {
-        "하루" -> "오늘: 1잔"
-        "일주일" -> "이번주: 5잔"
-        "한달" -> "이번달: 20잔"
-        else -> "목표 없음"
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -227,8 +228,8 @@ fun AlcoholStatistic(
         )
         GaugeGraph(
             progress = progress,
-            goalText = goalText,
-            achievedText = achievedText,
+            goalText = goal,
+            achievedText = current,
             backgroundColor = Color.LightGray,
             progressColor = Red
         )
@@ -238,26 +239,13 @@ fun AlcoholStatistic(
 @Composable
 fun SmokingStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
-    selectedOption: String // 옵션마다 텍스트
+    currentSmoking: Float,
+    goalSmoking: Float,
 ) {
-    val smokingTitle = when (selectedOption) {
-        "하루" -> "오늘의 흡연 통계"
-        "일주일" -> "이번주의 흡연 통계"
-        "한달" -> "이번달의 흡연 통계"
-        else -> "흡연 통계"
-    }
-    val achievedText = when (selectedOption) {
-        "하루" -> "오늘: 4개피"
-        "일주일" -> "이번주: 8개피"
-        "한달" -> "이번달: 36개피"
-        else -> "달성치 없음"
-    }
-    val goalText = when (selectedOption) {
-        "하루" -> "오늘: 5개피"
-        "일주일" -> "이번주: 30개피"
-        "한달" -> "이번달: 100개피"
-        else -> "목표 없음"
-    }
+    val smokingTitle = "일주일 흡연 통계"
+    val current = currentSmoking.toInt().toString() + "개피"
+    val goal = goalSmoking.toInt().toString() + "개피"
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -272,8 +260,8 @@ fun SmokingStatistic(
         )
         GaugeGraph(
             progress = progress,
-            goalText = goalText,
-            achievedText = achievedText,
+            goalText = goal,
+            achievedText = current,
             backgroundColor = Color.LightGray,
             progressColor = Red
         )
@@ -283,26 +271,13 @@ fun SmokingStatistic(
 @Composable
 fun CaffeineStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
-    selectedOption: String // 옵션마다 텍스트
+    currentCaffeine: Float,
+    goalCaffeine: Float,
 ) {
-    val caffeineTitle = when (selectedOption) {
-        "하루" -> "오늘의 카페인 통계"
-        "일주일" -> "이번주의 카페인 통계"
-        "한달" -> "이번달의 카페인 통계"
-        else -> "카페인 통계"
-    }
-    val achievedText = when (selectedOption) {
-        "하루" -> "오늘: 1잔"
-        "일주일" -> "이번주: 2잔"
-        "한달" -> "이번달: 12잔"
-        else -> "달성치 없음"
-    }
-    val goalText = when (selectedOption) {
-        "하루" -> "오늘: 1잔"
-        "일주일" -> "이번주: 5잔"
-        "한달" -> "이번달: 20잔"
-        else -> "목표 없음"
-    }
+    val caffeineTitle = "일주일 카페인 통계"
+    val current = currentCaffeine.toInt().toString() + "잔"
+    val goal = goalCaffeine.toInt().toString() + "잔"
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -317,8 +292,8 @@ fun CaffeineStatistic(
         )
         GaugeGraph(
             progress = progress,
-            goalText = goalText,
-            achievedText = achievedText,
+            goalText = goal,
+            achievedText = current,
             backgroundColor = Color.LightGray,
             progressColor = Red
         )

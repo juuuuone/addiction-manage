@@ -78,7 +78,6 @@ fun CalendarPage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
-                navigateToGraph = navigateToGraph,
                 isCalendarPage = true,
             )
         }
@@ -245,14 +244,10 @@ fun BottomAppBarComponent(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToGraph: () -> Unit,
     isCalendarPage: Boolean = false,
     isHomePage: Boolean = false,
     isStatisticPage: Boolean = false,
-    isGraphPage: Boolean = false,
 ) {
-    var selectedItem by remember { mutableStateOf(1) }  // 초기 선택 인덱스를 0으로 설정
-
     BottomAppBar(
         modifier = Modifier
             .padding(0.dp)
@@ -285,13 +280,6 @@ fun BottomAppBarComponent(
                 icon = { },
                 isSelected = isStatisticPage,
                 onSelect = navigateToStatistic,
-                modifier = Modifier.weight(1f)
-            )
-            TabItem(
-                title = "그래프",
-                icon = {},
-                isSelected = isGraphPage,
-                onSelect = navigateToGraph,
                 modifier = Modifier.weight(1f)
             )
         }
