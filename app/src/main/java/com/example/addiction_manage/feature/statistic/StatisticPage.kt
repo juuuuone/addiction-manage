@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.WhiteBlue
+import com.example.addiction_manage.ui.theme.White
 import java.util.*
 
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
@@ -50,6 +51,7 @@ fun StatisticPage(
     navigateToStatistic: () -> Unit,
     navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
+    selectedItem:Int,
     navController: NavController,
 ) {
     var selectedOption by remember { mutableStateOf("일주일") } // Default selected option
@@ -69,6 +71,7 @@ fun StatisticPage(
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
                 navigateToGraph = navigateToGraph,
+                selectedItem = selectedItem,
                 isStatisticPage = true,
             )
         }
@@ -131,12 +134,12 @@ fun TimeframeSelector(
                         onClick = { onOptionSelected(option) }
                     )
                     .background(
-                        color = if (option == selectedOption) MediumBlue else LightBlue,
+                        color = if (option == selectedOption) MediumBlue else WhiteBlue,
                         shape = RoundedCornerShape(16.dp)
                     )
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 shape = RoundedCornerShape(16.dp),
-                color = if (option == selectedOption) MediumBlue else LightBlue
+                color = if (option == selectedOption) MediumBlue else WhiteBlue
             ) {
                 Text(
                     text = option,

@@ -26,8 +26,12 @@ val BackgroundColor = Color(0xFFFFFFFF)
 
 
 val LightRed=Color(0xFF000000)
-val LightBlue=Color(0xFFA0CFFE)
+//val LightBlue=Color(0xFFA0CFFE)
+//
+//val MediumBlue=Color(0xFF429FFE)
+//val WhiteBlue= Color(0xFFEAF2FF)
 
-//val MediumBlue=Color(0xFF444D79)
-val MediumBlue=Color(0xFF429FFE)
-val WhiteBlue= Color(0xFFEAF2FF)
+
+val LightBlue = Color(0xFF95BB96) // 예: 비슷한 명도와 채도를 가진 옅은 녹색
+val MediumBlue = Color(0xFF4CAF50) // 예: Android Material Design의 'Green 500'
+val WhiteBlue = Color(0xFFE8F5E9) // 예: 매우 연한 녹색, Android Material Design의 'Green 50'

@@ -80,6 +80,7 @@ fun GraphPage(
     navigateToStatistic: () -> Unit,
     navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
+    selectedItem :Int,
     navController: NavController,
 ) {
     Scaffold(
@@ -97,6 +98,7 @@ fun GraphPage(
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
                 navigateToGraph = navigateToGraph,
+                selectedItem=selectedItem,
                 isCalendarPage = true,
             )
         }

@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.calendar
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -39,6 +40,7 @@ import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.LightRed
 import com.example.addiction_manage.ui.theme.Black
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -55,6 +57,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.fontResource
+import androidx.compose.ui.text.font.FontFamily
 import java.time.LocalDate
 import java.time.YearMonth
 import androidx.compose.ui.window.Dialog
@@ -63,6 +67,9 @@ import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.WhiteBlue
 import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.MediumBlue
+import androidx.compose.ui.text.font.Font
+import com.example.addiction_manage.feature.mypage.checkUser
+import com.google.firebase.auth.FirebaseAuth
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -73,8 +80,11 @@ fun CalendarPage(
     navigateToStatistic: () -> Unit,
     navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
+    selectedItem: Int,
     navController: NavController,
 ) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    var nickname: String = currentUser?.let { checkUser(it) }.toString()
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BackgroundColor,
@@ -90,26 +100,46 @@ fun CalendarPage(
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
                 navigateToGraph = navigateToGraph,
-                isCalendarPage = true,
+                selectedItem=selectedItem,
             )
         }
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f)
+                .fillMaxHeight()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp)
-                .padding(top = 120.dp)
-                .background(color = WhiteBlue, shape = RoundedCornerShape(10.dp)),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val currentMonth = YearMonth.now()
-            Text(text = currentMonth.toString(), fontSize = 32.sp)
-            SimpleCalendar()
-        }
+            Spacer(modifier = Modifier.height(40.dp))
+            // 여기에 텍스트를 독립적으로 배치합니다.
+            Text(
+                text = "$nickname 님의 12월을 확인해볼까요?",
+                color = Black,
+                fontSize = 24.sp,
+                fontFamily = FontFamily(Font(R.font.minsans)),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(60.dp))
 
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.7f)
+                    //.padding(innerPadding)
+                    .padding(horizontal = 16.dp)
+                    .background(color = WhiteBlue, shape = RoundedCornerShape(10.dp)),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                val currentMonth = YearMonth.now()
+                Text(text = currentMonth.toString(), fontSize = 32.sp)
+                SimpleCalendar()
+            }
+        }
     }
 }
 
@@ -185,7 +215,8 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                     colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
                     shape = RectangleShape
                 ) {
-                    Text("나의 음주 기록하기", color = LightRed, fontSize = 24.sp)
+                    Text("나의 음주 기록하기", color = LightRed, fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.minsans)))
                 }
                 Button(
                     onClick = { /*TODO*/ },
@@ -224,9 +255,19 @@ fun TopAppBarComponent(
 ) {
     TopAppBar(
         title = {
-            Text(
-                text = "중독 관리 어플",
-            )
+            Row {
+                Text(
+                    text = "DeToxify",
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    //modifier = Modifier.height(70.dp),
+                    fontSize = 30.sp
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.leaf),
+                    contentDescription = "Logo",
+                    modifier = Modifier.height(40.dp) // 이미지 높이 조절
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = navigateUp) {
@@ -265,12 +306,12 @@ fun BottomAppBarComponent(
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
     navigateToGraph: () -> Unit,
+    selectedItem: Int,
     isCalendarPage: Boolean = false,
     isHomePage: Boolean = false,
     isStatisticPage: Boolean = false,
     isGraphPage: Boolean = false,
 ) {
-    var selectedItem by remember { mutableStateOf(1) }  // 초기 선택 인덱스를 0으로 설정
 
     val painter: Painter = painterResource(id = R.drawable.bar_chart_24px)  // Drawable 리소스 ID
 
@@ -288,40 +329,39 @@ fun BottomAppBarComponent(
             horizontalArrangement = Arrangement.Center
         ) {
             TabItem(
-                title = "캘린더",
+                text = { Text(text = "캘린더", color = if (selectedItem == 0) Black else LightGray, fontSize = 12.sp) },
                 icon = { Icon(painter = painterResource(id = R.drawable.calendar_month_24px), contentDescription = "Calender", tint = if (selectedItem == 0) Black else LightGray) },
-                isSelected = selectedItem == 0,
+                isSelected = isCalendarPage,
                 onSelect = {
-                    selectedItem = 0
                     navigateToCalendar()
                 },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
-                title = "홈",
+                text = { Text(text = "홈", color = if (selectedItem == 1) Black else LightGray, fontSize = 12.sp) },
                 icon = { Icon(painter = painterResource(id = R.drawable.home_24px), contentDescription = "Home", tint = if (selectedItem == 1) Black else LightGray) },
-                isSelected = selectedItem == 1,
+                isSelected = isHomePage,
                 onSelect = {
-                    selectedItem = 1
                     navigateToHome()
                 },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
-                title = "통계",
-                icon = { Icon(painter = painterResource(id = R.drawable.bar_chart_24px), contentDescription = "Bar Chart", tint = if (selectedItem == 2) Black else LightGray) },
-                isSelected = selectedItem == 2,
+                text = { Text(text = "통계", color = if (selectedItem == 2) Black else LightGray, fontSize = 12.sp) },
+                icon = { Icon(painter = painterResource(id = R.drawable.database_24px), contentDescription = "Bar Chart", tint = if (selectedItem == 2) Black else LightGray) },
+                isSelected = isStatisticPage,
                 onSelect = {
-                    selectedItem = 2
                     navigateToStatistic()
                 },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
-                title = "그래프",
-                icon = {},
+                text = { Text(text = "그래프", color = if (selectedItem == 3) Black else LightGray, fontSize = 12.sp) },
+                icon = { Icon(painter = painterResource(id = R.drawable.bar_chart_24px), contentDescription = "Bar Chart", tint = if (selectedItem == 3) Black else LightGray) },
                 isSelected = isGraphPage,
-                onSelect = navigateToGraph,
+                onSelect = {
+                    navigateToGraph()
+                },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -331,7 +371,7 @@ fun BottomAppBarComponent(
 /*캘린더 탭*/
 @Composable
 fun TabItem(
-    title: String,
+    text:@Composable () -> Unit,
     icon: @Composable () -> Unit,
     isSelected: Boolean,
     onSelect: () -> Unit,
@@ -348,7 +388,7 @@ fun TabItem(
         verticalArrangement = Arrangement.Center
     ) {
         icon()
-        Text(text = title, color = if (isSelected) Black else LightGrey, fontSize = 12.sp)
+        text()
     }
 }
 

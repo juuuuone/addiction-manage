@@ -3,6 +3,7 @@ package com.example.addiction_manage.feature
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,18 +20,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.addiction_manage.R
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
+import com.example.addiction_manage.feature.mypage.checkUser
 import com.example.addiction_manage.ui.theme.BackgroundColor
 import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.LightRed
 import com.example.addiction_manage.ui.theme.MediumBlue
-import com.example.addiction_manage.ui.theme.MediumGrey
+import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.White
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomePage(
@@ -42,6 +48,7 @@ fun HomePage(
     navigateToAlcohol: () -> Unit,
     navigateToCaffeine: () -> Unit,
     navigateToSmoking: () -> Unit,
+    selectedItem :Int,
     navController: NavController,
 ) {
     Scaffold(
@@ -60,16 +67,17 @@ fun HomePage(
                 navigateToStatistic = navigateToStatistic,
                 navigateToGraph = navigateToGraph,
                 isHomePage = true,
+                selectedItem = selectedItem
             )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f)
+                .fillMaxHeight()
                 .padding(innerPadding)
                 .padding(horizontal = 8.dp)
-                .padding(top = 150.dp)
+                .padding(top =100 .dp)
                 .background(color = MediumBlue, shape = RoundedCornerShape(10.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -89,6 +97,8 @@ fun SelectingPage(
     navigateToCaffeine: () -> Unit,
     navigateToSmoking: () -> Unit,
 ) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    var nickname: String = currentUser?.let { checkUser(it) }.toString()
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,8 +108,11 @@ fun SelectingPage(
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.Top
         ) {
+            Text(text = "$nickname 님의 생활습관을 기록해볼까요?", color = Black, fontSize = 24.sp,
+                fontFamily = FontFamily(Font(R.font.minsans)))
+            Spacer(modifier = Modifier.height(100.dp))
             Button(
                 onClick = navigateToAlcohol,
                 modifier = Modifier
@@ -109,18 +122,21 @@ fun SelectingPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 음주 기록하기", color = White, fontSize = 24.sp)
+                Text("나의 음주 기록하기", color = White, fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
             }
             Button(
                 onClick = navigateToSmoking,
                 modifier = Modifier
                     .padding(8.dp)
-                    .width(500.dp)
+                    .width(600.dp)
                     .height(70.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 흡연 기록하기", color = White, fontSize = 24.sp)
+                Text("나의 흡연 기록하기", color = White, fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans)))
             }
             Button(
                 onClick = navigateToCaffeine,
@@ -131,7 +147,8 @@ fun SelectingPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 카페인 기록하기", color = White, fontSize = 24.sp)
+                Text("나의 카페인 기록하기", color = White, fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans)))
             }
         }
     }

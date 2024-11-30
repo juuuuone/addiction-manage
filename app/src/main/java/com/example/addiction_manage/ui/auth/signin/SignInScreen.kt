@@ -1,6 +1,7 @@
 package com.example.addiction_manage.ui.auth.signin
 
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -94,8 +95,10 @@ fun SignInScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
                 .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
+            Text("로그인하고 중독을 디톡스해보세요!")
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = email,
