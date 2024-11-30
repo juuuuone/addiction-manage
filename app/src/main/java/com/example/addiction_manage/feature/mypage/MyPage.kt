@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.mypage
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,11 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.feature.alcohol.AlcoholGoalViewModel
+import com.example.addiction_manage.feature.caffeine.CaffeineGoalViewModel
+import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
 import com.example.addiction_manage.ui.theme.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPage(
@@ -29,9 +36,14 @@ fun MyPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+    val smokingGoalViewModel: SmokingGoalViewModel = hiltViewModel()
+    val alcoholGoalViewModel: AlcoholGoalViewModel = hiltViewModel()
+    val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
+    val isLoading = smokingGoalViewModel.isLoading.collectAsState().value
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = LightGrey,
+        containerColor = White,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -79,28 +91,65 @@ fun MyPage(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 음주 목표 섹션 -> 이 섹션들은 초기에 목표 설정했던 것을 가져와야함. 지금은 임시 데이터.
-            GoalSection(
-                title = "나의 음주 목표",
-                goals = listOf("1주일 2회 이하", "음주량 1병 이하")
-            )
+            // 음주 목표 섹션
+            val alcoholGoal = alcoholGoalViewModel.goal.collectAsState().value
+            val isNotAlcohol = alcoholGoalViewModel.isNoAlcoholChecked
+            if(isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            else if (alcoholGoal.isNotEmpty() && !isNotAlcohol.value) {
+                GoalSection(
+                    title = "나의 음주 목표",
+                    goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하")
+                )
+            } else {
+                GoalSection(
+                    title = "나의 음주 목표",
+                    goals = listOf("목표가 없습니다.")
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // 흡연 목표 섹션
-            GoalSection(
-                title = "나의 흡연 목표",
-                goals = listOf("하루 반 갑 이하")
-            )
+            val smokingGoals = smokingGoalViewModel.goal.collectAsState().value
+            val isNotSmoking = smokingGoalViewModel.isNoSmokingChecked
+
+            if(isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            else if (smokingGoals.isNotEmpty() && !isNotSmoking.value) {
+                GoalSection(
+                    title = "나의 흡연 목표",
+                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하")
+                )
+            } else {
+                GoalSection(
+                    title = "나의 흡연 목표",
+                    goals = listOf("목표가 없습니다.")
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // 카페인 목표 섹션
-            GoalSection(
-                title = "나의 카페인 목표",
-                goals = listOf("하루 2잔 이하 (300mg)")
-            )
+            val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
+            val isNotCaffeine = caffeineGoalViewModel.isNoCaffeineChecked
 
+            if(isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            }
+            else if (caffeineGoals.isNotEmpty() && !isNotCaffeine.value) {
+                GoalSection(
+                    title = "나의 카페인 목표",
+                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "잔 이하")
+                )
+            } else {
+                GoalSection(
+                    title = "나의 카페인 목표",
+                    goals = listOf("목표가 없습니다.")
+                )
+            }
             Spacer(modifier = Modifier.weight(1f))
 
             // 편집 버튼 -> 목표 설정 페이지 재사용...?

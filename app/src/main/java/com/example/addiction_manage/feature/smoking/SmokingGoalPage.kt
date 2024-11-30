@@ -14,13 +14,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SmokingGoalPage() {
+fun SmokingGoalPage(
+    navController: NavController
+) {
     var selectedOption by remember { mutableStateOf("") }
-    var isNoSmokingChecked by remember { mutableStateOf(false) }
+    val viewModel: SmokingGoalViewModel = hiltViewModel()
+    val isNoSmokingChecked by viewModel.isNoSmokingChecked.collectAsState()
+    var smokingDayGoal by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -55,7 +61,7 @@ fun SmokingGoalPage() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘 목표 흡연량을 선택하거나\n'흡연하지 않습니다'를 체크하세요.",
+                text = "오늘 목표 흡연량을 작성하거나\n'흡연하지 않습니다'를 체크하세요.",
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -73,12 +79,22 @@ fun SmokingGoalPage() {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     // 드롭다운 메뉴
-                    GoalDropdown(
-                        label = "하루 목표 설정",
-                        options = listOf("1~2개피", "3~5개피", "반 갑", "한 갑"),
-                        selectedOption = selectedOption,
-                        onOptionSelected = { selectedOption = it }
+//                    GoalDropdown(
+//                        label = "하루 목표 설정",
+//                        options = listOf("1~2개피", "3~5개피", "반 갑", "한 갑"),
+//                        selectedOption = selectedOption,
+//                        onOptionSelected = { selectedOption = it }
+//                    )
+
+                    TextField(
+                        value = smokingDayGoal,
+                        onValueChange = { smokingDayGoal = it }
                     )
+                    Button(onClick = {
+                        viewModel.addGoal(smokingDayGoal) }
+                    ) {
+                        Text("Save Goal")
+                    }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -86,7 +102,7 @@ fun SmokingGoalPage() {
                     CheckboxWithBorder(
                         label = "흡연하지 않습니다",
                         isChecked = isNoSmokingChecked,
-                        onCheckedChange = { isNoSmokingChecked = it }
+                        onCheckedChange = { viewModel.setNoSmokingChecked(it)}
                     )
                 }
             }
@@ -95,7 +111,9 @@ fun SmokingGoalPage() {
 
             // 다음 버튼
             Button(
-                onClick = { /* Placeholder */ },
+                onClick = {
+                    navController.navigate(route = "caffeine-goal")
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),
@@ -107,7 +125,6 @@ fun SmokingGoalPage() {
         }
     }
 }
-
 
 @Composable
 fun GoalDropdown(label: String, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {

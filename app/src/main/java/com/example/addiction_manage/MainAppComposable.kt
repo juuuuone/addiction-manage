@@ -33,10 +33,10 @@ fun MainApp() {
             composable(route = "start") {
                 StartPage(
                     onLoginClick = {
-                        navController.navigate(route = "login")
+                        navController.navigate(route = "signin")
                     },
                     onRegisterClick = {
-                        navController.navigate(route = "register")
+                        navController.navigate(route = "signup")
                     }
                 )
             }
@@ -86,7 +86,6 @@ fun MainApp() {
                     navController = navController
                 )
             }
-
             composable(route = "mypage") {
                 MyPage(
                     navController = navController
@@ -107,6 +106,22 @@ fun MainApp() {
             composable(route = "smoking") {
                 SmokingPage(
                     navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController
+                )
+            }
+
+            composable(route = "alcohol-goal") {
+                AlcoholGoalPage(
+                    navController = navController,
+                )
+            }
+            composable(route = "caffeine-goal") {
+                CaffeineGoalPage(
+                    navController = navController
+                )
+            }
+            composable(route = "smoking-goal") {
+                SmokingGoalPage(
                     navController = navController
                 )
             }

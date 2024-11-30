@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 
 import com.example.addiction_manage.ui.theme.Addiction_manageTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.text.Typography.dagger
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
