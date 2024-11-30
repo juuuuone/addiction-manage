@@ -43,7 +43,6 @@ fun HomePage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
     navigateToAlcohol: () -> Unit,
     navigateToCaffeine: () -> Unit,

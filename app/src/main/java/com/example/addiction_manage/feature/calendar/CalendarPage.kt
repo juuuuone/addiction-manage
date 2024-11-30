@@ -78,13 +78,13 @@ fun CalendarPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
     selectedItem: Int,
     navController: NavController,
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BackgroundColor,
@@ -99,7 +99,6 @@ fun CalendarPage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
-                navigateToGraph = navigateToGraph,
                 isCalendarPage = true,
                 selectedItem = selectedItem,
             )
@@ -309,7 +308,6 @@ fun BottomAppBarComponent(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToGraph: () -> Unit,
     selectedItem: Int,
     isCalendarPage: Boolean = false,
     isHomePage: Boolean = false,

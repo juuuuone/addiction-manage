@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,6 +80,7 @@ fun ColumnGraph(
 //                },
 //            ),
             rememberColumnCartesianLayer(
+                // 막대색깔인 chatColors는 코드 맨 밑에 있음
                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                     chartColors.map { color ->
                         rememberLineComponent(
@@ -134,15 +136,15 @@ fun ColumnGraph(
         marker = rememberDefaultCartesianMarker(
             valueFormatter = remember { XYValueFormatter() },
             label = rememberTextComponent(
-                color = Black,
+                color = Black, // 막대 눌렀을 때 위에 나오는 값(텍스트 색깔)
                 textSize = 16.sp,
             ),
             indicator = rememberShapeComponent(
-                shape = Shape.Pill,
-                color = Black,
+                shape = Shape.Rectangle,
+                color = Black, // 막대 눌렀을 때 위에 나오는 직사각형 색깔
             ),
             indicatorSize = 8.dp,
-            labelPosition = DefaultCartesianMarker.LabelPosition.AroundPoint,
+            labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
             guideline = null,
         ),
         modelProducer = modelProducer,
@@ -164,7 +166,7 @@ fun rememberStartAxisLabel() =
 
         )
 
-// color는 x축 색깔
+// color는 x축 텍스트 색깔
 @Composable
 fun rememberBottomAxisLabel() =
     rememberAxisLabelComponent(
@@ -227,6 +229,7 @@ class XYValueFormatter : CartesianMarkerValueFormatter {
     }
 }
 
+// 막대 색깔!!
 private val chartColors = listOf(Black)
 
 

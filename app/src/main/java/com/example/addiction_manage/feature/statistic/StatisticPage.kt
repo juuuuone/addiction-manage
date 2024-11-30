@@ -54,6 +54,7 @@ fun StatisticPage(
     navigateToStatistic: () -> Unit,
     navigateToMyPage: () -> Unit,
     navController: NavController,
+    selectedItem: Int,
 ) {
     var selectedOption by remember { mutableStateOf("음주") } // Default selected option
     val currentAlcohol by remember { mutableFloatStateOf(0f) }
@@ -78,6 +79,7 @@ fun StatisticPage(
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
                 isStatisticPage = true,
+                selectedItem = selectedItem,
             )
         }
     ) { innerPadding ->
