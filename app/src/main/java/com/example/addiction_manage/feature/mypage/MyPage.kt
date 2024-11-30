@@ -169,7 +169,11 @@ fun MyPage(
                 )
             }
             Button(
-                onClick = {/* 로그아웃 */},
+                onClick =
+                {
+                    logout()
+                    navController.navigate("start")
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = LightRed),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -215,4 +219,9 @@ fun GoalSection(title: String, goals: List<String>) {
 
 fun checkUser(currentUser : FirebaseUser) : String {
     return currentUser.displayName ?: "Unknown User"
+}
+
+fun logout() {
+    val auth = FirebaseAuth.getInstance()
+    auth.signOut()
 }
