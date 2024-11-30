@@ -1,8 +1,10 @@
 package com.example.addiction_manage.ui.auth.signin
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,13 +39,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.R
+import com.example.addiction_manage.ui.theme.MediumBlue
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +83,18 @@ fun SignInScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Login")
+                    Row {
+                        Text(
+                            text = "DeToxify",
+                            fontFamily = FontFamily(Font(R.font.bold)),
+                            fontSize = 30.sp
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.leaf),
+                            contentDescription = "Logo",
+                            modifier = Modifier.height(40.dp) // 이미지 높이 조절
+                        )
+                    }
                 },
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
@@ -94,17 +113,31 @@ fun SignInScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .padding(top = 100.dp),
+
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            Text("로그인하고 중독을 디톡스해보세요!")
+            Row(){
+                Text("로그인하고 중독을 ",fontSize = 22.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
+                Text("DeTox",fontSize = 22.sp,
+                    fontFamily = FontFamily(Font(R.font.bold))
+                )
+                Text(" 해보세요!",fontSize = 22.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
+            }
+            Spacer(modifier = Modifier.height(50.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = email,
                 onValueChange = { email = it },
                 label = {
-                    Text("E-mail")
+                    Text("이메일",
+                        fontFamily = FontFamily(Font(R.font.minsans)))
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             )
@@ -114,13 +147,14 @@ fun SignInScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = {
-                    Text("Password")
+                    Text("비밀번호",
+                        fontFamily = FontFamily(Font(R.font.minsans)))
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             if(uiState.value == SignInState.Loading){
                 CircularProgressIndicator() // 동그라미 로딩 창
@@ -128,14 +162,17 @@ fun SignInScreen(
                 Button(
                     onClick = {viewModel.signIn(email, password)},
                     modifier = Modifier.fillMaxWidth()
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 ){
-                    Text(text = stringResource(id = R.string.signin))
+                    Text(text = "로그인", fontSize=16.sp)
                 }
                 TextButton(
                     onClick = {navController.navigate("signup")},
                     modifier = Modifier.fillMaxWidth()
+                    .height(40.dp),
                 ){
-                    Text(text = stringResource(id = R.string.signintext))
+                    Text(text = "계정이 없다면? 회원가입하기", color = MediumBlue, fontSize = 16.sp)
                 }
             }
         }
