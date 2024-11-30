@@ -40,6 +40,7 @@ import java.util.*
 
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
+import com.example.addiction_manage.ui.theme.White
 
 
 @OptIn(ExperimentalMaterial3Api::class)

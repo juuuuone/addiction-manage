@@ -62,10 +62,7 @@ fun SignUpScreen(
     LaunchedEffect(key1 = uiState.value) { // key 값이 바뀌면 이걸 먼저 수행
         when(uiState.value){
             is SignUpState.Success -> {
-                navController.navigate("home"){
-                    popUpTo("signin") { inclusive = true }//  홈 화면 밑에 깔린 로그인 페이지를 스택에서 제거하는거
-                    popUpTo("signup") { inclusive = true }
-                }
+                navController.navigate("alcohol-goal")
             }
             is SignUpState.Error -> {
                 Toast.makeText(context, "Sign Up Failed", Toast.LENGTH_SHORT).show()

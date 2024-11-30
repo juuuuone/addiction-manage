@@ -12,16 +12,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
 import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlcoholGoalPage() {
+fun AlcoholGoalPage(
+    navController: NavController
+) {
     var dailyGoal by remember { mutableStateOf("") }
     var weeklyGoal by remember { mutableStateOf("") }
-    var isNoAlcoholChecked by remember { mutableStateOf(false) } // 음주하지 않습니다 체크박스 상태
+    val viewModel : AlcoholGoalViewModel = hiltViewModel()
+    val isNoAlcoholChecked by viewModel.isNoAlcoholChecked.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -73,23 +78,33 @@ fun AlcoholGoalPage() {
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // 하루 목표 드롭다운
-                    GoalDropdown(
-                        label = "하루 목표 설정",
-                        options = listOf("반 잔", "한 잔", "2~3 잔", "한 병"),
-                        selectedOption = dailyGoal,
-                        onOptionSelected = { dailyGoal = it }
-                    )
+//                    // 하루 목표 드롭다운
+//                    GoalDropdown(
+//                        label = "하루 목표 설정",
+//                        options = listOf("반 잔", "한 잔", "2~3 잔", "한 병"),
+//                        selectedOption = dailyGoal,
+//                        onOptionSelected = { dailyGoal = it }
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    // 일주일 목표 드롭다운
+//                    GoalDropdown(
+//                        label = "일주일 목표 설정 (횟수)",
+//                        options = listOf("1회", "2회", "3회", "4회 이상"),
+//                        selectedOption = weeklyGoal,
+//                        onOptionSelected = { weeklyGoal = it }
+//                    )
 
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // 일주일 목표 드롭다운
-                    GoalDropdown(
-                        label = "일주일 목표 설정 (횟수)",
-                        options = listOf("1회", "2회", "3회", "4회 이상"),
-                        selectedOption = weeklyGoal,
-                        onOptionSelected = { weeklyGoal = it }
+                    TextField(
+                        value = weeklyGoal,
+                        onValueChange = { weeklyGoal = it }
                     )
+                    Button(onClick = {
+                        viewModel.addGoal(weeklyGoal) }
+                    ) {
+                        Text("Save Goal")
+                    }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -97,7 +112,7 @@ fun AlcoholGoalPage() {
                     CheckboxWithBorder(
                         label = "음주하지 않습니다",
                         isChecked = isNoAlcoholChecked,
-                        onCheckedChange = { isNoAlcoholChecked = it }
+                        onCheckedChange = { viewModel.setNoAlcoholChecked(it) }
                     )
                 }
             }
@@ -106,7 +121,9 @@ fun AlcoholGoalPage() {
 
             // 다음 버튼
             Button(
-                onClick = { /* Placeholder */ },
+                onClick = {
+                    navController.navigate(route = "smoking-goal")
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),

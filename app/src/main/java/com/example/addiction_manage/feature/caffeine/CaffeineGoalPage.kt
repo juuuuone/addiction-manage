@@ -12,15 +12,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
 import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CaffeineGoalPage() {
+fun CaffeineGoalPage(
+    navController: NavController
+) {
     var selectedOption by remember { mutableStateOf("") }
-    var isNoCaffeineChecked by remember { mutableStateOf(false) }
+
+    val viewModel: CaffeineGoalViewModel = hiltViewModel()
+    val isNoCaffeineChecked by viewModel.isNoCaffeineChecked.collectAsState()
+    var caffeineDayGoal by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -72,21 +79,22 @@ fun CaffeineGoalPage() {
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // 드롭다운 메뉴
-                    GoalDropdown(
-                        label = "하루 목표 설정",
-                        options = listOf("반 잔", "한 잔", "두 잔", "세 잔"),
-                        selectedOption = selectedOption,
-                        onOptionSelected = { selectedOption = it }
+                    TextField(
+                        value = caffeineDayGoal,
+                        onValueChange = { caffeineDayGoal = it }
                     )
-
+                    Button(onClick = {
+                        viewModel.addGoal(caffeineDayGoal)
+                    }) {
+                        Text("Save Goal")
+                    }
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // 체크박스
                     CheckboxWithBorder(
                         label = "카페인을 섭취하지 않습니다",
                         isChecked = isNoCaffeineChecked,
-                        onCheckedChange = { isNoCaffeineChecked = it }
+                        onCheckedChange = { viewModel.setNoCaffeineChecked(it) }
                     )
                 }
             }
@@ -95,7 +103,15 @@ fun CaffeineGoalPage() {
 
             // 다음 버튼
             Button(
-                onClick = { /* Placeholder */ },
+                onClick = {
+                    navController.navigate("home") {
+                        popUpTo("signin") { inclusive = true }
+                        popUpTo("signup") { inclusive = true }
+                        popUpTo("alcohol-goal") { inclusive = true }
+                        popUpTo("smoking-goal") { inclusive = true }
+                        popUpTo("caffeine-goal") { inclusive = true }
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),

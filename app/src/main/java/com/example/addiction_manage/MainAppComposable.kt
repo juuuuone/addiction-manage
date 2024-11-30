@@ -15,6 +15,10 @@ import com.example.addiction_manage.feature.HomePage
 import com.example.addiction_manage.feature.mypage.MyPage
 import com.example.addiction_manage.feature.smoking.SmokingPage
 import com.example.addiction_manage.feature.StartPage
+import com.example.addiction_manage.feature.alcohol.AlcoholGoalPage
+import com.example.addiction_manage.feature.caffeine.CaffeineGoalPage
+import com.example.addiction_manage.feature.model.SmokingGoal
+import com.example.addiction_manage.feature.smoking.SmokingGoalPage
 import com.example.addiction_manage.feature.statistic.StatisticPage
 import com.google.firebase.auth.FirebaseAuth
 import com.example.addiction_manage.ui.auth.signin.SignInScreen
@@ -25,11 +29,11 @@ fun MainApp() {
     Surface(modifier = Modifier.fillMaxSize()) {
         val navController = rememberNavController()
         val currentUser = FirebaseAuth.getInstance().currentUser
-        val start = if (currentUser != null) "home" else "login"
+        val start = if (currentUser != null) "home" else "signin"
 
         NavHost(
             navController = navController,
-            startDestination = "start"
+            startDestination = start // 로그인 스킵
         ) {
             composable(route = "start") {
                 StartPage(
@@ -118,6 +122,22 @@ fun MainApp() {
             composable(route = "smoking") {
                 SmokingPage(
                     navigateToMyPage = { navController.navigate(route = "mypage") },
+                    navController = navController
+                )
+            }
+
+            composable(route = "alcohol-goal") {
+                AlcoholGoalPage(
+                    navController = navController,
+                )
+            }
+            composable(route = "caffeine-goal") {
+                CaffeineGoalPage(
+                    navController = navController
+                )
+            }
+            composable(route = "smoking-goal") {
+                SmokingGoalPage(
                     navController = navController
                 )
             }
