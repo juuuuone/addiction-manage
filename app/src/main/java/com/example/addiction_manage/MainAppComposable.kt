@@ -14,14 +14,12 @@ import androidx.navigation.compose.rememberNavController
 import com.example.addiction_manage.feature.alcohol.AlcoholPage
 import com.example.addiction_manage.feature.caffeine.CaffeinePage
 import com.example.addiction_manage.feature.calendar.CalendarPage
-import com.example.addiction_manage.feature.graph.GraphPage
 import com.example.addiction_manage.feature.HomePage
 import com.example.addiction_manage.feature.mypage.MyPage
 import com.example.addiction_manage.feature.smoking.SmokingPage
 import com.example.addiction_manage.feature.StartPage
 import com.example.addiction_manage.feature.alcohol.AlcoholGoalPage
 import com.example.addiction_manage.feature.caffeine.CaffeineGoalPage
-import com.example.addiction_manage.feature.model.SmokingGoal
 import com.example.addiction_manage.feature.smoking.SmokingGoalPage
 import com.example.addiction_manage.feature.statistic.StatisticPage
 import com.google.firebase.auth.FirebaseAuth
@@ -33,14 +31,12 @@ fun MainApp() {
     Surface(modifier = Modifier.fillMaxSize()) {
         val navController = rememberNavController()
         val currentUser = FirebaseAuth.getInstance().currentUser
-
         val start = if (currentUser != null) "home" else "login"
-        var selectedItem by rememberSaveable { mutableStateOf(1)        }
-
+        var selectedItem by rememberSaveable { mutableStateOf(1) }
 
         NavHost(
             navController = navController,
-            startDestination = start // 로그인 스킵
+            startDestination = start
         ) {
             composable(route = "start") {
                 StartPage(
@@ -65,6 +61,7 @@ fun MainApp() {
                     navController = navController
                 )
             }
+
             composable(route = "home") {
                 HomePage(
                     navigateToCalendar = {
@@ -79,15 +76,11 @@ fun MainApp() {
                         selectedItem = 2
                         navController.navigate(route = "statistic")
                     },
-                    navigateToGraph = {
-                        selectedItem = 3
-                        navController.navigate(route = "graph")
-                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     navigateToAlcohol = { navController.navigate(route = "alcohol") },
                     navigateToCaffeine = { navController.navigate(route = "caffeine") },
                     navigateToSmoking = { navController.navigate(route = "smoking") },
-                    selectedItem=selectedItem,
+                    selectedItem = selectedItem,
                     navController = navController
                 )
             }
@@ -105,12 +98,8 @@ fun MainApp() {
                         selectedItem = 2
                         navController.navigate(route = "statistic")
                     },
-                    navigateToGraph = {
-                        selectedItem = 3
-                        navController.navigate(route = "graph")
-                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
-                    selectedItem=selectedItem,
+                    selectedItem = selectedItem,
                     navController = navController
                 )
             }
@@ -128,39 +117,11 @@ fun MainApp() {
                         selectedItem = 2
                         navController.navigate(route = "statistic")
                     },
-                    navigateToGraph = {
-                        selectedItem = 3
-                        navController.navigate(route = "graph")
-                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
-                    selectedItem=selectedItem,
+                    selectedItem = selectedItem,
                     navController = navController
                 )
             }
-            composable(route = "graph") {
-                GraphPage(
-                    navigateToCalendar = {
-                        selectedItem = 0
-                        navController.navigate(route = "calendar")
-                    },
-                    navigateToHome = {
-                        selectedItem = 1
-                        navController.navigate(route = "home")
-                    },
-                    navigateToStatistic = {
-                        selectedItem = 2
-                        navController.navigate(route = "statistic")
-                    },
-                    navigateToGraph = {
-                        selectedItem = 3
-                        navController.navigate(route = "graph")
-                    },
-                    navigateToMyPage = { navController.navigate(route = "mypage") },
-                    selectedItem=selectedItem,
-                    navController = navController,
-                )
-            }
-
             composable(route = "mypage") {
                 MyPage(
                     navController = navController
