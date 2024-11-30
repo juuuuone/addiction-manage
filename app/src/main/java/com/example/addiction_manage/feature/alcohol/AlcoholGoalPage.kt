@@ -74,7 +74,7 @@ fun AlcoholGoalPage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightBlue, shape = RoundedCornerShape(16.dp))
+                    .background(White, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -100,10 +100,15 @@ fun AlcoholGoalPage(
                         value = weeklyGoal,
                         onValueChange = { weeklyGoal = it }
                     )
-                    Button(onClick = {
-                        viewModel.addGoal(weeklyGoal) }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Button(
+                        onClick = { viewModel.addGoal(weeklyGoal) },
+                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Save Goal")
+                        Text("저장")
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))

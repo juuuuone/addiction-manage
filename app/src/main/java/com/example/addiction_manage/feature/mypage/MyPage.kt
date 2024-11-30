@@ -51,7 +51,7 @@ fun MyPage(
                         text = "마이페이지",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Black
                     )
                 },
                 navigationIcon = {
@@ -59,7 +59,7 @@ fun MyPage(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = White
+                            tint = Black
                         )
                     }
                 },
@@ -166,6 +166,20 @@ fun MyPage(
                     contentDescription = "Edit",
                     tint = White,
                     modifier = Modifier.size(28.dp)
+                )
+            }
+            Button(
+                onClick = {/* 로그아웃 */},
+                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                Text(
+                    text = "로그아웃",
+                    fontSize = 18.sp,
+                    color = White,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
