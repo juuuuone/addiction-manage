@@ -75,7 +75,7 @@ fun CaffeineGoalPage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightGrey, shape = RoundedCornerShape(16.dp))
+                    .background(White, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -83,10 +83,15 @@ fun CaffeineGoalPage(
                         value = caffeineDayGoal,
                         onValueChange = { caffeineDayGoal = it }
                     )
-                    Button(onClick = {
-                        viewModel.addGoal(caffeineDayGoal)
-                    }) {
-                        Text("Save Goal")
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Button(
+                        onClick = { viewModel.addGoal(caffeineDayGoal)},
+                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        shape = RoundedCornerShape(8.dp)
+                        ) {
+                        Text("저장")
                     }
                     Spacer(modifier = Modifier.height(20.dp))
 

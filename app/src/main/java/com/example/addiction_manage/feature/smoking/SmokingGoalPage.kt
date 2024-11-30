@@ -74,7 +74,7 @@ fun SmokingGoalPage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightGrey, shape = RoundedCornerShape(16.dp))
+                    .background(White, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -90,10 +90,16 @@ fun SmokingGoalPage(
                         value = smokingDayGoal,
                         onValueChange = { smokingDayGoal = it }
                     )
-                    Button(onClick = {
-                        viewModel.addGoal(smokingDayGoal) }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+
+                    Button(
+                        onClick = { viewModel.addGoal(smokingDayGoal) },
+                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Save Goal")
+                        Text("저장")
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
