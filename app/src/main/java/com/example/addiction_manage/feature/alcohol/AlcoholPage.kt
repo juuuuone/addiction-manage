@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.alcohol
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +47,9 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
+import com.example.addiction_manage.ui.theme.MediumBlue
+import com.example.addiction_manage.ui.theme.White
+import com.example.addiction_manage.ui.theme.LightGrey
 
 
 @Composable
@@ -106,19 +111,19 @@ fun AlcoholDialog1(
                 .fillMaxWidth()
                 .fillMaxHeight(0.5f),
             shape = RoundedCornerShape(8.dp),
-            color = MediumGrey
+            color = White
         ) {
             Column(
                 modifier = Modifier.padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
-                Text("오늘 어떤 술을 마셨나요?", color = DarkRed, fontSize = 20.sp)
+                Text("오늘 어떤 술을 마셨나요?", color = MediumBlue, fontSize = 24.sp)
                 Spacer(modifier = Modifier.height(48.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             showDialog.value = false
                             showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
@@ -127,8 +132,9 @@ fun AlcoholDialog1(
                             .padding(4.dp)
                             .width(70.dp)
                             .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                        shape = CircleShape
+                        colors = ButtonDefaults.buttonColors(containerColor = White),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MediumBlue),
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.beer),
@@ -139,17 +145,18 @@ fun AlcoholDialog1(
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true
+                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
                         },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
                             .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                        shape = CircleShape
+                        colors = ButtonDefaults.buttonColors(containerColor = White),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MediumBlue),
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.soju),
@@ -160,17 +167,18 @@ fun AlcoholDialog1(
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true
+                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
                         },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
                             .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                        shape = CircleShape
+                        colors = ButtonDefaults.buttonColors(containerColor = White),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MediumBlue),
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.mgl),
@@ -194,17 +202,18 @@ fun AlcoholDialog1(
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true
+                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
                         },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
                             .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                        shape = CircleShape
+                        colors = ButtonDefaults.buttonColors(containerColor = White),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MediumBlue),
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.wine),
@@ -215,17 +224,18 @@ fun AlcoholDialog1(
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true
+                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
                         },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
                             .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                        shape = CircleShape
+                        colors = ButtonDefaults.buttonColors(containerColor = White),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MediumBlue),
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.cham),
@@ -236,17 +246,18 @@ fun AlcoholDialog1(
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    Button(
+                    OutlinedButton(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true
+                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
                         },
                         modifier = Modifier
                             .padding(4.dp)
                             .width(70.dp)
                             .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                        shape = CircleShape
+                        colors = ButtonDefaults.buttonColors(containerColor = White),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, MediumBlue),
                     ) {
 
                     }
@@ -282,20 +293,20 @@ fun AlcoholDialog2(
                 .fillMaxWidth()
                 .fillMaxHeight(0.6f),
             shape = RoundedCornerShape(8.dp),
-            color = MediumGrey
+            color = White
         ) {
             Column(
                 modifier = Modifier.padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
-                Text("오늘의 음주량은 어떻게 되나요?", color = DarkRed, fontSize = 20.sp)
+                Text("오늘의 음주량은 어떻게 되나요?", color = MediumBlue, fontSize = 20.sp)
                 Spacer(modifier = Modifier.height(32.dp))
                 Row() {
                     Text("나의 목표 음주량 ", fontSize = 20.sp)
                     Text(
                         "소주 반 병",
-                        color = DarkRed,
+                        color = MediumBlue,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold
                     )
