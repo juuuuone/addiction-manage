@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +27,7 @@ fun SmokingGoalPage(
 ) {
     var selectedOption by remember { mutableStateOf("") }
     val viewModel: SmokingGoalViewModel = hiltViewModel()
-    val isNoSmokingChecked by viewModel.isNoSmokingChecked.collectAsState()
+    val isSmokingChecked by viewModel.isSmokingChecked.collectAsState()
     var smokingDayGoal by remember { mutableStateOf("") }
 
     Scaffold(
@@ -41,7 +43,16 @@ fun SmokingGoalPage(
                         color = White
                     )
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigateUp()}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                },
             )
         }
     ) { innerPadding ->
@@ -107,7 +118,7 @@ fun SmokingGoalPage(
                     // 체크박스
                     CheckboxWithBorder(
                         label = "흡연하지 않습니다",
-                        isChecked = isNoSmokingChecked,
+                        isChecked = isSmokingChecked,
                         onCheckedChange = { viewModel.setNoSmokingChecked(it)}
                     )
                 }

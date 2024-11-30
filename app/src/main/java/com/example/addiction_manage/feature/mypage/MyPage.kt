@@ -93,11 +93,11 @@ fun MyPage(
 
             // 음주 목표 섹션
             val alcoholGoal = alcoholGoalViewModel.goal.collectAsState().value
-            val isNotAlcohol = alcoholGoalViewModel.isNoAlcoholChecked
+            val doAlcohol = alcoholGoalViewModel.isAlcoholChecked
             if(isLoading){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (alcoholGoal.isNotEmpty() && !isNotAlcohol.value) {
+            else if (alcoholGoal.isNotEmpty() && !doAlcohol.value) {
                 GoalSection(
                     title = "나의 음주 목표",
                     goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하")
@@ -113,12 +113,12 @@ fun MyPage(
 
             // 흡연 목표 섹션
             val smokingGoals = smokingGoalViewModel.goal.collectAsState().value
-            val isNotSmoking = smokingGoalViewModel.isNoSmokingChecked
+            val doSmoking = smokingGoalViewModel.isSmokingChecked
 
             if(isLoading){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (smokingGoals.isNotEmpty() && !isNotSmoking.value) {
+            else if (smokingGoals.isNotEmpty() && doSmoking.value) {
                 GoalSection(
                     title = "나의 흡연 목표",
                     goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하")
@@ -134,12 +134,12 @@ fun MyPage(
 
             // 카페인 목표 섹션
             val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
-            val isNotCaffeine = caffeineGoalViewModel.isNoCaffeineChecked
+            val doCaffeine = caffeineGoalViewModel.isCaffeineChecked
 
             if(isLoading){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (caffeineGoals.isNotEmpty() && !isNotCaffeine.value) {
+            else if (caffeineGoals.isNotEmpty() && !doCaffeine.value) {
                 GoalSection(
                     title = "나의 카페인 목표",
                     goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "잔 이하")

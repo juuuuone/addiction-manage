@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
-import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +25,7 @@ fun AlcoholGoalPage(
     var dailyGoal by remember { mutableStateOf("") }
     var weeklyGoal by remember { mutableStateOf("") }
     val viewModel : AlcoholGoalViewModel = hiltViewModel()
-    val isNoAlcoholChecked by viewModel.isNoAlcoholChecked.collectAsState()
+    val isNoAlcoholChecked by viewModel.isAlcoholChecked.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

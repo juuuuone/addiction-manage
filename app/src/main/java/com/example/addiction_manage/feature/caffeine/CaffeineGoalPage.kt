@@ -3,6 +3,8 @@ package com.example.addiction_manage.feature.caffeine
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
-import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +27,7 @@ fun CaffeineGoalPage(
     var selectedOption by remember { mutableStateOf("") }
 
     val viewModel: CaffeineGoalViewModel = hiltViewModel()
-    val isNoCaffeineChecked by viewModel.isNoCaffeineChecked.collectAsState()
+    val isCaffeineChecked by viewModel.isCaffeineChecked.collectAsState()
     var caffeineDayGoal by remember { mutableStateOf("") }
 
     Scaffold(
@@ -42,7 +43,16 @@ fun CaffeineGoalPage(
                         color = White
                     )
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigateUp()}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                },
             )
         }
     ) { innerPadding ->
@@ -98,7 +108,7 @@ fun CaffeineGoalPage(
                     // 체크박스
                     CheckboxWithBorder(
                         label = "카페인을 섭취하지 않습니다",
-                        isChecked = isNoCaffeineChecked,
+                        isChecked = isCaffeineChecked,
                         onCheckedChange = { viewModel.setNoCaffeineChecked(it) }
                     )
                 }

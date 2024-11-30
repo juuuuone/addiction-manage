@@ -1,10 +1,9 @@
 package com.example.addiction_manage.feature.smoking
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.addiction_manage.feature.model.AlcoholGoal
 import com.example.addiction_manage.feature.model.SmokingGoal
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,8 +22,8 @@ class SmokingGoalViewModel @Inject constructor() : ViewModel() {
     private val _goal = MutableStateFlow<List<SmokingGoal>>(emptyList())
     val goal = _goal.asStateFlow()
 
-    private val _isNoSmokingChecked = MutableStateFlow(false)
-    val isNoSmokingChecked = _isNoSmokingChecked.asStateFlow()
+    private val _isSmokingChecked = MutableStateFlow(false)
+    val isSmokingChecked = _isSmokingChecked.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
@@ -44,14 +43,12 @@ class SmokingGoalViewModel @Inject constructor() : ViewModel() {
             val uid = user.uid
             valueEventListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<SmokingGoal>()
-                    snapshot.children.forEach { data ->
-                        val smokingGoal = data.getValue(SmokingGoal::class.java)
-                        if (smokingGoal?.userId == uid) {
-                            list.add(smokingGoal)
-                        }
+                    val smokingGoal = snapshot.child(uid).getValue(SmokingGoal::class.java)
+                    if (smokingGoal != null) {
+                        _goal.value = listOf(smokingGoal) // 단일 데이터를 리스트로 변환하여 Flow 업데이트
+                    } else {
+                        _goal.value = emptyList()
                     }
-                    _goal.value = list // Flow 상태 업데이트
                     _isLoading.value = false
                 }
 
@@ -72,16 +69,17 @@ class SmokingGoalViewModel @Inject constructor() : ViewModel() {
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
-    fun setNoSmokingChecked(checked: Boolean) { _isNoSmokingChecked.value = checked }
+    fun setNoSmokingChecked(checked: Boolean) { _isSmokingChecked.value = checked }
 
     fun addGoal(newGoal: String){
         val currentUser = firebaseAuth.currentUser
-        val key = firebaseDatabase.reference.child("SmokingGoal").push().key ?: UUID.randomUUID().toString()
+        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
         val smokingGoal = SmokingGoal(
-            id = key,
-            userId = currentUser?.uid?: "",
-            goal = newGoal
+            id = uid, // 유저 ID를 그대로 사용
+            userId = uid,
+            goal = newGoal,
+            createdAt = System.currentTimeMillis()
         )
-        firebaseDatabase.reference.child("SmokingGoal").push().setValue(smokingGoal)
+        firebaseDatabase.reference.child("SmokingGoal").child(uid).setValue(smokingGoal)
     }
 }

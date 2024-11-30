@@ -2,11 +2,8 @@ package com.example.addiction_manage.feature.alcohol
 
 import com.example.addiction_manage.feature.model.AlcoholGoal
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.addiction_manage.feature.model.SmokingGoal
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -15,7 +12,6 @@ import com.google.firebase.database.database
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,8 +21,8 @@ class AlcoholGoalViewModel @Inject constructor() : ViewModel() {
     private val _goal = MutableStateFlow<List<AlcoholGoal>>(emptyList())
     val goal = _goal.asStateFlow()
 
-    private val _isNoAlcoholChecked = MutableStateFlow(false)
-    val isNoAlcoholChecked = _isNoAlcoholChecked.asStateFlow()
+    private val _isAlcoholChecked = MutableStateFlow(false)
+    val isAlcoholChecked = _isAlcoholChecked.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
@@ -38,7 +34,6 @@ class AlcoholGoalViewModel @Inject constructor() : ViewModel() {
         fetchGoalsAutomatically()
     }
 
-    // 자동으로 데이터 가져오기
     private fun fetchGoalsAutomatically() {
         _isLoading.value = true
         val currentUser = firebaseAuth.currentUser
@@ -46,14 +41,12 @@ class AlcoholGoalViewModel @Inject constructor() : ViewModel() {
             val uid = user.uid
             valueEventListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<AlcoholGoal>()
-                    snapshot.children.forEach { data ->
-                        val alcoholGoal = data.getValue(AlcoholGoal::class.java)
-                        if (alcoholGoal?.userId == uid) {
-                            list.add(alcoholGoal)
-                        }
+                    val alcoholGoal = snapshot.child(uid).getValue(AlcoholGoal::class.java)
+                    if (alcoholGoal != null) {
+                        _goal.value = listOf(alcoholGoal) // 단일 데이터를 리스트로 변환하여 Flow 업데이트
+                    } else {
+                        _goal.value = emptyList()
                     }
-                    _goal.value = list // Flow 상태 업데이트
                     _isLoading.value = false
                 }
 
@@ -68,22 +61,30 @@ class AlcoholGoalViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+
+
     override fun onCleared() {
         super.onCleared()
         // ViewModel이 클리어되면 리스너 제거
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
-    fun setNoAlcoholChecked(checked: Boolean) { _isNoAlcoholChecked.value = checked }
+    fun setNoAlcoholChecked(checked: Boolean) { _isAlcoholChecked.value = checked }
 
-    fun addGoal(newGoal: String){
+    fun addGoal(newGoal: String) {
         val currentUser = firebaseAuth.currentUser
-        val key = firebaseDatabase.reference.child("AlcoholGoal").push().key ?: UUID.randomUUID().toString()
+        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
+
         val alcoholGoal = AlcoholGoal(
-            id = key,
-            userId = currentUser?.uid?: "",
-            goal = newGoal
+            id = uid, // 유저 ID를 그대로 사용
+            userId = uid,
+            goal = newGoal,
+            createdAt = System.currentTimeMillis()
         )
-        firebaseDatabase.reference.child("AlcoholGoal").push().setValue(alcoholGoal)
+
+        // uid 아래 데이터를 덮어쓰기 => 뒤로 돌아가서 다시 목표 설정해도 새로 안생기고 덮어써짐
+        firebaseDatabase.reference.child("AlcoholGoal").child(uid).setValue(alcoholGoal)
     }
+
+
 }
