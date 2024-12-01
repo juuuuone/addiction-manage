@@ -39,7 +39,9 @@ fun MyPage(
     val smokingGoalViewModel: SmokingGoalViewModel = hiltViewModel()
     val alcoholGoalViewModel: AlcoholGoalViewModel = hiltViewModel()
     val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
-    val isLoading = smokingGoalViewModel.isLoading.collectAsState().value
+    val isLoadingSmoking = smokingGoalViewModel.isLoading.collectAsState().value
+    val isLoadingAlcohol = alcoholGoalViewModel.isLoading.collectAsState().value
+    val isLoadingCaffeine = caffeineGoalViewModel.isLoading.collectAsState().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -51,7 +53,7 @@ fun MyPage(
                         text = "마이페이지",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Black
                     )
                 },
                 navigationIcon = {
@@ -59,7 +61,7 @@ fun MyPage(
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back",
-                            tint = White
+                            tint = Black
                         )
                     }
                 },
@@ -93,11 +95,11 @@ fun MyPage(
 
             // 음주 목표 섹션
             val alcoholGoal = alcoholGoalViewModel.goal.collectAsState().value
-            val isNotAlcohol = alcoholGoalViewModel.isNoAlcoholChecked
-            if(isLoading){
+//            val doAlcohol = alcoholGoalViewModel.isAlcoholChecked.collectAsState().value
+            if(isLoadingAlcohol){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (alcoholGoal.isNotEmpty() && !isNotAlcohol.value) {
+            else if (alcoholGoal.isNotEmpty()) {
                 GoalSection(
                     title = "나의 음주 목표",
                     goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하")
@@ -113,12 +115,13 @@ fun MyPage(
 
             // 흡연 목표 섹션
             val smokingGoals = smokingGoalViewModel.goal.collectAsState().value
-            val isNotSmoking = smokingGoalViewModel.isNoSmokingChecked
+//            val doSmoking = smokingGoalViewModel.isSmokingChecked.collectAsState().value
+//            Log.d("Mypage", doSmoking.toString())
 
-            if(isLoading){
+            if(isLoadingSmoking){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (smokingGoals.isNotEmpty() && !isNotSmoking.value) {
+            else if (smokingGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 흡연 목표",
                     goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하")
@@ -134,15 +137,15 @@ fun MyPage(
 
             // 카페인 목표 섹션
             val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
-            val isNotCaffeine = caffeineGoalViewModel.isNoCaffeineChecked
+//            val doCaffeine = caffeineGoalViewModel.isCaffeineChecked.collectAsState().value
 
-            if(isLoading){
+            if(isLoadingCaffeine){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (caffeineGoals.isNotEmpty() && !isNotCaffeine.value) {
+            else if (caffeineGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 카페인 목표",
-                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "잔 이하")
+                    goals = listOf("하루 " + caffeineGoals.joinToString{it.goal} + "잔 이하")
                 )
             } else {
                 GoalSection(
@@ -156,7 +159,7 @@ fun MyPage(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .clickable { /* 편집 동작 */ }
+                    .clickable { navController.navigate("alcohol-goal") }
                     .background(LightRed, shape = CircleShape)
                     .size(56.dp),
                 contentAlignment = Alignment.Center
@@ -166,6 +169,24 @@ fun MyPage(
                     contentDescription = "Edit",
                     tint = White,
                     modifier = Modifier.size(28.dp)
+                )
+            }
+            Button(
+                onClick =
+                {
+                    logout()
+                    navController.navigate("start")
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                Text(
+                    text = "로그아웃",
+                    fontSize = 18.sp,
+                    color = White,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -201,4 +222,9 @@ fun GoalSection(title: String, goals: List<String>) {
 
 fun checkUser(currentUser : FirebaseUser) : String {
     return currentUser.displayName ?: "Unknown User"
+}
+
+fun logout() {
+    val auth = FirebaseAuth.getInstance()
+    auth.signOut()
 }

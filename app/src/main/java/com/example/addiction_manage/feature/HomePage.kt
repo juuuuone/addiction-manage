@@ -43,7 +43,6 @@ fun HomePage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToGraph: () -> Unit,
     navigateToMyPage: () -> Unit,
     navigateToAlcohol: () -> Unit,
     navigateToCaffeine: () -> Unit,
@@ -65,7 +64,6 @@ fun HomePage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
-                navigateToGraph = navigateToGraph,
                 isHomePage = true,
                 selectedItem = selectedItem
             )
@@ -99,6 +97,7 @@ fun SelectingPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()

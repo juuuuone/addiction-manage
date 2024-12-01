@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
-import com.example.addiction_manage.feature.smoking.GoalDropdown
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -23,10 +22,11 @@ import com.example.addiction_manage.ui.theme.*
 fun AlcoholGoalPage(
     navController: NavController
 ) {
-    var dailyGoal by remember { mutableStateOf("") }
-    var weeklyGoal by remember { mutableStateOf("") }
     val viewModel : AlcoholGoalViewModel = hiltViewModel()
-    val isNoAlcoholChecked by viewModel.isNoAlcoholChecked.collectAsState()
+    val isNoAlcoholChecked by viewModel.isAlcoholChecked.collectAsState()
+    val showDialog = remember { mutableStateOf(false) }
+    val currentUserGoal = viewModel.getCurrentUserGoal()
+    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -74,7 +74,7 @@ fun AlcoholGoalPage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightBlue, shape = RoundedCornerShape(16.dp))
+                    .background(White, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -97,13 +97,21 @@ fun AlcoholGoalPage(
 //                    )
 
                     TextField(
-                        value = weeklyGoal,
-                        onValueChange = { weeklyGoal = it }
+                        value = newGoal.value,
+                        onValueChange = { newGoal.value = it }
                     )
-                    Button(onClick = {
-                        viewModel.addGoal(weeklyGoal) }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    Button(
+                        onClick = {
+                            viewModel.addGoal(newGoal.value)
+                            showDialog.value = true
+                                  },
+                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Save Goal")
+                        Text("저장")
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -132,7 +140,28 @@ fun AlcoholGoalPage(
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)
             }
+
+            if (showDialog.value) {
+                showSaveDialog(
+                    onDismiss = { showDialog.value = false }
+                )
+            }
         }
     }
 }
 
+@Composable
+fun showSaveDialog(onDismiss: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("확인")
+            }
+        },
+        title = { Text("알림") },
+        text = { Text("저장되었습니다!") }
+    )
+
+}

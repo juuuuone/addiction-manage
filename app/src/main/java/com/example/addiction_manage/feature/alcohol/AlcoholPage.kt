@@ -3,6 +3,7 @@ package com.example.addiction_manage.feature.alcohol
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,14 +35,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.window.Dialog
@@ -58,6 +64,8 @@ fun AlcoholPage(
     navController: NavController,
 ) {
     val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
+    val yesterday = remember { mutableStateOf(false) }
+    val today = remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -65,25 +73,12 @@ fun AlcoholPage(
         topBar = {
             TopAppBarComponent(
                 navigateToMyPage = navigateToMyPage,
-                navigateUp = { navController.navigateUp() }
+                navigateUp = {
+                    navController.navigateUp()
+                }
             )
         },
     ) { innerPadding ->
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight(0.8f)
-//                .padding(innerPadding)
-//                .padding(horizontal = 8.dp)
-//                .padding(top = 150.dp)
-//                .background(color = LightGrey, shape = RoundedCornerShape(10.dp)),
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//        ) {
-//            val currentMonth = YearMonth.now()
-//            Text(text = currentMonth.toString(), fontSize = 32.sp)
-//            SimpleCalendar()
-//        }
 
         if (showDialog.value) {  // 상태 변수를 확인하여 대화상자를 표시
             AlcoholDialog1(onDismiss = { showDialog.value = false })  // onDismiss에서 대화상자를 숨김

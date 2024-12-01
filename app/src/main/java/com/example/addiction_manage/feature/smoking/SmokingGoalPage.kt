@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,8 +27,11 @@ fun SmokingGoalPage(
 ) {
     var selectedOption by remember { mutableStateOf("") }
     val viewModel: SmokingGoalViewModel = hiltViewModel()
-    val isNoSmokingChecked by viewModel.isNoSmokingChecked.collectAsState()
+    val isSmokingChecked by viewModel.isSmokingChecked.collectAsState()
     var smokingDayGoal by remember { mutableStateOf("") }
+    val showDialog = remember { mutableStateOf(false) }
+    val currentUserGoal = viewModel.getCurrentUserGoal()
+    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -41,7 +46,16 @@ fun SmokingGoalPage(
                         color = White
                     )
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigateUp()}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                },
             )
         }
     ) { innerPadding ->
@@ -74,7 +88,7 @@ fun SmokingGoalPage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(LightGrey, shape = RoundedCornerShape(16.dp))
+                    .background(White, shape = RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -87,13 +101,20 @@ fun SmokingGoalPage(
 //                    )
 
                     TextField(
-                        value = smokingDayGoal,
-                        onValueChange = { smokingDayGoal = it }
+                        value = newGoal.value,
+                        onValueChange = { newGoal.value = it }
                     )
-                    Button(onClick = {
-                        viewModel.addGoal(smokingDayGoal) }
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+
+                    Button(
+                        onClick = { viewModel.addGoal(newGoal.value)
+                            showDialog.value = true},
+                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("Save Goal")
+                        Text("저장")
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -101,7 +122,7 @@ fun SmokingGoalPage(
                     // 체크박스
                     CheckboxWithBorder(
                         label = "흡연하지 않습니다",
-                        isChecked = isNoSmokingChecked,
+                        isChecked = isSmokingChecked,
                         onCheckedChange = { viewModel.setNoSmokingChecked(it)}
                     )
                 }
@@ -122,6 +143,12 @@ fun SmokingGoalPage(
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)
             }
+        }
+
+        if (showDialog.value) {
+            com.example.addiction_manage.feature.alcohol.showSaveDialog(
+                onDismiss = { showDialog.value = false }
+            )
         }
     }
 }
@@ -210,3 +237,18 @@ fun CheckboxWithBorder(label: String, isChecked: Boolean, onCheckedChange: (Bool
 }
 
 
+@Composable
+fun showSaveDialog(onDismiss: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("확인")
+            }
+        },
+        title = { Text("알림") },
+        text = { Text("저장되었습니다!") }
+    )
+
+}
