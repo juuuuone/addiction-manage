@@ -97,6 +97,7 @@ fun SelectingPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()

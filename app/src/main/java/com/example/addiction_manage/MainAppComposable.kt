@@ -31,7 +31,7 @@ fun MainApp() {
     Surface(modifier = Modifier.fillMaxSize()) {
         val navController = rememberNavController()
         val currentUser = FirebaseAuth.getInstance().currentUser
-        val start = if (currentUser != null) "home" else "login"
+        val start = if (currentUser != null) "home" else "start"
         var selectedItem by rememberSaveable { mutableStateOf(1) }
 
         NavHost(
