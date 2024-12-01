@@ -45,7 +45,7 @@ fun StartPage(
                     fontFamily= FontFamily(Font(R.font.light)),
                     fontSize = 24.sp
                 )
-                Spacer(modifier=Modifier.height(40.dp))
+                Spacer(modifier=Modifier.height(60.dp))
                 Row {
                     androidx.compose.material3.Text(
                         text = "DeToxify",

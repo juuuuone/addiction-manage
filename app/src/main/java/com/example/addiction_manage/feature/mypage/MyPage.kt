@@ -15,12 +15,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.R
 import com.example.addiction_manage.feature.alcohol.AlcoholGoalViewModel
 import com.example.addiction_manage.feature.caffeine.CaffeineGoalViewModel
 import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
@@ -53,7 +56,8 @@ fun MyPage(
                         text = "마이페이지",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Black
+                        color = Black,
+                        fontFamily = FontFamily(Font(R.font.minsans)),
                     )
                 },
                 navigationIcon = {
@@ -81,14 +85,16 @@ fun MyPage(
             Text(
                 text = "닉네임",
                 fontSize = 24.sp,
-                color = Color.DarkGray
+                color = Color.DarkGray,
+                fontFamily = FontFamily(Font(R.font.minsans)),
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = nickname,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
-                color = Black
+                color = Black,
+                fontFamily = FontFamily(Font(R.font.minsans)),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -102,12 +108,14 @@ fun MyPage(
             else if (alcoholGoal.isNotEmpty()) {
                 GoalSection(
                     title = "나의 음주 목표",
-                    goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하")
+                    goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하"),
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
                 GoalSection(
                     title = "나의 음주 목표",
-                    goals = listOf("목표가 없습니다.")
+                    goals = listOf("목표가 없습니다."),
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
 
@@ -124,12 +132,14 @@ fun MyPage(
             else if (smokingGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 흡연 목표",
-                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하")
+                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하"),
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
                 GoalSection(
                     title = "나의 흡연 목표",
-                    goals = listOf("목표가 없습니다.")
+                    goals = listOf("목표가 없습니다."),
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
 
@@ -145,39 +155,45 @@ fun MyPage(
             else if (caffeineGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 카페인 목표",
-                    goals = listOf("하루 " + caffeineGoals.joinToString{it.goal} + "잔 이하")
+                    goals = listOf("하루 " + caffeineGoals.joinToString{it.goal} + "잔 이하"),
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
                 GoalSection(
                     title = "나의 카페인 목표",
-                    goals = listOf("목표가 없습니다.")
+                    goals = listOf("목표가 없습니다."),
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
 
             // 편집 버튼 -> 목표 설정 페이지 재사용...?
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clickable { navController.navigate("alcohol-goal") }
-                    .background(LightRed, shape = CircleShape)
-                    .size(56.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit",
-                    tint = White,
-                    modifier = Modifier.size(28.dp)
-                )
+            Row(){
+                Spacer(modifier=Modifier.fillMaxWidth(0.8f))
+                Box(
+                    modifier = Modifier
+                        .clickable { navController.navigate("alcohol-goal") }
+                        .background(WhiteBlue, shape = CircleShape)
+                        .size(56.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = MediumBlue,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
+
+            Spacer(modifier=Modifier.height(20.dp))
             Button(
                 onClick =
                 {
                     logout()
                     navController.navigate("start")
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp)
@@ -186,7 +202,8 @@ fun MyPage(
                     text = "로그아웃",
                     fontSize = 18.sp,
                     color = White,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
         }
@@ -194,7 +211,7 @@ fun MyPage(
 }
 
 @Composable
-fun GoalSection(title: String, goals: List<String>) {
+fun GoalSection(title: String, goals: List<String>, fontFamily: FontFamily) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -205,16 +222,18 @@ fun GoalSection(title: String, goals: List<String>) {
             text = title,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            color = Black
+            color = Black,
+            fontFamily = fontFamily
         )
         Spacer(modifier = Modifier.height(8.dp))
         goals.forEach { goal ->
             Text(
                 text = goal,
                 fontSize = 25.sp,
-                color = DarkRed,
+                color = MediumBlue,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                fontFamily = fontFamily
             )
         }
     }

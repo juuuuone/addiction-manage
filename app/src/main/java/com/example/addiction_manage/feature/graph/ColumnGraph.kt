@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.DarkRed
+import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.White
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
@@ -219,6 +220,6 @@ class XYValueFormatter : CartesianMarkerValueFormatter {
 }
 
 // 막대 색깔!!
-private val chartColors = listOf(Black)
+private val chartColors = listOf(MediumBlue)
 
 

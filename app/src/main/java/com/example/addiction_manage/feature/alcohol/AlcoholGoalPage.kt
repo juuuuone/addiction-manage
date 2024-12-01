@@ -61,7 +61,7 @@ fun AlcoholGoalPage(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘과 일주일의 음주량 목표를 설정하거나\n'음주하지 않습니다'를 체크하세요.",
+                text = "일주일 목표 음주 횟수를 입력하세요.\n음주를 하지 않으면 '음주하지 않습니다'를 체크하세요.",
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -135,7 +135,7 @@ fun AlcoholGoalPage(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)
