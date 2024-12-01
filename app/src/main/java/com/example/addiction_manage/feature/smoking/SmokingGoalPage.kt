@@ -138,7 +138,7 @@ fun SmokingGoalPage(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)

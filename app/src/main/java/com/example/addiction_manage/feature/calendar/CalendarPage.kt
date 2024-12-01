@@ -113,15 +113,25 @@ fun CalendarPage(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
             // 여기에 텍스트를 독립적으로 배치합니다.
-            Text(
-                text = "$nickname 님의 12월을 확인해볼까요?",
-                color = Black,
-                fontSize = 24.sp,
-                fontFamily = FontFamily(Font(R.font.minsans)),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 16.dp)
-            )
+            Row(){
+                Text(
+                    text="$nickname",
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    modifier = Modifier
+                        .padding(start = 20.dp)
+                        .padding(top = 16.dp)
+                )
+                Text(
+                    text = " 님의 12월을 확인해볼까요?",
+                    color = Black,
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans)),
+                    modifier = Modifier
+                        .padding(end=16.dp)
+                        .padding(top = 16.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(60.dp))
 
             Column(

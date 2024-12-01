@@ -75,7 +75,7 @@ fun CaffeineGoalPage(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘 목표 카페인 섭취량을 선택하거나\n'카페인을 섭취하지 않습니다'를 체크하세요.",
+                text = "하루 목표 섭취 잔 수를 입력하거나\n'카페인을 섭취하지 않습니다'를 체크하세요.",
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -134,7 +134,7 @@ fun CaffeineGoalPage(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)

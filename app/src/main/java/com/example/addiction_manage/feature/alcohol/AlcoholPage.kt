@@ -56,12 +56,14 @@ import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.LightGrey
+import com.example.addiction_manage.ui.theme.WhiteBlue
 
 
 @Composable
 fun AlcoholPage(
     navigateToMyPage: () -> Unit,
     navController: NavController,
+    navigateToHome: () -> Unit
 ) {
     val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
     val yesterday = remember { mutableStateOf(false) }
@@ -81,30 +83,46 @@ fun AlcoholPage(
     ) { innerPadding ->
 
         if (showDialog.value) {  // 상태 변수를 확인하여 대화상자를 표시
-            AlcoholDialog1(onDismiss = { showDialog.value = false })  // onDismiss에서 대화상자를 숨김
+            AlcoholDialog1(onDismiss = { showDialog.value = false },
+            navigateToHome=navigateToHome)  // onDismiss에서 대화상자를 숨김
         }
     }
 }
 
 @Composable
 fun AlcoholDialog1(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    navigateToHome: () -> Unit
 ) {
     Dialog(onDismissRequest = { onDismiss() }) {
         val showDialog = remember { mutableStateOf(true) }
-        val showNextDialog = remember { mutableStateOf(false) }
+        val showYesDialog = remember { mutableStateOf(false) }
+        val showNoDialog = remember { mutableStateOf(false) }
 
-        if (showNextDialog.value) {
-            AlcoholDialog2 {
-                showNextDialog.value = false
-                onDismiss() // 부모 다이얼로그를 종료
-            }
+        if (showYesDialog.value) {
+            AlcoholDialog2(
+                onDismiss = {
+                    showYesDialog.value = false
+                    onDismiss()  // 부모 다이얼로그를 종료
+                },
+                navigateToHome = navigateToHome  // 홈으로 이동 함수 전달
+            )
+        }
+
+        if(showNoDialog.value){
+            AlcoholDialog3 (
+                onDismiss = {
+                    showNoDialog.value = false
+                    onDismiss()  // 부모 다이얼로그를 종료
+                },
+                navigateToHome = navigateToHome  // 홈으로 이동 함수 전
+            )
         }
 
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f),
+                .fillMaxHeight(0.2f),
             shape = RoundedCornerShape(8.dp),
             color = White
         ) {
@@ -112,170 +130,70 @@ fun AlcoholDialog1(
                 modifier = Modifier.padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text("오늘 어떤 술을 마셨나요?", color = MediumBlue, fontSize = 24.sp)
-                Spacer(modifier = Modifier.height(48.dp))
+                Spacer(modifier = Modifier.height(40.dp))
+                Text("오늘 음주를 했나요?", color = MediumBlue, fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(60.dp))
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    OutlinedButton(
+                    Button(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
+                            showYesDialog.value = true // '네'를 클릭했을 때 다음 다이얼로그 표시
                         },
                         modifier = Modifier
                             .padding(4.dp)
-                            .width(70.dp)
-                            .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = White),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MediumBlue),
+                            .width(150.dp)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = WhiteBlue),
+                        shape = RoundedCornerShape(20.dp),
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.beer),
-                            contentDescription = "맥주",
-                            modifier = Modifier.size(150.dp)
+                        Text(
+                            "네",
+                            color = Black,
+                            fontSize = 20.sp,
+                            fontFamily = FontFamily(Font(R.font.minsans))
                         )
                     }
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    OutlinedButton(
+                    Button(
                         onClick = {
                             showDialog.value = false
-                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
+                            showNoDialog.value = true
                         },
                         modifier = Modifier
                             .padding(4.dp)
-                            .width(70.dp)
-                            .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = White),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MediumBlue),
+                            .width(150.dp)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
+                        shape = RoundedCornerShape(20.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.soju),
-                            contentDescription = "소주",
-                            modifier = Modifier.size(150.dp)
+                        Text(
+                            "아니요",
+                            fontSize = 20.sp,
+                            color = White,
+                            fontFamily = FontFamily(Font(R.font.minsans))
                         )
                     }
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    OutlinedButton(
-                        onClick = {
-                            showDialog.value = false
-                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .width(70.dp)
-                            .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = White),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MediumBlue),
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.mgl),
-                            contentDescription = "mgl",
-                            modifier = Modifier.size(180.dp)
-                        )
-                    }
+
                 }
 
-                Row(
-                    modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
-                ) {
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "맥주", color = LightRed, fontSize = 18.sp)
-                    Spacer(modifier = Modifier.width(64.dp))
-                    Text(text = "소주", color = LightRed, fontSize = 18.sp)
-                    Spacer(modifier = Modifier.width(60.dp))
-                    Text(text = "막걸리", color = LightRed, fontSize = 18.sp)
-                }
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            showDialog.value = false
-                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .width(70.dp)
-                            .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = White),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MediumBlue),
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.wine),
-                            contentDescription = "wine",
-                            modifier = Modifier.size(150.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(20.dp))
-
-                    OutlinedButton(
-                        onClick = {
-                            showDialog.value = false
-                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .width(70.dp)
-                            .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = White),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MediumBlue),
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.cham),
-                            contentDescription = "champange",
-                            modifier = Modifier.size(150.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.width(20.dp))
-
-                    OutlinedButton(
-                        onClick = {
-                            showDialog.value = false
-                            showNextDialog.value = true // 다음 대화상자로 이동 플래그 설정
-                        },
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .width(70.dp)
-                            .height(70.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = White),
-                        shape = CircleShape,
-                        border = BorderStroke(1.dp, MediumBlue),
-                    ) {
-
-                    }
-                }
-                Row(
-                    modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
-                ) {
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(text = "와인", color = LightRed, fontSize = 18.sp)
-                    Spacer(modifier = Modifier.width(64.dp))
-                    Text(text = "양주", color = LightRed, fontSize = 18.sp)
-                    Spacer(modifier = Modifier.width(52.dp))
-                    Text(text = "직접입력", color = LightRed, fontSize = 18.sp)
-                }
             }
         }
     }
 }
 
 
+
 @Composable
 fun AlcoholDialog2(
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    navigateToHome: () -> Unit  // 인자 추가
 ) {
 
     val alcoholOptions = listOf("1~2잔", "반 병", "한 병", "한 병 반", "두 병")
@@ -286,7 +204,7 @@ fun AlcoholDialog2(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.6f),
+                .fillMaxHeight(0.2f),
             shape = RoundedCornerShape(8.dp),
             color = White
         ) {
@@ -294,50 +212,87 @@ fun AlcoholDialog2(
                 modifier = Modifier.padding(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Text("오늘의 음주량은 어떻게 되나요?", color = MediumBlue, fontSize = 20.sp)
-                Spacer(modifier = Modifier.height(32.dp))
-                Row() {
-                    Text("나의 목표 음주량 ", fontSize = 20.sp)
-                    Text(
-                        "소주 반 병",
-                        color = MediumBlue,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                }
+                Spacer(modifier = Modifier.height(40.dp))
+                Text("내일은 금주해봐요!", color = MediumBlue, fontSize = 30.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
+                Spacer(modifier = Modifier.height(60.dp))
 
-                Spacer(modifier = Modifier.height(32.dp))
-                Button(
-                    onClick = { expanded = true },
-                    modifier = Modifier.width(250.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
-                    shape = RectangleShape
+                OutlinedButton(
+                    onClick = {
+                        onDismiss()
+                        navigateToHome()
+                    },
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .width(150.dp)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = White),
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(width=2.dp, color = MediumBlue)
                 ) {
                     Text(
-                        "                             ∨",
+                        "닫기",
+                        fontSize = 20.sp,
                         color = Black,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.ExtraBold
+                        fontFamily = FontFamily(Font(R.font.minsans))
                     )
-                }
-                DropdownMenu(
-                    modifier = Modifier.width(250.dp),
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    offset = DpOffset(x = 27.dp, y = (-270).dp)
-                ) {
-                    alcoholOptions.forEach { label ->
-                        DropdownMenuItem(onClick = {
-                            selectedOption = label
-                            expanded = false
-                        }) {
-                            Text(text = label)
-                        }
-                    }
                 }
             }
         }
     }
 }
 
+
+@Composable
+fun AlcoholDialog3(
+    onDismiss: () -> Unit,
+    navigateToHome: () -> Unit  // 인자 추가
+) {
+
+    val alcoholOptions = listOf("1~2잔", "반 병", "한 병", "한 병 반", "두 병")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf(alcoholOptions[0]) }  // 초기 선택값 설정
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.2f),
+            shape = RoundedCornerShape(8.dp),
+            color = White
+        ) {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(40.dp))
+                Text("잘하셨어요! 내일도 기대할게요!", color = MediumBlue, fontSize = 30.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
+                Spacer(modifier = Modifier.height(60.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        onDismiss()
+                        navigateToHome()
+                    },
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .width(150.dp)
+                        .height(50.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = White),
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(width=2.dp, color = MediumBlue)
+                ) {
+                    Text(
+                        "닫기",
+                        fontSize = 20.sp,
+                        color = Black,
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
+                }
+            }
+        }
+    }
+}
