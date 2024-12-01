@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.statistic
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,13 +28,18 @@ import com.example.addiction_manage.ui.theme.LightGrey
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import com.example.addiction_manage.R
 import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.WhiteBlue
@@ -44,6 +50,7 @@ import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.feature.graph.ColumnGraph
 import com.example.addiction_manage.ui.theme.White
+import kotlin.math.absoluteValue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,10 +63,13 @@ fun StatisticPage(
     navController: NavController,
     selectedItem: Int,
 ) {
-    var selectedOption by remember { mutableStateOf("음주") } // Default selected option
-    val currentAlcohol by remember { mutableFloatStateOf(0f) }
-    val currentSmoking by remember { mutableFloatStateOf(0f) }
-    val currentCaffeine by remember { mutableFloatStateOf(0f) }
+    var selectedOption by remember { mutableStateOf("음주") }
+    val yesterdayAlcohol by remember { mutableFloatStateOf(3f) }
+    val currentAlcohol by remember { mutableFloatStateOf(2f) }
+    val yesterdaySmoking by remember { mutableFloatStateOf(4f) }
+    val currentSmoking by remember { mutableFloatStateOf(5f) }
+    val yesterdayCaffeine by remember { mutableFloatStateOf(1f) }
+    val currentCaffeine by remember { mutableFloatStateOf(1f) }
     val goalAlcohol by remember { mutableFloatStateOf(3f) }
     val goalSmoking by remember { mutableFloatStateOf(3f) }
     val goalCaffeine by remember { mutableFloatStateOf(3f) }
@@ -86,7 +96,7 @@ fun StatisticPage(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f)
+                .fillMaxHeight()
                 .padding(innerPadding)
                 .background(color = White, shape = RoundedCornerShape(10.dp))
                 .padding(horizontal = 25.dp),
@@ -94,6 +104,7 @@ fun StatisticPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.padding(12.dp))
             // 카테고리 선택
             TimeframeSelector(
                 options = listOf("음주", "흡연", "카페인"),
@@ -101,29 +112,47 @@ fun StatisticPage(
                 onOptionSelected = { selectedOption = it }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.padding(12.dp))
 
             // 통계 페이지
             if (selectedOption == "음주") {
+                AlcoholCount(
+                    yesterdayAlcohol = yesterdayAlcohol,
+                    currentAlcohol = currentAlcohol,
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
                 AlcoholStatistic(
                     progress = 0.3f,
                     currentAlcohol = currentAlcohol,
                     goalAlcohol = goalAlcohol,
                 )
+                Spacer(modifier = Modifier.padding(10.dp))
                 ColumnGraph(unit = "잔", threshold = goalAlcohol)
             } else if (selectedOption == "흡연") {
+                SmokingCount(
+                    yesterdaySmoking = yesterdaySmoking,
+                    currentSmoking = currentSmoking,
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
                 SmokingStatistic(
                     progress = 0.7f,
                     currentSmoking = currentSmoking,
                     goalSmoking = goalSmoking
                 )
+                Spacer(modifier = Modifier.padding(10.dp))
                 ColumnGraph(unit = "개피", threshold = goalSmoking)
             } else if (selectedOption == "카페인") {
+                CaffeineCount(
+                    yesterdayCaffeine = yesterdayCaffeine,
+                    currentCaffeine = currentCaffeine,
+                )
+                Spacer(modifier = Modifier.padding(10.dp))
                 CaffeineStatistic(
                     progress = 0.5f,
                     currentCaffeine = currentCaffeine,
                     goalCaffeine = goalCaffeine
                 )
+                Spacer(modifier = Modifier.padding(10.dp))
                 ColumnGraph(unit = "잔", threshold = goalCaffeine)
             }
         }
@@ -213,6 +242,66 @@ fun GaugeGraph(
     }
 }
 
+
+@Composable
+fun AlcoholCount(
+    yesterdayAlcohol: Float,
+    currentAlcohol: Float,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 7.dp),
+        color = WhiteBlue,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "어제", fontSize = 14.sp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(text = yesterdayAlcohol.toInt().toString() + "잔", fontSize = 22.sp)
+            }
+            Column(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "오늘", fontSize = 14.sp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(text = currentAlcohol.toInt().toString() + "잔", fontSize = 22.sp)
+            }
+            Row(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = (currentAlcohol.toInt() - yesterdayAlcohol.toInt()).absoluteValue.toString(),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (currentAlcohol.toInt() > yesterdayAlcohol.toInt()) Red else Blue
+                )
+                Image(
+                    painter = painterResource(
+                        id = if (currentAlcohol.toInt() > yesterdayAlcohol.toInt()) R.drawable.uparrow
+                        else R.drawable.downarrow
+                    ),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
+
 @Composable
 fun AlcoholStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
@@ -246,6 +335,65 @@ fun AlcoholStatistic(
 }
 
 @Composable
+fun SmokingCount(
+    yesterdaySmoking: Float,
+    currentSmoking: Float,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 7.dp),
+        color = WhiteBlue,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "어제", fontSize = 14.sp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(text = yesterdaySmoking.toInt().toString() + "개피", fontSize = 22.sp)
+            }
+            Column(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "오늘", fontSize = 14.sp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(text = currentSmoking.toInt().toString() + "개피", fontSize = 22.sp)
+            }
+            Row(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = (currentSmoking.toInt() - yesterdaySmoking.toInt()).absoluteValue.toString(),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (currentSmoking.toInt() > yesterdaySmoking.toInt()) Red else Blue
+                )
+                Image(
+                    painter = painterResource(
+                        id = if (currentSmoking.toInt() > yesterdaySmoking.toInt()) R.drawable.uparrow
+                        else R.drawable.downarrow
+                    ),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun SmokingStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
     currentSmoking: Float,
@@ -274,6 +422,65 @@ fun SmokingStatistic(
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue
         )
+    }
+}
+
+@Composable
+fun CaffeineCount(
+    yesterdayCaffeine: Float,
+    currentCaffeine: Float,
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 7.dp),
+        color = WhiteBlue,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "어제", fontSize = 14.sp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(text = yesterdayCaffeine.toInt().toString() + "잔", fontSize = 22.sp)
+            }
+            Column(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(text = "오늘", fontSize = 14.sp)
+                Spacer(modifier = Modifier.padding(3.dp))
+                Text(text = currentCaffeine.toInt().toString() + "잔", fontSize = 22.sp)
+            }
+            Row(
+                modifier = Modifier.padding(vertical = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Text(
+                    text = (currentCaffeine.toInt() - yesterdayCaffeine.toInt()).absoluteValue.toString(),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (currentCaffeine.toInt() > yesterdayCaffeine.toInt()) Red else Blue
+                )
+                Image(
+                    painter = painterResource(
+                        id = if (currentCaffeine.toInt() > yesterdayCaffeine.toInt()) R.drawable.uparrow
+                        else R.drawable.downarrow
+                    ),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
     }
 }
 
