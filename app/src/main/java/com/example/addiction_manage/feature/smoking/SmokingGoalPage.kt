@@ -30,6 +30,8 @@ fun SmokingGoalPage(
     val isSmokingChecked by viewModel.isSmokingChecked.collectAsState()
     var smokingDayGoal by remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
+    val currentUserGoal = viewModel.getCurrentUserGoal()
+    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,15 +101,15 @@ fun SmokingGoalPage(
 //                    )
 
                     TextField(
-                        value = smokingDayGoal,
-                        onValueChange = { smokingDayGoal = it }
+                        value = newGoal.value,
+                        onValueChange = { newGoal.value = it }
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
 
 
                     Button(
-                        onClick = { viewModel.addGoal(smokingDayGoal)
+                        onClick = { viewModel.addGoal(newGoal.value)
                             showDialog.value = true},
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)

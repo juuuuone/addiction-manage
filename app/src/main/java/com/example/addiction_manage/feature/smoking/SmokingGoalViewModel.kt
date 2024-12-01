@@ -98,6 +98,11 @@ class SmokingGoalViewModel @Inject constructor(
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
+    fun getCurrentUserGoal(): SmokingGoal? {
+        val uid = firebaseAuth.currentUser?.uid ?: return null
+        return _goal.value.firstOrNull { it.userId == uid }
+    }
+
     fun addGoal(newGoal: String){
         val currentUser = firebaseAuth.currentUser
         val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료

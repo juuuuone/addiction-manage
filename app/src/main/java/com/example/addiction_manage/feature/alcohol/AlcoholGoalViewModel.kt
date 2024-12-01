@@ -91,6 +91,10 @@ class AlcoholGoalViewModel @Inject constructor(
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
+    fun getCurrentUserGoal(): AlcoholGoal? {
+        val uid = firebaseAuth.currentUser?.uid ?: return null
+        return _goal.value.firstOrNull { it.userId == uid }
+    }
 
     fun addGoal(newGoal: String) {
         val currentUser = firebaseAuth.currentUser

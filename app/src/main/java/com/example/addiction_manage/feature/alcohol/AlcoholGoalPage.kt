@@ -22,11 +22,11 @@ import com.example.addiction_manage.ui.theme.*
 fun AlcoholGoalPage(
     navController: NavController
 ) {
-    var dailyGoal by remember { mutableStateOf("") }
-    var weeklyGoal by remember { mutableStateOf("") }
     val viewModel : AlcoholGoalViewModel = hiltViewModel()
     val isNoAlcoholChecked by viewModel.isAlcoholChecked.collectAsState()
     val showDialog = remember { mutableStateOf(false) }
+    val currentUserGoal = viewModel.getCurrentUserGoal()
+    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -97,15 +97,15 @@ fun AlcoholGoalPage(
 //                    )
 
                     TextField(
-                        value = weeklyGoal,
-                        onValueChange = { weeklyGoal = it }
+                        value = newGoal.value,
+                        onValueChange = { newGoal.value = it }
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
                         onClick = {
-                            viewModel.addGoal(weeklyGoal)
+                            viewModel.addGoal(newGoal.value)
                             showDialog.value = true
                                   },
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),

@@ -145,7 +145,7 @@ fun MyPage(
             else if (caffeineGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 카페인 목표",
-                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "잔 이하")
+                    goals = listOf("하루 " + caffeineGoals.joinToString{it.goal} + "잔 이하")
                 )
             } else {
                 GoalSection(

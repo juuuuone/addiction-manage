@@ -2,6 +2,7 @@ package com.example.addiction_manage.feature.caffeine
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import com.example.addiction_manage.feature.model.AlcoholGoal
 import com.example.addiction_manage.feature.model.CaffeineGoal
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -89,6 +90,10 @@ class CaffeineGoalViewModel @Inject constructor(
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
+    fun getCurrentUserGoal(): CaffeineGoal? {
+        val uid = firebaseAuth.currentUser?.uid ?: return null
+        return _goal.value.firstOrNull { it.userId == uid }
+    }
 
     fun addGoal(newGoal: String){
         val currentUser = firebaseAuth.currentUser

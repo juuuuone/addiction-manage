@@ -30,6 +30,8 @@ fun CaffeineGoalPage(
     val isCaffeineChecked by viewModel.isCaffeineChecked.collectAsState()
     var caffeineDayGoal by remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
+    val currentUserGoal = viewModel.getCurrentUserGoal()
+    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -91,14 +93,14 @@ fun CaffeineGoalPage(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     TextField(
-                        value = caffeineDayGoal,
-                        onValueChange = { caffeineDayGoal = it }
+                        value = newGoal.value,
+                        onValueChange = { newGoal.value = it }
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
-                        onClick = { viewModel.addGoal(caffeineDayGoal)
+                        onClick = { viewModel.addGoal(newGoal.value)
                                   showDialog.value = true},
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
