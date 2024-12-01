@@ -1,8 +1,8 @@
 package com.example.addiction_manage.feature.caffeine
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.example.addiction_manage.feature.model.CaffeineGoal
-import com.example.addiction_manage.feature.model.SmokingGoal
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
@@ -10,25 +10,45 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class CaffeineGoalViewModel @Inject constructor() : ViewModel() {
+class CaffeineGoalViewModel @Inject constructor(
+    @ApplicationContext private val context: Context
+) : ViewModel() {
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
     private val _goal = MutableStateFlow<List<CaffeineGoal>>(emptyList())
     val goal = _goal.asStateFlow()
 
-    private val _isCaffeineChecked = MutableStateFlow(false)
-    val isCaffeineChecked = _isCaffeineChecked.asStateFlow()
+    private val _isCaffeineChecked = MutableStateFlow(loadState())
+    val isCaffeineChecked: StateFlow<Boolean> = _isCaffeineChecked
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
     private val databaseReference = firebaseDatabase.getReference("CaffeineGoal")
     private var valueEventListener: ValueEventListener? = null
+
+    fun setNoCaffeineChecked(checked: Boolean) {
+        _isCaffeineChecked.value = checked
+        saveState(checked)
+    }
+
+    private fun saveState(checked: Boolean) {
+        val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putBoolean("isCaffeineChecked_${firebaseAuth.currentUser?.uid}", checked).apply()
+    }
+
+    private fun loadState(): Boolean {
+        val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean("isCaffeineChecked_${firebaseAuth.currentUser?.uid}", false)
+    }
+
 
     init {
         fetchGoalsAutomatically()
@@ -41,11 +61,13 @@ class CaffeineGoalViewModel @Inject constructor() : ViewModel() {
             val uid = user.uid
             valueEventListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val caffeineGoal = snapshot.child(uid).getValue(CaffeineGoal::class.java)
-                    if (caffeineGoal != null) {
-                        _goal.value = listOf(caffeineGoal) // 단일 데이터를 리스트로 변환하여 Flow 업데이트
-                    } else {
-                        _goal.value = emptyList()
+                    if (!_isCaffeineChecked.value) {
+                        val caffeineGoal = snapshot.child(uid).getValue(CaffeineGoal::class.java)
+                        _goal.value = if (caffeineGoal != null) {
+                            listOf(caffeineGoal)
+                        } else {
+                            emptyList()
+                        }
                     }
                     _isLoading.value = false
                 }
@@ -67,7 +89,6 @@ class CaffeineGoalViewModel @Inject constructor() : ViewModel() {
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
-    fun setNoCaffeineChecked(checked: Boolean) { _isCaffeineChecked.value = checked }
 
     fun addGoal(newGoal: String){
         val currentUser = firebaseAuth.currentUser

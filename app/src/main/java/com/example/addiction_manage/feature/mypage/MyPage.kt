@@ -39,7 +39,9 @@ fun MyPage(
     val smokingGoalViewModel: SmokingGoalViewModel = hiltViewModel()
     val alcoholGoalViewModel: AlcoholGoalViewModel = hiltViewModel()
     val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
-    val isLoading = smokingGoalViewModel.isLoading.collectAsState().value
+    val isLoadingSmoking = smokingGoalViewModel.isLoading.collectAsState().value
+    val isLoadingAlcohol = alcoholGoalViewModel.isLoading.collectAsState().value
+    val isLoadingCaffeine = caffeineGoalViewModel.isLoading.collectAsState().value
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -93,11 +95,11 @@ fun MyPage(
 
             // 음주 목표 섹션
             val alcoholGoal = alcoholGoalViewModel.goal.collectAsState().value
-            val doAlcohol = alcoholGoalViewModel.isAlcoholChecked
-            if(isLoading){
+//            val doAlcohol = alcoholGoalViewModel.isAlcoholChecked.collectAsState().value
+            if(isLoadingAlcohol){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (alcoholGoal.isNotEmpty() && !doAlcohol.value) {
+            else if (alcoholGoal.isNotEmpty()) {
                 GoalSection(
                     title = "나의 음주 목표",
                     goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하")
@@ -113,12 +115,13 @@ fun MyPage(
 
             // 흡연 목표 섹션
             val smokingGoals = smokingGoalViewModel.goal.collectAsState().value
-            val doSmoking = smokingGoalViewModel.isSmokingChecked
+//            val doSmoking = smokingGoalViewModel.isSmokingChecked.collectAsState().value
+//            Log.d("Mypage", doSmoking.toString())
 
-            if(isLoading){
+            if(isLoadingSmoking){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (smokingGoals.isNotEmpty() && doSmoking.value) {
+            else if (smokingGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 흡연 목표",
                     goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하")
@@ -134,12 +137,12 @@ fun MyPage(
 
             // 카페인 목표 섹션
             val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
-            val doCaffeine = caffeineGoalViewModel.isCaffeineChecked
+//            val doCaffeine = caffeineGoalViewModel.isCaffeineChecked.collectAsState().value
 
-            if(isLoading){
+            if(isLoadingCaffeine){
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
-            else if (caffeineGoals.isNotEmpty() && !doCaffeine.value) {
+            else if (caffeineGoals.isNotEmpty()) {
                 GoalSection(
                     title = "나의 카페인 목표",
                     goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "잔 이하")
