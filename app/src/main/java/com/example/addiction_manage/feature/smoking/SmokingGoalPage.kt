@@ -29,6 +29,7 @@ fun SmokingGoalPage(
     val viewModel: SmokingGoalViewModel = hiltViewModel()
     val isSmokingChecked by viewModel.isSmokingChecked.collectAsState()
     var smokingDayGoal by remember { mutableStateOf("") }
+    val showDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -106,7 +107,8 @@ fun SmokingGoalPage(
 
 
                     Button(
-                        onClick = { viewModel.addGoal(smokingDayGoal) },
+                        onClick = { viewModel.addGoal(smokingDayGoal)
+                            showDialog.value = true},
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -139,6 +141,12 @@ fun SmokingGoalPage(
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)
             }
+        }
+
+        if (showDialog.value) {
+            com.example.addiction_manage.feature.alcohol.showSaveDialog(
+                onDismiss = { showDialog.value = false }
+            )
         }
     }
 }
@@ -227,3 +235,18 @@ fun CheckboxWithBorder(label: String, isChecked: Boolean, onCheckedChange: (Bool
 }
 
 
+@Composable
+fun showSaveDialog(onDismiss: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("확인")
+            }
+        },
+        title = { Text("알림") },
+        text = { Text("저장되었습니다!") }
+    )
+
+}

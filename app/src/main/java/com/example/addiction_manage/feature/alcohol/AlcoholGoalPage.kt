@@ -26,6 +26,7 @@ fun AlcoholGoalPage(
     var weeklyGoal by remember { mutableStateOf("") }
     val viewModel : AlcoholGoalViewModel = hiltViewModel()
     val isNoAlcoholChecked by viewModel.isAlcoholChecked.collectAsState()
+    val showDialog = remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -103,7 +104,10 @@ fun AlcoholGoalPage(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
-                        onClick = { viewModel.addGoal(weeklyGoal) },
+                        onClick = {
+                            viewModel.addGoal(weeklyGoal)
+                            showDialog.value = true
+                                  },
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
@@ -136,7 +140,28 @@ fun AlcoholGoalPage(
             ) {
                 Text(text = "다음", fontSize = 18.sp, color = White)
             }
+
+            if (showDialog.value) {
+                showSaveDialog(
+                    onDismiss = { showDialog.value = false }
+                )
+            }
         }
     }
 }
 
+@Composable
+fun showSaveDialog(onDismiss: () -> Unit) {
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        confirmButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("확인")
+            }
+        },
+        title = { Text("알림") },
+        text = { Text("저장되었습니다!") }
+    )
+
+}

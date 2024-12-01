@@ -159,7 +159,7 @@ fun MyPage(
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .clickable { /* 편집 동작 */ }
+                    .clickable { navController.navigate("alcohol-goal") }
                     .background(LightRed, shape = CircleShape)
                     .size(56.dp),
                 contentAlignment = Alignment.Center
