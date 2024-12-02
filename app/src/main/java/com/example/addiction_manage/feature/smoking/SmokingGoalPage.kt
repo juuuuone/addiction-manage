@@ -12,12 +12,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.R
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +35,9 @@ fun SmokingGoalPage(
     val showDialog = remember { mutableStateOf(false) }
     val currentUserGoal = viewModel.getCurrentUserGoal()
     val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
+    //폰트
+    val boldFontFamily = FontFamily(Font(R.font.bold))
+    val lightFontFamily = FontFamily(Font(R.font.light))
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -69,17 +75,17 @@ fun SmokingGoalPage(
             // 제목 및 설명
             Text(
                 text = "흡연 목표를 설정하세요",
+                color = Black,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Black
+                fontFamily = boldFontFamily,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = "오늘 목표 흡연량을 작성하거나\n'흡연하지 않습니다'를 체크하세요.",
                 fontSize = 19.sp,
-                color = Color.DarkGray,
+                fontFamily = lightFontFamily,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -114,7 +120,10 @@ fun SmokingGoalPage(
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("저장")
+                        Text(
+                            text= "저장",
+                            fontFamily = lightFontFamily
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -141,7 +150,7 @@ fun SmokingGoalPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "다음", fontSize = 18.sp, color = White)
+                Text(text = "다음", fontFamily = lightFontFamily, fontSize = 20.sp)
             }
         }
 
