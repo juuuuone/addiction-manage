@@ -37,6 +37,8 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
 import com.example.addiction_manage.R
@@ -52,6 +54,7 @@ import com.example.addiction_manage.feature.graph.ColumnGraph
 import com.example.addiction_manage.ui.theme.White
 import kotlin.math.absoluteValue
 
+val minSansFontFamily = FontFamily(Font(R.font.minsans))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -190,6 +193,7 @@ fun TimeframeSelector(
                 Text(
                     text = option,
                     fontSize = 14.sp,
+                    fontFamily = minSansFontFamily,
                     color = Color.Black
                 )
             }
@@ -236,7 +240,7 @@ fun GaugeGraph(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "현재 : $achievedText", fontSize = 14.sp, color = Color.Black)
+            Text(text = "현재 : $achievedText", fontSize = 14.sp,fontFamily = minSansFontFamily, color = Color.Black)
 //            Text(text = "목표 : $goalText", fontSize = 14.sp, color = Color.Black)
         }
     }
@@ -265,18 +269,18 @@ fun AlcoholCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "어제", fontSize = 14.sp)
+                Text(text = "어제", fontSize = 14.sp,fontFamily = minSansFontFamily,)
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(text = yesterdayAlcohol.toInt().toString() + "잔", fontSize = 22.sp)
+                Text(text = yesterdayAlcohol.toInt().toString() + "잔", fontSize = 22.sp,fontFamily = minSansFontFamily,)
             }
             Column(
                 modifier = Modifier.padding(vertical = 5.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "오늘", fontSize = 14.sp)
+                Text(text = "오늘", fontSize = 14.sp,fontFamily = minSansFontFamily,)
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(text = currentAlcohol.toInt().toString() + "잔", fontSize = 22.sp)
+                Text(text = currentAlcohol.toInt().toString() + "잔", fontSize = 22.sp,fontFamily = minSansFontFamily,)
             }
             Row(
                 modifier = Modifier.padding(vertical = 5.dp),
@@ -320,6 +324,7 @@ fun AlcoholStatistic(
     ) {
         Text(
             text = alcoholTitle,
+            fontFamily = minSansFontFamily,
             style = typography.titleLarge,
             color = Color.Black,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -356,18 +361,18 @@ fun SmokingCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "어제", fontSize = 14.sp)
+                Text(text = "어제", fontSize = 14.sp,fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(text = yesterdaySmoking.toInt().toString() + "개피", fontSize = 22.sp)
+                Text(text = yesterdaySmoking.toInt().toString() + "개피", fontSize = 22.sp,fontFamily = minSansFontFamily,)
             }
             Column(
                 modifier = Modifier.padding(vertical = 5.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "오늘", fontSize = 14.sp)
+                Text(text = "오늘", fontSize = 14.sp,fontFamily = minSansFontFamily,)
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(text = currentSmoking.toInt().toString() + "개피", fontSize = 22.sp)
+                Text(text = currentSmoking.toInt().toString() + "개피", fontSize = 22.sp,fontFamily = minSansFontFamily,)
             }
             Row(
                 modifier = Modifier.padding(vertical = 5.dp),
@@ -377,6 +382,7 @@ fun SmokingCount(
                 Text(
                     text = (currentSmoking.toInt() - yesterdaySmoking.toInt()).absoluteValue.toString(),
                     fontSize = 20.sp,
+                    fontFamily = minSansFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = if (currentSmoking.toInt() > yesterdaySmoking.toInt()) Red else Blue
                 )
@@ -411,6 +417,7 @@ fun SmokingStatistic(
     ) {
         Text(
             text = smokingTitle,
+            fontFamily = minSansFontFamily,
             style = typography.titleLarge,
             color = Color.Black,
             modifier = Modifier.padding(bottom = 8.dp)
@@ -447,18 +454,18 @@ fun CaffeineCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "어제", fontSize = 14.sp)
+                Text(text = "어제", fontSize = 14.sp,fontFamily = minSansFontFamily,)
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(text = yesterdayCaffeine.toInt().toString() + "잔", fontSize = 22.sp)
+                Text(text = yesterdayCaffeine.toInt().toString() + "잔", fontSize = 22.sp,fontFamily = minSansFontFamily,)
             }
             Column(
                 modifier = Modifier.padding(vertical = 5.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "오늘", fontSize = 14.sp)
+                Text(text = "오늘", fontSize = 14.sp,fontFamily = minSansFontFamily,)
                 Spacer(modifier = Modifier.padding(3.dp))
-                Text(text = currentCaffeine.toInt().toString() + "잔", fontSize = 22.sp)
+                Text(text = currentCaffeine.toInt().toString() + "잔", fontSize = 22.sp,fontFamily = minSansFontFamily,)
             }
             Row(
                 modifier = Modifier.padding(vertical = 5.dp),
@@ -468,6 +475,7 @@ fun CaffeineCount(
                 Text(
                     text = (currentCaffeine.toInt() - yesterdayCaffeine.toInt()).absoluteValue.toString(),
                     fontSize = 20.sp,
+                    fontFamily = minSansFontFamily,
                     fontWeight = FontWeight.Bold,
                     color = if (currentCaffeine.toInt() > yesterdayCaffeine.toInt()) Red else Blue
                 )
@@ -502,6 +510,7 @@ fun CaffeineStatistic(
     ) {
         Text(
             text = caffeineTitle,
+            fontFamily = minSansFontFamily,
             style = typography.titleLarge,
             color = Color.Black,
             modifier = Modifier.padding(bottom = 8.dp)
