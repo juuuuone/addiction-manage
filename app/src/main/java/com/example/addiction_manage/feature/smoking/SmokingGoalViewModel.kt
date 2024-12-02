@@ -46,13 +46,17 @@ class SmokingGoalViewModel @Inject constructor(
 
     private fun saveState(checked: Boolean) {
         val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean("isSmokingChecked_${firebaseAuth.currentUser?.uid}", checked).apply()
+        sharedPreferences.edit()
+            .putBoolean("isSmokingChecked_${firebaseAuth.currentUser?.uid}", checked).apply()
         // 현재 유저한테만 상태 저장 (계정간 상태 공유 x)
     }
 
     private fun loadState(): Boolean {
         val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("isSmokingChecked_${firebaseAuth.currentUser?.uid}", false)
+        return sharedPreferences.getBoolean(
+            "isSmokingChecked_${firebaseAuth.currentUser?.uid}",
+            false
+        )
     }
 
     init {
@@ -103,7 +107,7 @@ class SmokingGoalViewModel @Inject constructor(
         return _goal.value.firstOrNull { it.userId == uid }
     }
 
-    fun addGoal(newGoal: String){
+    fun addGoal(newGoal: String) {
         val currentUser = firebaseAuth.currentUser
         val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
         val smokingGoal = SmokingGoal(

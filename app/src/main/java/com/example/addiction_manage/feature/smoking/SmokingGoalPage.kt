@@ -54,7 +54,7 @@ fun SmokingGoalPage(
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
                 navigationIcon = {
-                    IconButton(onClick = {navController.navigateUp()}) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -115,13 +115,15 @@ fun SmokingGoalPage(
 
 
                     Button(
-                        onClick = { viewModel.addGoal(newGoal.value)
-                            showDialog.value = true},
+                        onClick = {
+                            viewModel.addGoal(newGoal.value)
+                            showDialog.value = true
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text= "저장",
+                            text = "저장",
                             fontFamily = lightFontFamily
                         )
                     }
@@ -132,7 +134,7 @@ fun SmokingGoalPage(
                     CheckboxWithBorder(
                         label = "흡연하지 않습니다",
                         isChecked = isSmokingChecked,
-                        onCheckedChange = { viewModel.setNoSmokingChecked(it)}
+                        onCheckedChange = { viewModel.setNoSmokingChecked(it) }
                     )
                 }
             }
@@ -163,7 +165,12 @@ fun SmokingGoalPage(
 }
 
 @Composable
-fun GoalDropdown(label: String, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {
+fun GoalDropdown(
+    label: String,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
