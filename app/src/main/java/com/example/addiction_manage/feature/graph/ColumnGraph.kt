@@ -3,8 +3,11 @@ package com.example.addiction_manage.feature.graph
 import android.graphics.Typeface
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.DarkRed
+import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.White
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
@@ -62,10 +66,6 @@ fun ColumnGraph(
 
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
-//            lineSeries {
-//                series(x = listOf(1, 2, 3, 4, 5, 6, 7), y = List(7) { Random.nextInt(1, 7) })
-//
-//            }
             columnSeries {
                 series(x = listOf(1, 2, 3, 4, 5, 6, 7), y = List(7) { Random.nextInt(1, 7) })
             }
@@ -74,11 +74,6 @@ fun ColumnGraph(
 
     CartesianChartHost(
         chart = rememberCartesianChart(
-//            rememberLineCartesianLayer(
-//                lines = chartColors.map { color ->
-//                    rememberLineSpec(shader = DynamicShader.color(color), backgroundShader = null)
-//                },
-//            ),
             rememberColumnCartesianLayer(
                 // 막대색깔인 chatColors는 코드 맨 밑에 있음
                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
@@ -149,6 +144,7 @@ fun ColumnGraph(
         ),
         modelProducer = modelProducer,
         modifier = Modifier
+            .fillMaxHeight()
             .fillMaxWidth()
             .background(color = White, shape = RoundedCornerShape(10.dp)),
     )
@@ -206,12 +202,6 @@ class XYValueFormatter : CartesianMarkerValueFormatter {
 
         for (target in targets) {
             when (target) {
-//                is LineCartesianLayerMarkerTarget -> {
-//                    for (point in target.points) {
-//                        val y = point.entry.y.toInt()
-//                        result.append("$y" + "번")
-//                    }
-//                }
                 is ColumnCartesianLayerMarkerTarget -> {
                     for (column in target.columns) {
                         val y = column.entry.y.toInt()
@@ -230,6 +220,6 @@ class XYValueFormatter : CartesianMarkerValueFormatter {
 }
 
 // 막대 색깔!!
-private val chartColors = listOf(Black)
+private val chartColors = listOf(MediumBlue)
 
 

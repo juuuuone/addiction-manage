@@ -36,7 +36,8 @@ fun MainApp() {
 
         NavHost(
             navController = navController,
-            startDestination = start
+            startDestination = //"start"
+        start
         ) {
             composable(route = "start") {
                 StartPage(
@@ -131,18 +132,21 @@ fun MainApp() {
                 AlcoholPage(
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     navController = navController,
+                    navigateToHome = { navController.navigate(route = "home") },
                 )
             }
             composable(route = "caffeine") {
                 CaffeinePage(
                     navigateToMyPage = { navController.navigate(route = "mypage") },
-                    navController = navController
+                    navController = navController,
+                    navigateToHome = { navController.navigate(route = "home") },
                 )
             }
             composable(route = "smoking") {
                 SmokingPage(
                     navigateToMyPage = { navController.navigate(route = "mypage") },
-                    navController = navController
+                    navController = navController,
+                    navigateToHome = { navController.navigate(route = "home") }
                 )
             }
 

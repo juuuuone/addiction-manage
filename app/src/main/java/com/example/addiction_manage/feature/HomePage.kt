@@ -3,6 +3,7 @@ package com.example.addiction_manage.feature
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -97,6 +98,7 @@ fun SelectingPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -108,8 +110,25 @@ fun SelectingPage(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            Text(text = "$nickname 님의 생활습관을 기록해볼까요?", color = Black, fontSize = 24.sp,
-                fontFamily = FontFamily(Font(R.font.minsans)))
+            Row(){
+                Text(
+                    text="$nickname",
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    modifier = Modifier
+                        .padding(start = 20.dp)
+                        .padding(top = 16.dp)
+                )
+                Text(
+                    text = " 님의 생활습관을 기록해볼까요?",
+                    color = Black,
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans)),
+                    modifier = Modifier
+                        .padding(end=16.dp)
+                        .padding(top = 16.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(100.dp))
             Button(
                 onClick = navigateToAlcohol,

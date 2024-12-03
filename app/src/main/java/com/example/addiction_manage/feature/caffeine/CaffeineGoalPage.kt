@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,6 +36,9 @@ fun CaffeineGoalPage(
     val showDialog = remember { mutableStateOf(false) }
     val currentUserGoal = viewModel.getCurrentUserGoal()
     val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
+    // 폰트
+    val boldFontFamily = FontFamily(Font(R.font.bold))
+    val lightFontFamily = FontFamily(Font(R.font.light))
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -45,7 +50,7 @@ fun CaffeineGoalPage(
                         text = stringResource(id = R.string.set_goal),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = Black
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
@@ -71,17 +76,17 @@ fun CaffeineGoalPage(
             // 제목 및 설명
             Text(
                 text = stringResource(id=R.string.set_caffeine_goal),
+                color = Black,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Black
+                fontFamily = boldFontFamily,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = stringResource(id=R.string.write_caffeine_goal),
                 fontSize = 19.sp,
-                color = Color.DarkGray,
+                fontFamily = lightFontFamily,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -107,7 +112,10 @@ fun CaffeineGoalPage(
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                         ) {
-                        Text(stringResource(id=R.string.save_button))
+                        Text(
+                            text= Text(stringResource(id=R.string.save_button)),
+                            fontFamily = lightFontFamily
+                        )
                     }
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -136,10 +144,10 @@ fun CaffeineGoalPage(
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightRed),
+                colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = stringResource(id=R.string.next_button), fontSize = 18.sp, color = White)
+                Text(text = stringResource(id=R.string.next_button), fontFamily = lightFontFamily, fontSize = 20.sp)
             }
 
 

@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter
 
 data class Alcohol(
     val id: String = "",
+    val userId: String = "",
     val createdAt: String = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    val doDrink: Boolean = false,
 )
 
