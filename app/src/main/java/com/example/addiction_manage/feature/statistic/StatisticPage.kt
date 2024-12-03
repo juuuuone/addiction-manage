@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.statistic
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,18 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.addiction_manage.ui.theme.BackgroundColor
-import com.example.addiction_manage.ui.theme.LightRed
-import com.example.addiction_manage.ui.theme.LightGrey
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
@@ -45,19 +45,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.R
+import com.example.addiction_manage.feature.alcohol.AlcoholGoalViewModel
 import com.example.addiction_manage.feature.alcohol.AlcoholViewModel
+import com.example.addiction_manage.feature.caffeine.CaffeineGoalViewModel
 import com.example.addiction_manage.feature.caffeine.CaffeineViewModel
-import com.example.addiction_manage.ui.theme.LightBlue
 import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.WhiteBlue
 import com.example.addiction_manage.ui.theme.White
-import java.util.*
 
 import com.example.addiction_manage.feature.calendar.BottomAppBarComponent
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.feature.graph.ColumnGraph
+import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
 import com.example.addiction_manage.feature.smoking.SmokingViewModel
-import com.example.addiction_manage.ui.theme.White
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.absoluteValue
 
@@ -73,11 +73,37 @@ fun StatisticPage(
     navController: NavController,
     selectedItem: Int,
 ) {
+    var isLoading by remember { mutableStateOf(true) }
+    var selectedOption by remember { mutableStateOf("음주") }
+
+    var yesterdayAlcohol by remember { mutableStateOf(false) }
+    var currentAlcohol by remember { mutableStateOf(true) }
+    var weekAlcohol by remember { mutableIntStateOf(0) }
+    var goalAlcohol by remember { mutableIntStateOf(0) }
+
+    var yesterdaySmoking by remember { mutableIntStateOf(0) }
+    var currentSmoking by remember { mutableIntStateOf(0) }
+    var weekSmoking by remember { mutableIntStateOf(0) }
+    var goalSmoking by remember { mutableIntStateOf(0) }
+
+    var yesterdayCaffeine by remember { mutableIntStateOf(0) }
+    var currentCaffeine by remember { mutableIntStateOf(0) }
+    var weekCaffeine by remember { mutableIntStateOf(0) }
+    var goalCaffeine by remember { mutableIntStateOf(0) }
+
+    var alcoholGraphData by remember { mutableStateOf(emptyList<Pair<String, Int>>()) }
+    var smokingGraphData by remember { mutableStateOf(emptyList<Pair<String, Int>>()) }
+    var caffeineGraphData by remember { mutableStateOf(emptyList<Pair<String, Int>>()) }
+
     val currentUser = FirebaseAuth.getInstance().currentUser
     val userId = currentUser?.uid ?: return
+
     val alcoholViewModel = hiltViewModel<AlcoholViewModel>()
+    val alcoholGoalViewModel = hiltViewModel<AlcoholGoalViewModel>()
     val smokingViewModel = hiltViewModel<SmokingViewModel>()
+    val smokingGoalViewModel = hiltViewModel<SmokingGoalViewModel>()
     val caffeineViewModel = hiltViewModel<CaffeineViewModel>()
+    val caffeineGoalViewModel = hiltViewModel<CaffeineGoalViewModel>()
 
     LaunchedEffect(key1 = true) {
         alcoholViewModel.listenForAlcoholRecords(userId)
@@ -85,27 +111,48 @@ fun StatisticPage(
         caffeineViewModel.listenForCaffeineRecords(userId)
     }
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
+    val alcoholGoal = alcoholGoalViewModel.goal.collectAsState()
     val smokingRecords = smokingViewModel.smokingRecords.collectAsState()
+    val smokingGoal = smokingGoalViewModel.goal.collectAsState()
     val caffeineRecords = caffeineViewModel.caffeineRecords.collectAsState()
+    val caffeineGoal = caffeineGoalViewModel.goal.collectAsState()
 
-    /*
-    어제, 오늘 기록은 각 ViewModel에서 어제랑 오늘 기록 하나씩 가져오면 될 것 같고
-    일주일 전체 기록 가져오면 그래프에 주고, 다 더해서 게이지에 주면 되겠네
-    일주일 단위에 대한 날짜들도 전부 가져와서 그래프 x축에 적으면 될 듯
-    뭔가 user의 createdAt을 시작점으로 일주일 단위로 끊으면 되지 않을까?
-     */
+    LaunchedEffect(alcoholRecords.value) {
+        if (alcoholRecords.value.isNotEmpty() && smokingRecords.value.isNotEmpty() && caffeineRecords.value.isNotEmpty()) {
+            isLoading = false
+        }
 
-    var selectedOption by remember { mutableStateOf("음주") }
-    val yesterdayAlcohol by remember { mutableStateOf(false) }
-    val currentAlcohol by remember { mutableStateOf(true) }
-    val weekAlcohol by remember { mutableFloatStateOf(2f) }
-    val yesterdaySmoking by remember { mutableFloatStateOf(4f) }
-    val currentSmoking by remember { mutableFloatStateOf(5f) }
-    val yesterdayCaffeine by remember { mutableFloatStateOf(1f) }
-    val currentCaffeine by remember { mutableFloatStateOf(1f) }
-    val goalAlcohol by remember { mutableFloatStateOf(3f) }
-    val goalSmoking by remember { mutableFloatStateOf(3f) }
-    val goalCaffeine by remember { mutableFloatStateOf(3f) }
+        yesterdayAlcohol =
+            alcoholViewModel.getYesterdayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
+        currentAlcohol =
+            alcoholViewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
+        weekAlcohol =
+            alcoholViewModel.getWeekTotalAlcoholRecord(alcoholRecords.value)
+        alcoholGraphData =
+            alcoholViewModel.getWeekAlcoholRecord(alcoholRecords.value)
+    }
+
+    LaunchedEffect(smokingRecords.value) {
+        yesterdaySmoking =
+            smokingViewModel.getYesterdaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
+        currentSmoking =
+            smokingViewModel.getTodaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
+        weekSmoking =
+            smokingViewModel.getWeekTotalSmokingRecord(smokingRecords.value)
+        smokingGraphData =
+            smokingViewModel.getWeekSmokingRecord(smokingRecords.value)
+    }
+
+    LaunchedEffect(caffeineRecords.value) {
+        yesterdayCaffeine =
+            caffeineViewModel.getYesterdayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
+        currentCaffeine =
+            caffeineViewModel.getTodayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
+        weekCaffeine =
+            caffeineViewModel.getWeekTotalCaffeineRecord(caffeineRecords.value)
+        caffeineGraphData =
+            caffeineViewModel.getWeekCaffeineRecord(caffeineRecords.value)
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -137,56 +184,75 @@ fun StatisticPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(modifier = Modifier.padding(12.dp))
-            // 카테고리 선택
-            TimeframeSelector(
-                options = listOf("음주", "흡연", "카페인"),
-                selectedOption = selectedOption,
-                onOptionSelected = { selectedOption = it }
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(16.dp),
+                    color = MediumBlue
+                )
+                Text(
+                    text = "로딩 중...",
+                    fontFamily = minSansFontFamily,
+                    fontSize = 16.sp,
+                    color = Color.Black
+                )
+            } else {
+                Spacer(modifier = Modifier.padding(12.dp))
+                // 카테고리 선택
+                TimeframeSelector(
+                    options = listOf("음주", "흡연", "카페인"),
+                    selectedOption = selectedOption,
+                    onOptionSelected = { selectedOption = it }
+                )
 
-            Spacer(modifier = Modifier.padding(12.dp))
+                Spacer(modifier = Modifier.padding(12.dp))
 
-            // 통계 페이지
-            if (selectedOption == "음주") {
-                AlcoholCount(
-                    yesterdayAlcohol = yesterdayAlcohol,
-                    currentAlcohol = currentAlcohol,
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                AlcoholStatistic(
-                    progress = 0.3f,
-                    weekAlcohol = weekAlcohol,
-                    goalAlcohol = goalAlcohol,
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                ColumnGraph(unit = "잔", threshold = goalAlcohol)
-            } else if (selectedOption == "흡연") {
-                SmokingCount(
-                    yesterdaySmoking = yesterdaySmoking,
-                    currentSmoking = currentSmoking,
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                SmokingStatistic(
-                    progress = 0.7f,
-                    currentSmoking = currentSmoking,
-                    goalSmoking = goalSmoking
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                ColumnGraph(unit = "개피", threshold = goalSmoking)
-            } else if (selectedOption == "카페인") {
-                CaffeineCount(
-                    yesterdayCaffeine = yesterdayCaffeine,
-                    currentCaffeine = currentCaffeine,
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                CaffeineStatistic(
-                    progress = 0.5f,
-                    currentCaffeine = currentCaffeine,
-                    goalCaffeine = goalCaffeine
-                )
-                Spacer(modifier = Modifier.padding(10.dp))
-                ColumnGraph(unit = "잔", threshold = goalCaffeine)
+                // 통계 페이지
+                if (selectedOption == "음주") {
+                    AlcoholCount(
+                        yesterdayAlcohol = yesterdayAlcohol,
+                        currentAlcohol = currentAlcohol,
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    AlcoholStatistic(
+                        progress = weekAlcohol.toFloat() / 7,
+                        weekAlcohol = weekAlcohol,
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    ColumnGraph(
+                        unit = "술",
+                        data = alcoholGraphData,
+                    )
+                } else if (selectedOption == "흡연") {
+                    SmokingCount(
+                        yesterdaySmoking = yesterdaySmoking,
+                        currentSmoking = currentSmoking,
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    SmokingStatistic(
+                        progress = 0.7f,
+                        weekSmoking = weekSmoking,
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    ColumnGraph(
+                        unit = "개피",
+                        data = smokingGraphData,
+                    )
+                } else if (selectedOption == "카페인") {
+                    CaffeineCount(
+                        yesterdayCaffeine = yesterdayCaffeine,
+                        currentCaffeine = currentCaffeine,
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    CaffeineStatistic(
+                        progress = 0.5f,
+                        weekCaffeine = weekCaffeine,
+                    )
+                    Spacer(modifier = Modifier.padding(10.dp))
+                    ColumnGraph(
+                        unit = "잔",
+                        data = caffeineGraphData,
+                    )
+                }
             }
         }
     }
@@ -235,7 +301,6 @@ fun TimeframeSelector(
 fun GaugeGraph(
     modifier: Modifier = Modifier,
     progress: Float,
-    goalText: String,
     achievedText: String,
     backgroundColor: Color = WhiteBlue,
     progressColor: Color = MediumBlue
@@ -276,7 +341,6 @@ fun GaugeGraph(
                 fontFamily = minSansFontFamily,
                 color = Color.Black
             )
-//            Text(text = "목표 : $goalText", fontSize = 14.sp, color = Color.Black)
         }
     }
 }
@@ -345,12 +409,10 @@ fun AlcoholCount(
 @Composable
 fun AlcoholStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
-    weekAlcohol: Float,
-    goalAlcohol: Float,
+    weekAlcohol: Int,
 ) {
     val alcoholTitle = "일주일 음주 통계"
-    val current = weekAlcohol.toInt().toString() + "잔"
-    val goal = goalAlcohol.toInt().toString() + "잔"
+    val current = weekAlcohol.toInt().toString() + "일"
 
     Column(
         modifier = Modifier
@@ -367,7 +429,6 @@ fun AlcoholStatistic(
         )
         GaugeGraph(
             progress = progress,
-            goalText = goal,
             achievedText = current,
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue
@@ -377,8 +438,8 @@ fun AlcoholStatistic(
 
 @Composable
 fun SmokingCount(
-    yesterdaySmoking: Float,
-    currentSmoking: Float,
+    yesterdaySmoking: Int,
+    currentSmoking: Int,
 ) {
     Surface(
         modifier = Modifier
@@ -446,12 +507,10 @@ fun SmokingCount(
 @Composable
 fun SmokingStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
-    currentSmoking: Float,
-    goalSmoking: Float,
+    weekSmoking: Int,
 ) {
     val smokingTitle = "일주일 흡연 통계"
-    val current = currentSmoking.toInt().toString() + "개피"
-    val goal = goalSmoking.toInt().toString() + "개피"
+    val current = weekSmoking.toInt().toString() + "개피"
 
     Column(
         modifier = Modifier
@@ -468,7 +527,6 @@ fun SmokingStatistic(
         )
         GaugeGraph(
             progress = progress,
-            goalText = goal,
             achievedText = current,
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue
@@ -478,8 +536,8 @@ fun SmokingStatistic(
 
 @Composable
 fun CaffeineCount(
-    yesterdayCaffeine: Float,
-    currentCaffeine: Float,
+    yesterdayCaffeine: Int,
+    currentCaffeine: Int,
 ) {
     Surface(
         modifier = Modifier
@@ -547,12 +605,10 @@ fun CaffeineCount(
 @Composable
 fun CaffeineStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
-    currentCaffeine: Float,
-    goalCaffeine: Float,
+    weekCaffeine: Int,
 ) {
     val caffeineTitle = "일주일 카페인 통계"
-    val current = currentCaffeine.toInt().toString() + "잔"
-    val goal = goalCaffeine.toInt().toString() + "잔"
+    val current = weekCaffeine.toInt().toString() + "잔"
 
     Column(
         modifier = Modifier
@@ -569,7 +625,6 @@ fun CaffeineStatistic(
         )
         GaugeGraph(
             progress = progress,
-            goalText = goal,
             achievedText = current,
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue

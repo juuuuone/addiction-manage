@@ -27,6 +27,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,6 +52,7 @@ import com.example.addiction_manage.R
 import com.example.addiction_manage.feature.alcohol.AlcoholRecording
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.feature.smoking.SmokingRecording
+import com.example.addiction_manage.feature.smoking.SmokingViewModel
 import com.example.addiction_manage.ui.theme.BackgroundColor
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.DarkRed
@@ -59,6 +62,7 @@ import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.MediumGrey
 import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.WhiteBlue
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun CaffeinePage(
@@ -66,8 +70,18 @@ fun CaffeinePage(
     navController: NavController,
     navigateToHome: () -> Unit
 ) {
+    val viewModel = hiltViewModel<CaffeineViewModel>()
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userId = currentUser?.uid ?: return
     var count by remember { mutableIntStateOf(0) }
-
+    LaunchedEffect(key1 = true) {
+        viewModel.listenForCaffeineRecords(userId)
+    }
+    val caffeineRecords = viewModel.caffeineRecords.collectAsState()
+    val todayRecord = viewModel.getTodayCaffeineRecord(caffeineRecords.value)
+    LaunchedEffect(key1 = todayRecord) {
+        count = todayRecord?.drinks ?: 0
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = BackgroundColor,
@@ -118,6 +132,12 @@ fun CaffeineRecording(
             Spacer(modifier = Modifier.height(40.dp))
             Text("오늘 카페인 음료를 몇 잔 마셨나요?", color = MediumBlue, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(60.dp))
+            Text(
+                text = "오늘",
+                fontSize = 30.sp,
+                color = MediumBlue,
+                modifier = Modifier.padding(top = 15.dp)
+            )
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {

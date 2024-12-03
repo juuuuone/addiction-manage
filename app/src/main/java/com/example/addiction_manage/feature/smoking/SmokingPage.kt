@@ -20,6 +20,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +41,9 @@ import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.WhiteBlue
+import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SmokingPage(
@@ -46,7 +51,18 @@ fun SmokingPage(
     navController: NavController,
     navigateToHome: () -> Unit,
 ) {
+    val viewModel = hiltViewModel<SmokingViewModel>()
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val userId = currentUser?.uid ?: return
     var count by remember { mutableIntStateOf(0) }
+    LaunchedEffect(key1 = true) {
+        viewModel.listenForSmokingRecords(userId)
+    }
+    val smokingRecords = viewModel.smokingRecords.collectAsState()
+    val todayRecord = viewModel.getTodaySmokingRecord(smokingRecords.value)
+    LaunchedEffect(key1 = todayRecord) {
+        count = todayRecord?.cigarettes ?: 0
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -98,6 +114,12 @@ fun SmokingRecording(
             Spacer(modifier = Modifier.height(40.dp))
             Text("오늘 담배를 얼마나 폈나요?", color = MediumBlue, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(60.dp))
+            Text(
+                text = "오늘",
+                fontSize = 30.sp,
+                color = MediumBlue,
+                modifier = Modifier.padding(top = 15.dp)
+            )
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
