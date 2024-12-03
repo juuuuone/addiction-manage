@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +47,7 @@ fun CaffeineGoalPage(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "카페인 목표 설정",
+                        text = stringResource(id = R.string.set_goal),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Black
@@ -74,14 +75,14 @@ fun CaffeineGoalPage(
         ) {
             // 제목 및 설명
             Text(
-                text = "카페인 목표를 설정하세요",
+                text = stringResource(id=R.string.set_caffeine_goal),
                 color = Black,
                 fontSize = 24.sp,
                 fontFamily = boldFontFamily,
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "하루 목표 섭취 잔 수를 입력하거나\n'카페인을 섭취하지 않습니다'를 체크하세요.",
+                text = stringResource(id=R.string.write_caffeine_goal),
                 fontSize = 19.sp,
                 fontFamily = lightFontFamily,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -112,7 +113,7 @@ fun CaffeineGoalPage(
                         shape = RoundedCornerShape(8.dp)
                         ) {
                         Text(
-                            text= "저장",
+                            text= Text(stringResource(id=R.string.save_button)),
                             fontFamily = lightFontFamily
                         )
                     }
@@ -120,7 +121,7 @@ fun CaffeineGoalPage(
 
                     // 체크박스
                     CheckboxWithBorder(
-                        label = "카페인을 섭취하지 않습니다",
+                        label = stringResource(id=R.string.not_caffeine),
                         isChecked = isCaffeineChecked,
                         onCheckedChange = { viewModel.setNoCaffeineChecked(it) }
                     )
@@ -146,12 +147,12 @@ fun CaffeineGoalPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "다음", fontFamily = lightFontFamily, fontSize = 20.sp)
+                Text(text = stringResource(id=R.string.next_button), fontFamily = lightFontFamily, fontSize = 20.sp)
             }
 
 
             if (showDialog.value) {
-                com.example.addiction_manage.feature.alcohol.showSaveDialog(
+                ShowSaveDialog(
                     onDismiss = { showDialog.value = false }
                 )
             }
@@ -159,17 +160,16 @@ fun CaffeineGoalPage(
     }
 }
 @Composable
-fun showSaveDialog(onDismiss: () -> Unit) {
+fun ShowSaveDialog(onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("확인")
+                Text(stringResource(id=R.string.check_button))
             }
         },
-        title = { Text("알림") },
-        text = { Text("저장되었습니다!") }
+        title = { Text(stringResource(id = R.string.notify)) },
+        text = { Text(stringResource(id=R.string.is_saving)) }
     )
-
 }

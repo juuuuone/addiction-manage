@@ -2,7 +2,6 @@ package com.example.addiction_manage.feature.smoking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -46,10 +46,10 @@ fun SmokingGoalPage(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "흡연 목표 설정",
+                        text = stringResource(id = R.string.set_goal),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Color.Black
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
@@ -74,6 +74,7 @@ fun SmokingGoalPage(
         ) {
             // 제목 및 설명
             Text(
+                text = stringResource(id= R.string.set_smoking_goal),
                 text = "흡연 목표를 설정하세요",
                 color = Black,
                 fontSize = 24.sp,
@@ -81,7 +82,7 @@ fun SmokingGoalPage(
             )
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "오늘 목표 흡연량을 작성하거나\n'흡연하지 않습니다'를 체크하세요.",
+                text = stringResource(id= R.string.write_smoking_goal),
                 fontSize = 19.sp,
                 fontFamily = lightFontFamily,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -123,7 +124,7 @@ fun SmokingGoalPage(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "저장",
+                            text = stringResource(id=R.string.save_button),
                             fontFamily = lightFontFamily
                         )
                     }
@@ -132,7 +133,7 @@ fun SmokingGoalPage(
 
                     // 체크박스
                     CheckboxWithBorder(
-                        label = "흡연하지 않습니다",
+                        label = stringResource(id = R.string.not_smoking),
                         isChecked = isSmokingChecked,
                         onCheckedChange = { viewModel.setNoSmokingChecked(it) }
                     )
@@ -152,12 +153,12 @@ fun SmokingGoalPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "다음", fontFamily = lightFontFamily, fontSize = 20.sp)
+                Text(text = stringResource(id=R.string.next_button), fontFamily = lightFontFamily, fontSize = 20.sp)
             }
         }
 
         if (showDialog.value) {
-            com.example.addiction_manage.feature.alcohol.showSaveDialog(
+            ShowSaveDialog(
                 onDismiss = { showDialog.value = false }
             )
         }
@@ -254,17 +255,16 @@ fun CheckboxWithBorder(label: String, isChecked: Boolean, onCheckedChange: (Bool
 
 
 @Composable
-fun showSaveDialog(onDismiss: () -> Unit) {
+fun ShowSaveDialog(onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("확인")
+                Text(stringResource(id=R.string.check_button))
             }
         },
-        title = { Text("알림") },
-        text = { Text("저장되었습니다!") }
+        title = { Text(stringResource(id = R.string.notify)) },
+        text = { Text(stringResource(id=R.string.is_saving)) }
     )
-
 }

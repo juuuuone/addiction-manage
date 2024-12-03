@@ -4,4 +4,19 @@
     <string name="signintext">Don\'t have an account? Sign up!</string>
     <string name="signup">Sign Up</string>
     <string name="signuptext">Already have an account? Sign in!</string>
+    <string name="save_button">저장</string>
+    <string name="is_saving">저장되었습니다!</string>
+    <string name="check_button">확인</string>
+    <string name="notify">알림</string>
+    <string name="next_button">다음</string>
+    <string name="set_goal">목표 설정</string>
+    <string name="set_caffeine_goal">카페인 목표를 설정하세요</string>
+    <string name="write_caffeine_goal">오늘 목표 카페인량을 작성하거나\n `카페인을 섭취하지 않습니다`를\n 체크하세요.</string>
+    <string name="not_caffeine">카페인을 섭취하지 않습니다.</string>
+    <string name="set_alcohol_goal">음주 목표를 설정하세요</string>
+    <string name="write_alcohol_goal">일주일 목표 음주량 작성하거나\n `음주하지 않습니다`를 체크하세요.</string>
+    <string name="not_alcohol">음주하지 않습니다.</string>
+    <string name="set_smoking_goal">흡연 목표를 설정하세요</string>
+    <string name="write_smoking_goal">오늘 목표 흡연량을 작성하거나\n `흡연하지 않습니다`를 체크하세요.</string>
+    <string name="not_smoking">흡연하지 않습니다.</string>
 </resources>
