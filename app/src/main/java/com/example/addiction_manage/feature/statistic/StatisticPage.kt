@@ -74,8 +74,12 @@ fun StatisticPage(
     navController: NavController,
     selectedItem: Int,
 ) {
+    val alcoholString = stringResource(id = R.string.alcohol)
+    val smokingString = stringResource(id = R.string.smoking)
+    val caffeineString = stringResource(id = R.string.caffeine)
+
     var isLoading by remember { mutableStateOf(true) }
-    var selectedOption by remember { mutableStateOf("음주") }
+    var selectedOption by remember { mutableStateOf("") }
 
     var yesterdayAlcohol by remember { mutableStateOf(false) }
     var currentAlcohol by remember { mutableStateOf(true) }
@@ -96,6 +100,8 @@ fun StatisticPage(
     var smokingGraphData by remember { mutableStateOf(emptyList<Pair<String, Int>>()) }
     var caffeineGraphData by remember { mutableStateOf(emptyList<Pair<String, Int>>()) }
 
+    var options by remember { mutableStateOf<List<String>>(emptyList()) }
+
     val currentUser = FirebaseAuth.getInstance().currentUser
     val userId = currentUser?.uid ?: return
 
@@ -113,46 +119,75 @@ fun StatisticPage(
     }
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
     val alcoholGoal = alcoholGoalViewModel.goal.collectAsState()
+    val hasAlcoholGoal = alcoholGoalViewModel.isAlcoholChecked.collectAsState()
     val smokingRecords = smokingViewModel.smokingRecords.collectAsState()
     val smokingGoal = smokingGoalViewModel.goal.collectAsState()
+    val hasSmokingGoal = smokingGoalViewModel.isSmokingChecked.collectAsState()
     val caffeineRecords = caffeineViewModel.caffeineRecords.collectAsState()
     val caffeineGoal = caffeineGoalViewModel.goal.collectAsState()
+    val hasCaffeineGoal = caffeineGoalViewModel.isCaffeineChecked.collectAsState()
 
-    LaunchedEffect(alcoholRecords.value) {
+    LaunchedEffect(
+        alcoholRecords.value,
+        smokingRecords.value,
+        caffeineRecords.value,
+        alcoholGoal.value,
+        smokingGoal.value,
+        caffeineGoal.value,
+        hasAlcoholGoal.value,
+        hasSmokingGoal.value,
+        hasCaffeineGoal.value,
+    ) {
         if (alcoholRecords.value.isNotEmpty() && smokingRecords.value.isNotEmpty() && caffeineRecords.value.isNotEmpty()) {
             isLoading = false
         }
+        if (alcoholRecords.value.isNotEmpty()) {
+            yesterdayAlcohol =
+                alcoholViewModel.getYesterdayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
+            currentAlcohol =
+                alcoholViewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
+            weekAlcohol = alcoholViewModel.getWeekTotalAlcoholRecord(alcoholRecords.value)
+            alcoholGraphData = alcoholViewModel.getWeekAlcoholRecord(alcoholRecords.value)
+        }
+        if (smokingRecords.value.isNotEmpty()) {
+            yesterdaySmoking =
+                smokingViewModel.getYesterdaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
+            currentSmoking =
+                smokingViewModel.getTodaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
+            weekSmoking = smokingViewModel.getWeekTotalSmokingRecord(smokingRecords.value)
+            smokingGraphData = smokingViewModel.getWeekSmokingRecord(smokingRecords.value)
+        }
+        if (caffeineRecords.value.isNotEmpty()) {
+            yesterdayCaffeine =
+                caffeineViewModel.getYesterdayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
+            currentCaffeine =
+                caffeineViewModel.getTodayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
+            weekCaffeine = caffeineViewModel.getWeekTotalCaffeineRecord(caffeineRecords.value)
+            caffeineGraphData = caffeineViewModel.getWeekCaffeineRecord(caffeineRecords.value)
+        }
+        if (alcoholGoal.value.isNotEmpty()) {
+            goalAlcohol = alcoholGoalViewModel.getCurrentUserGoal()?.goal?.toInt() ?: 0
+        }
+        if (smokingGoal.value.isNotEmpty()) {
+            goalSmoking = smokingGoalViewModel.getCurrentUserGoal()?.goal?.toInt() ?: 0
+        }
+        if (caffeineGoal.value.isNotEmpty()) {
+            goalCaffeine = caffeineGoalViewModel.getCurrentUserGoal()?.goal?.toInt() ?: 0
+        }
 
-        yesterdayAlcohol =
-            alcoholViewModel.getYesterdayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
-        currentAlcohol =
-            alcoholViewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
-        weekAlcohol =
-            alcoholViewModel.getWeekTotalAlcoholRecord(alcoholRecords.value)
-        alcoholGraphData =
-            alcoholViewModel.getWeekAlcoholRecord(alcoholRecords.value)
-    }
+        var updatedOptions = mutableListOf<String>()
 
-    LaunchedEffect(smokingRecords.value) {
-        yesterdaySmoking =
-            smokingViewModel.getYesterdaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
-        currentSmoking =
-            smokingViewModel.getTodaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
-        weekSmoking =
-            smokingViewModel.getWeekTotalSmokingRecord(smokingRecords.value)
-        smokingGraphData =
-            smokingViewModel.getWeekSmokingRecord(smokingRecords.value)
-    }
-
-    LaunchedEffect(caffeineRecords.value) {
-        yesterdayCaffeine =
-            caffeineViewModel.getYesterdayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
-        currentCaffeine =
-            caffeineViewModel.getTodayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
-        weekCaffeine =
-            caffeineViewModel.getWeekTotalCaffeineRecord(caffeineRecords.value)
-        caffeineGraphData =
-            caffeineViewModel.getWeekCaffeineRecord(caffeineRecords.value)
+        if (!hasAlcoholGoal.value) {
+            updatedOptions.add(alcoholString)
+        }
+        if (!hasSmokingGoal.value) {
+            updatedOptions.add(smokingString)
+        }
+        if (!hasCaffeineGoal.value) {
+            updatedOptions.add(caffeineString)
+        }
+        options = updatedOptions
+        selectedOption = options.firstOrNull() ?: ""
     }
 
     Scaffold(
@@ -185,72 +220,71 @@ fun StatisticPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          if (isLoading) {
+            if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.padding(16.dp),
                     color = MediumBlue
                 )
                 Text(
-                    text = "로딩 중...",
+                    text = stringResource(id = R.string.loading),
                     fontFamily = minSansFontFamily,
                     fontSize = 16.sp,
                     color = Color.Black
                 )
             } else {
                 Spacer(modifier = Modifier.padding(12.dp))
-                // 카테고리 선택
                 TimeframeSelector(
-                    options = listOf("음주", "흡연", "카페인"),
+                    options = options,
                     selectedOption = selectedOption,
                     onOptionSelected = { selectedOption = it }
                 )
-
                 Spacer(modifier = Modifier.padding(12.dp))
-
-                // 통계 페이지
-                if (selectedOption == "음주") {
+                if (selectedOption == alcoholString) {
                     AlcoholCount(
                         yesterdayAlcohol = yesterdayAlcohol,
                         currentAlcohol = currentAlcohol,
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     AlcoholStatistic(
-                        progress = weekAlcohol.toFloat() / 7,
+                        progress = weekAlcohol.toFloat() / goalAlcohol,
                         weekAlcohol = weekAlcohol,
+                        goalAlcohol = goalAlcohol,
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     ColumnGraph(
-                        unit = "술",
+                        unit = stringResource(id = R.string.soju),
                         data = alcoholGraphData,
                     )
-                } else if (selectedOption == "흡연") {
+                } else if (selectedOption == smokingString) {
                     SmokingCount(
                         yesterdaySmoking = yesterdaySmoking,
                         currentSmoking = currentSmoking,
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     SmokingStatistic(
-                        progress = 0.7f,
+                        progress = weekSmoking.toFloat() / (goalSmoking * 7),
                         weekSmoking = weekSmoking,
+                        goalSmoking = goalSmoking * 7,
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     ColumnGraph(
-                        unit = "개피",
+                        unit = stringResource(id = R.string.gp),
                         data = smokingGraphData,
                     )
-                } else if (selectedOption == "카페인") {
+                } else if (selectedOption == caffeineString) {
                     CaffeineCount(
                         yesterdayCaffeine = yesterdayCaffeine,
                         currentCaffeine = currentCaffeine,
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     CaffeineStatistic(
-                        progress = 0.5f,
+                        progress = weekCaffeine.toFloat() / (goalCaffeine * 7),
                         weekCaffeine = weekCaffeine,
+                        goalCaffeine = goalCaffeine * 7,
                     )
                     Spacer(modifier = Modifier.padding(10.dp))
                     ColumnGraph(
-                        unit = "잔",
+                        unit = stringResource(id = R.string.cup),
                         data = caffeineGraphData,
                     )
                 }
@@ -302,7 +336,8 @@ fun TimeframeSelector(
 fun GaugeGraph(
     modifier: Modifier = Modifier,
     progress: Float,
-    achievedText: String,
+    current: String,
+    goal: String,
     backgroundColor: Color = WhiteBlue,
     progressColor: Color = MediumBlue
 ) {
@@ -337,7 +372,13 @@ fun GaugeGraph(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(id=R.string.now) + " : $achievedText",
+                text = stringResource(id = R.string.now) + " : $current",
+                fontSize = 14.sp,
+                fontFamily = minSansFontFamily,
+                color = Color.Black
+            )
+            Text(
+                text = stringResource(id = R.string.goal) + " : $goal",
                 fontSize = 14.sp,
                 fontFamily = minSansFontFamily,
                 color = Color.Black
@@ -369,10 +410,16 @@ fun AlcoholCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id=R.string.yesterday), fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(
+                    text = stringResource(id = R.string.yesterday),
+                    fontSize = 14.sp,
+                    fontFamily = minSansFontFamily
+                )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = if (yesterdayAlcohol) stringResource(id=R.string.alcohol) else stringResource(id=R.string.no_alcohol),
+                    text = if (yesterdayAlcohol) stringResource(id = R.string.alcohol) else stringResource(
+                        id = R.string.no_alcohol
+                    ),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -382,10 +429,16 @@ fun AlcoholCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id=R.string.today), fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(
+                    text = stringResource(id = R.string.today),
+                    fontSize = 14.sp,
+                    fontFamily = minSansFontFamily
+                )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = if (currentAlcohol) stringResource(id=R.string.alcohol) else stringResource(id=R.string.no_alcohol),
+                    text = if (currentAlcohol) stringResource(id = R.string.alcohol) else stringResource(
+                        id = R.string.no_alcohol
+                    ),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -399,7 +452,7 @@ fun AlcoholCount(
                     painter = painterResource(
                         id = if (currentAlcohol) R.drawable.downarrow else R.drawable.uparrow
                     ),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -411,9 +464,11 @@ fun AlcoholCount(
 fun AlcoholStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
     weekAlcohol: Int,
+    goalAlcohol: Int,
 ) {
-    val alcoholTitle = stringResource(id=R.string.weekly_alcohol_statistic)
-    val current = weekAlcohol.toInt().toString() + stringResource(id=R.string.cup)
+    val alcoholTitle = stringResource(id = R.string.weekly_alcohol_statistic)
+    val current = weekAlcohol.toString() + stringResource(id = R.string.day)
+    val goal = goalAlcohol.toString() + stringResource(id = R.string.day)
 
     Column(
         modifier = Modifier
@@ -430,7 +485,8 @@ fun AlcoholStatistic(
         )
         GaugeGraph(
             progress = progress,
-            achievedText = current,
+            current = current,
+            goal = goal,
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue
         )
@@ -459,10 +515,14 @@ fun SmokingCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id=R.string.yesterday), fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(
+                    text = stringResource(id = R.string.yesterday),
+                    fontSize = 14.sp,
+                    fontFamily = minSansFontFamily
+                )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = yesterdaySmoking.toInt().toString() + stringResource(id=R.string.gp),
+                    text = yesterdaySmoking.toString() + stringResource(id = R.string.gp),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -472,10 +532,14 @@ fun SmokingCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id=R.string.today), fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(
+                    text = stringResource(id = R.string.today),
+                    fontSize = 14.sp,
+                    fontFamily = minSansFontFamily
+                )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = currentSmoking.toInt().toString() + stringResource(id=R.string.gp),
+                    text = currentSmoking.toString() + stringResource(id = R.string.gp),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -486,18 +550,18 @@ fun SmokingCount(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = (currentSmoking.toInt() - yesterdaySmoking.toInt()).absoluteValue.toString(),
+                    text = (currentSmoking - yesterdaySmoking).absoluteValue.toString(),
                     fontSize = 20.sp,
                     fontFamily = minSansFontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = if (currentSmoking.toInt() > yesterdaySmoking.toInt()) Red else Blue
+                    color = if (currentSmoking > yesterdaySmoking) Red else Blue
                 )
                 Image(
                     painter = painterResource(
-                        id = if (currentSmoking.toInt() > yesterdaySmoking.toInt()) R.drawable.uparrow
+                        id = if (currentSmoking > yesterdaySmoking) R.drawable.uparrow
                         else R.drawable.downarrow
                     ),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -509,9 +573,11 @@ fun SmokingCount(
 fun SmokingStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
     weekSmoking: Int,
+    goalSmoking: Int,
 ) {
-    val smokingTitle = stringResource(id=R.string.weekly_smoking_statistic)
-    val current = currentSmoking.toInt().toString() + stringResource(id=R.string.gp)
+    val smokingTitle = stringResource(id = R.string.weekly_smoking_statistic)
+    val current = weekSmoking.toString() + stringResource(id = R.string.gp)
+    val goal = goalSmoking.toString() + stringResource(id = R.string.gp)
 
     Column(
         modifier = Modifier
@@ -528,7 +594,8 @@ fun SmokingStatistic(
         )
         GaugeGraph(
             progress = progress,
-            achievedText = current,
+            current = current,
+            goal = goal,
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue
         )
@@ -557,10 +624,14 @@ fun CaffeineCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id=R.string.yesterday), fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(
+                    text = stringResource(id = R.string.yesterday),
+                    fontSize = 14.sp,
+                    fontFamily = minSansFontFamily
+                )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = yesterdayCaffeine.toInt().toString() + stringResource(id=R.string.cup),
+                    text = yesterdayCaffeine.toString() + stringResource(id = R.string.cup),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -570,10 +641,14 @@ fun CaffeineCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = stringResource(id=R.string.today), fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(
+                    text = stringResource(id = R.string.today),
+                    fontSize = 14.sp,
+                    fontFamily = minSansFontFamily
+                )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = currentCaffeine.toInt().toString() + stringResource(id=R.string.cup),
+                    text = currentCaffeine.toString() + stringResource(id = R.string.cup),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -584,18 +659,18 @@ fun CaffeineCount(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Text(
-                    text = (currentCaffeine.toInt() - yesterdayCaffeine.toInt()).absoluteValue.toString(),
+                    text = (currentCaffeine - yesterdayCaffeine).absoluteValue.toString(),
                     fontSize = 20.sp,
                     fontFamily = minSansFontFamily,
                     fontWeight = FontWeight.Bold,
-                    color = if (currentCaffeine.toInt() > yesterdayCaffeine.toInt()) Red else Blue
+                    color = if (currentCaffeine > yesterdayCaffeine) Red else Blue
                 )
                 Image(
                     painter = painterResource(
-                        id = if (currentCaffeine.toInt() > yesterdayCaffeine.toInt()) R.drawable.uparrow
+                        id = if (currentCaffeine > yesterdayCaffeine) R.drawable.uparrow
                         else R.drawable.downarrow
                     ),
-                    contentDescription = "",
+                    contentDescription = null,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -607,9 +682,11 @@ fun CaffeineCount(
 fun CaffeineStatistic(
     progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
     weekCaffeine: Int,
+    goalCaffeine: Int,
 ) {
-    val caffeineTitle = stringResource(id=R.string.weekly_caffeine_statistic)
-    val current = currentCaffeine.toInt().toString() + stringResource(id=R.string.cup)
+    val caffeineTitle = stringResource(id = R.string.weekly_caffeine_statistic)
+    val current = weekCaffeine.toString() + stringResource(id = R.string.cup)
+    val goal = goalCaffeine.toString() + stringResource(id = R.string.cup)
 
     Column(
         modifier = Modifier
@@ -626,7 +703,8 @@ fun CaffeineStatistic(
         )
         GaugeGraph(
             progress = progress,
-            achievedText = current,
+            current = current,
+            goal = goal,
             backgroundColor = WhiteBlue,
             progressColor = MediumBlue
         )

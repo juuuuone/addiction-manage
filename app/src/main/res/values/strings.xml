@@ -43,8 +43,10 @@
     <string name="logout">로그아웃</string>
     <string name="nickname">닉네임</string>
 
+    <string name="loading">로딩 중...</string>
 
     <string name="now">현재</string>
+    <string name="goal">일주일 목표</string>
     <string name="weekly_alcohol_statistic">일주일 음주 통계</string>
     <string name="weekly_smoking_statistic">일주일 흡연 통계</string>
     <string name="weekly_caffeine_statistic">일주일 카페인 통계</string>
@@ -52,6 +54,8 @@
     <string name="no_alcohol">금주</string>
     <string name="smoking">흡연</string>
     <string name="caffeine">카페인</string>
+    <string name="day">일</string>
+    <string name="soju">술</string>
     <string name="gp">개피</string>
     <string name="cup">잔</string>
 

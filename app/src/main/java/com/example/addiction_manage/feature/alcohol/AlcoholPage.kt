@@ -110,7 +110,7 @@ fun AlcoholRecording(
     navigateToHome: () -> Unit
 ) {
     val viewModel = hiltViewModel<AlcoholViewModel>()
-    var selected by rememberSaveable { mutableIntStateOf(0) }
+    var selected by rememberSaveable { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -132,14 +132,14 @@ fun AlcoholRecording(
             ) {
                 Button(
                     onClick = {
-                        selected = 1
+                        selected = true
                         setAnswer(true)
                     },
                     modifier = Modifier
                         .padding(4.dp)
                         .width(150.dp)
                         .height(50.dp),
-                    colors = if (selected == 1) ButtonDefaults.buttonColors(containerColor = MediumBlue)
+                    colors = if (selected) ButtonDefaults.buttonColors(containerColor = MediumBlue)
                     else ButtonDefaults.buttonColors(
                         containerColor = WhiteBlue
                     ),
@@ -155,14 +155,14 @@ fun AlcoholRecording(
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
                     onClick = {
-                        selected = 2
+                        selected = false
                         setAnswer(false)
                     },
                     modifier = Modifier
                         .padding(4.dp)
                         .width(150.dp)
                         .height(50.dp),
-                    colors = if (selected == 2) ButtonDefaults.buttonColors(containerColor = MediumBlue)
+                    colors = if (!selected) ButtonDefaults.buttonColors(containerColor = MediumBlue)
                     else ButtonDefaults.buttonColors(
                         containerColor = WhiteBlue
                     ),
