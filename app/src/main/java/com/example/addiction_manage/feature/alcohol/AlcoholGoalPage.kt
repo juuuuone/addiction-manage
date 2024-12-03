@@ -3,17 +3,21 @@ package com.example.addiction_manage.feature.alcohol
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.R
 import com.example.addiction_manage.feature.smoking.CheckboxWithBorder
 import com.example.addiction_manage.ui.theme.*
 
@@ -35,13 +39,22 @@ fun AlcoholGoalPage(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "음주 목표 설정",
+                        text = stringResource(id = R.string.set_goal),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Color.Black
                     )
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigateUp()}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                },
             )
         }
     ) { innerPadding ->
@@ -54,14 +67,14 @@ fun AlcoholGoalPage(
         ) {
             // 제목 및 설명
             Text(
-                text = "음주 목표를 설정하세요",
+                text = stringResource(id=R.string.set_alcohol_goal),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Black
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "오늘과 일주일의 음주량 목표를 설정하거나\n'음주하지 않습니다'를 체크하세요.",
+                text = stringResource(id=R.string.write_alcohol_goal),
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -111,14 +124,14 @@ fun AlcoholGoalPage(
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("저장")
+                        Text(stringResource(id=R.string.save_button))
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // 체크박스: 음주하지 않습니다
                     CheckboxWithBorder(
-                        label = "음주하지 않습니다",
+                        label = stringResource(id=R.string.not_alcohol),
                         isChecked = isNoAlcoholChecked,
                         onCheckedChange = { viewModel.setNoAlcoholChecked(it) }
                     )
@@ -138,11 +151,11 @@ fun AlcoholGoalPage(
                 colors = ButtonDefaults.buttonColors(containerColor = LightRed),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "다음", fontSize = 18.sp, color = White)
+                Text(text = stringResource(id=R.string.next_button), fontSize = 18.sp, color = White)
             }
 
             if (showDialog.value) {
-                showSaveDialog(
+                ShowSaveDialog(
                     onDismiss = { showDialog.value = false }
                 )
             }
@@ -151,17 +164,16 @@ fun AlcoholGoalPage(
 }
 
 @Composable
-fun showSaveDialog(onDismiss: () -> Unit) {
+fun ShowSaveDialog(onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("확인")
+                Text(stringResource(id=R.string.check_button))
             }
         },
-        title = { Text("알림") },
-        text = { Text("저장되었습니다!") }
+        title = { Text(stringResource(id = R.string.notify)) },
+        text = { Text(stringResource(id=R.string.is_saving)) }
     )
-
 }
