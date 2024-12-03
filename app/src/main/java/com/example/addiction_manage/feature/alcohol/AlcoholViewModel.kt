@@ -1,8 +1,8 @@
-package com.example.addiction_manage.feature.smoking
+package com.example.addiction_manage.feature.alcohol
 
 import androidx.lifecycle.ViewModel
 import com.example.addiction_manage.feature.model.Alcohol
-import com.example.addiction_manage.feature.model.Smoking
+import com.example.addiction_manage.feature.model.Caffeine
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
@@ -16,56 +16,56 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-class SmokingViewModel @Inject constructor() : ViewModel() {
+class AlcoholViewModel @Inject constructor() : ViewModel() {
 
-    private val _smokingRecords = MutableStateFlow<List<Smoking>>(emptyList())
-    val smokingRecords = _smokingRecords.asStateFlow()
+    private val _alcoholRecords = MutableStateFlow<List<Alcohol>>(emptyList())
+    val alcoholRecords = _alcoholRecords.asStateFlow()
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
 
     init {
-        getSmokingRecords()
+        getAlcoholRecords()
     }
 
-    private fun getSmokingRecords() {
+    private fun getAlcoholRecords() {
         // 비동기 함수, DB에서 데이터 받아오기
-        firebaseDatabase.getReference("Smoking").get()
+        firebaseDatabase.getReference("Alcohol").get()
             .addOnSuccessListener {
-                val list = mutableListOf<Smoking>()
+                val list = mutableListOf<Alcohol>()
                 it.children.forEach { data ->
-                    val smoking = Smoking(data.key!!, data.value.toString())
-                    list.add(smoking)
+                    val alcohol = Alcohol(data.key!!, data.value.toString())
+                    list.add(alcohol)
                 }
-                _smokingRecords.value = list
+                _alcoholRecords.value = list
             }
     }
 
-    fun addSmokingRecord(cigarettes: Int) {
+    fun addAlcoholRecord(doDrink: Boolean) {
         val currentUser = firebaseAuth.currentUser
         val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
 
-        val smokingRecord = Smoking(
-            id = firebaseDatabase.reference.child("Smoking").push().key ?: UUID.randomUUID()
+        val alcoholRecord = Alcohol(
+            id = firebaseDatabase.reference.child("Alcohol").push().key ?: UUID.randomUUID()
                 .toString(),
             userId = uid,
-            cigarettes = cigarettes,
+            doDrink = doDrink,
         )
 
-        firebaseDatabase.reference.child("Smoking").child(uid).push().setValue(smokingRecord)
+        firebaseDatabase.reference.child("Alcohol").child(uid).push().setValue(alcoholRecord)
     }
 
-    fun listenForSmokingRecords(userId: String) {
-        firebaseDatabase.reference.child("Smoking").child(userId).orderByChild("createdAt")
+    fun listenForAlcoholRecords(userId: String) {
+        firebaseDatabase.reference.child("Alcohol").child(userId).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val list = mutableListOf<Smoking>()
+                    val list = mutableListOf<Alcohol>()
                     snapshot.children.forEach { data ->
-                        val smoking = data.getValue(Smoking::class.java)
-                        smoking?.let {
-                            list.add(smoking)
+                        val alcohol = data.getValue(Alcohol::class.java)
+                        alcohol?.let {
+                            list.add(alcohol)
                         }
                     }
-                    _smokingRecords.value = list
+                    _alcoholRecords.value = list
                 }
 
                 override fun onCancelled(error: DatabaseError) {

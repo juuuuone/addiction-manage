@@ -12,12 +12,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.addiction_manage.R
 import com.example.addiction_manage.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +36,9 @@ fun SmokingGoalPage(
     val showDialog = remember { mutableStateOf(false) }
     val currentUserGoal = viewModel.getCurrentUserGoal()
     val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
+    //폰트
+    val boldFontFamily = FontFamily(Font(R.font.bold))
+    val lightFontFamily = FontFamily(Font(R.font.light))
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -40,15 +47,15 @@ fun SmokingGoalPage(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "흡연 목표 설정",
+                        text = stringResource(id = R.string.set_goal),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        color = White
+                        color = Color.Black
                     )
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
                 navigationIcon = {
-                    IconButton(onClick = {navController.navigateUp()}) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
@@ -68,18 +75,18 @@ fun SmokingGoalPage(
         ) {
             // 제목 및 설명
             Text(
-                text = "흡연 목표를 설정하세요",
+                text = stringResource(id= R.string.set_smoking_goal),
+                color = Black,
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Black
+                fontFamily = boldFontFamily,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "오늘 목표 흡연량을 작성하거나\n'흡연하지 않습니다'를 체크하세요.",
+                text = stringResource(id= R.string.write_smoking_goal),
                 fontSize = 19.sp,
-                color = Color.DarkGray,
+                fontFamily = lightFontFamily,
                 modifier = Modifier.padding(horizontal = 16.dp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -109,21 +116,26 @@ fun SmokingGoalPage(
 
 
                     Button(
-                        onClick = { viewModel.addGoal(newGoal.value)
-                            showDialog.value = true},
+                        onClick = {
+                            viewModel.addGoal(newGoal.value)
+                            showDialog.value = true
+                        },
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
-                        Text("저장")
+                        Text(
+                            text = stringResource(id=R.string.save_button),
+                            fontFamily = lightFontFamily
+                        )
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     // 체크박스
                     CheckboxWithBorder(
-                        label = "흡연하지 않습니다",
+                        label = stringResource(id = R.string.not_smoking),
                         isChecked = isSmokingChecked,
-                        onCheckedChange = { viewModel.setNoSmokingChecked(it)}
+                        onCheckedChange = { viewModel.setNoSmokingChecked(it) }
                     )
                 }
             }
@@ -141,73 +153,14 @@ fun SmokingGoalPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "다음", fontSize = 18.sp, color = White)
+                Text(text = stringResource(id=R.string.next_button), fontFamily = lightFontFamily, fontSize = 20.sp)
             }
         }
 
         if (showDialog.value) {
-            com.example.addiction_manage.feature.alcohol.showSaveDialog(
+            ShowSaveDialog(
                 onDismiss = { showDialog.value = false }
             )
-        }
-    }
-}
-
-@Composable
-fun GoalDropdown(label: String, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(bottom = 4.dp),
-            color = Black
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(White, RoundedCornerShape(8.dp))
-                .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-                .padding(12.dp)
-                .clickable { expanded = true }
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = selectedOption.ifEmpty { "선택하세요" },
-                    color = Black,
-                    fontSize = 16.sp
-                )
-                Text(
-                    text = "∨",
-                    color = Color.Gray,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = {
-                        Text(option, color = Black)
-                    },
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded = false
-                    }
-                )
-            }
         }
     }
 }
@@ -238,17 +191,16 @@ fun CheckboxWithBorder(label: String, isChecked: Boolean, onCheckedChange: (Bool
 
 
 @Composable
-fun showSaveDialog(onDismiss: () -> Unit) {
+fun ShowSaveDialog(onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("확인")
+                Text(stringResource(id=R.string.check_button))
             }
         },
-        title = { Text("알림") },
-        text = { Text("저장되었습니다!") }
+        title = { Text(stringResource(id = R.string.notify)) },
+        text = { Text(stringResource(id=R.string.is_saving)) }
     )
-
 }

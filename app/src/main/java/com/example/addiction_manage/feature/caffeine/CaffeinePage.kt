@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -43,11 +45,12 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.R
-import com.example.addiction_manage.feature.alcohol.AlcoholDialog2
-import com.example.addiction_manage.feature.alcohol.AlcoholDialog3
+import com.example.addiction_manage.feature.alcohol.AlcoholRecording
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
+import com.example.addiction_manage.feature.smoking.SmokingRecording
 import com.example.addiction_manage.ui.theme.BackgroundColor
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.DarkRed
@@ -64,7 +67,7 @@ fun CaffeinePage(
     navController: NavController,
     navigateToHome: () -> Unit
 ) {
-    val showDialog = remember { mutableStateOf(true) }  // 대화상자를 표시할지 여부를 제어하는 상태
+    var count by remember { mutableIntStateOf(0) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -75,126 +78,128 @@ fun CaffeinePage(
                 navigateUp = { navController.navigateUp() }
             )
         },
-    ) { innerPadding ->
-
-
-        if (showDialog.value) {  // 상태 변수를 확인하여 대화상자를 표시
-            CaffeineDialog1(onDismiss = { showDialog.value = false }, navigateToHome)  // onDismiss에서 대화상자를 숨김
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            CaffeineRecording(
+                count = count,
+                upCount = { count++ },
+                downCount = { if (count > 0) count-- else count = 0 },
+                navigateToHome = navigateToHome
+            )
         }
     }
 }
 
 @Composable
-fun CaffeineDialog1( onDismiss: () -> Unit,
-                     navigateToHome: () -> Unit) {
+fun CaffeineRecording(
+    count: Int,
+    upCount: () -> Unit,
+    downCount: () -> Unit,
+    navigateToHome: () -> Unit
+) {
+    val viewModel = hiltViewModel<CaffeineViewModel>()
 
-    var count by remember { mutableStateOf(0) }  // 초기 선택값 설정
-
-    Dialog(onDismissRequest = { onDismiss() }) {
-        val showDialog = remember { mutableStateOf(true) }
-        val showYesDialog = remember { mutableStateOf(false) }
-        val showNoDialog = remember { mutableStateOf(false) }
-
-        if (showYesDialog.value) {
-            AlcoholDialog2(
-                onDismiss = {
-                    showYesDialog.value = false
-                    onDismiss()  // 부모 다이얼로그를 종료
-                },
-                navigateToHome = navigateToHome  // 홈으로 이동 함수 전달
-            )
-        }
-
-        if(showNoDialog.value){
-            AlcoholDialog3 (
-                onDismiss = {
-                    showNoDialog.value = false
-                    onDismiss()  // 부모 다이얼로그를 종료
-                },
-                navigateToHome = navigateToHome  // 홈으로 이동 함수 전
-            )
-        }
-
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.3f),
-            shape = RoundedCornerShape(8.dp),
-            color = White
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 70.dp),
+        shape = RoundedCornerShape(8.dp),
+        color = White
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            Spacer(modifier = Modifier.height(40.dp))
+            Text(stringResource(id=R.string.today_caffeine), color = MediumBlue, fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(60.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Spacer(modifier = Modifier.height(40.dp))
-                Text("오늘 카페인 음료를 몇 잔 마셨나요?", color = MediumBlue, fontSize = 24.sp)
-                Spacer(modifier = Modifier.height(60.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {Spacer(modifier = Modifier.fillMaxWidth(0.1f))
-                    // 흡연 횟수 표시
-                    Text(
-                        text = "$count",
-                        fontSize = 30.sp,
-                        color = Black,
-                        modifier = Modifier.padding(top=10.dp)
-                    )
-                    Text(
-                        text = "  잔    ",
-                        fontSize = 20.sp,
-                        color = MediumBlue,
-                        modifier = Modifier.padding(top=15.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    // 흡연 횟수 증가 버튼
-                    Button(
-                        onClick = { count++ },  // 버튼 클릭 시 count 증가
-                        modifier = Modifier.height(60.dp)
-                            .width(60.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = WhiteBlue),
-                        shape = CircleShape,
-                        contentPadding = PaddingValues()
-                    ) {
-                        Box(
-                            contentAlignment = Alignment.Center,  // 내용을 중앙에 정렬
-                            modifier = Modifier.fillMaxSize()  // Box를 버튼 크기만큼 채움
-                        ) {
-                            Text(
-                                text = "+",
-                                fontSize = 24.sp,
-                                color = Black
-                            )
-                        }
-                    }
-
-
-                }
-
-                Spacer(modifier = Modifier.height(60.dp))
-
-
-                OutlinedButton(
-                    onClick = {
-                        onDismiss()
-                        navigateToHome()
-                    },
+                // 흡연 횟수 표시
+                Button(
+                    onClick = downCount,  // 버튼 클릭 시 count 증가
                     modifier = Modifier
-                        .padding(4.dp)
-                        .width(150.dp)
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = White),
-                    shape = RoundedCornerShape(20.dp),
-                    border = BorderStroke(width=2.dp, color = MediumBlue)
+                        .height(60.dp)
+                        .width(60.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = WhiteBlue),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues()  // 내부 패딩 제거
                 ) {
-                    Text(
-                        "닫기",
-                        fontSize = 20.sp,
-                        color = Black,
-                        fontFamily = FontFamily(Font(R.font.minsans))
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center,  // 내용을 중앙에 정렬
+                        modifier = Modifier.fillMaxSize()  // Box를 버튼 크기만큼 채움
+                    ) {
+                        Text(
+                            text = "-",
+                            fontSize = 24.sp,
+                            color = Black
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+                Text(
+                    text = "$count",
+                    fontSize = 30.sp,
+                    color = Black,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+                Text(
+                    text = " 잔",
+                    fontSize = 20.sp,
+                    color = MediumBlue,
+                    modifier = Modifier.padding(top = 15.dp)
+                )
+                Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+                // 흡연 횟수 증가 버튼
+                Button(
+                    onClick = upCount,  // 버튼 클릭 시 count 증가
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(60.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = WhiteBlue),
+                    shape = CircleShape,
+                    contentPadding = PaddingValues()  // 내부 패딩 제거
+                ) {
+                    Box(
+                        contentAlignment = Alignment.Center,  // 내용을 중앙에 정렬
+                        modifier = Modifier.fillMaxSize()  // Box를 버튼 크기만큼 채움
+                    ) {
+                        Text(
+                            text = "+",
+                            fontSize = 24.sp,
+                            color = Black
+                        )
+                    }
                 }
             }
-
+            Spacer(modifier = Modifier.height(60.dp))
+            OutlinedButton(
+                onClick = {
+                    viewModel.addCaffeineRecord(count)
+                    navigateToHome()
+                },
+                modifier = Modifier
+                    .padding(4.dp)
+                    .width(150.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = White),
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(width = 2.dp, color = MediumBlue)
+            ) {
+                Text(
+                    stringResource(id=R.string.record_button),
+                    fontSize = 20.sp,
+                    color = Black,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
+            }
         }
     }
-
 }
