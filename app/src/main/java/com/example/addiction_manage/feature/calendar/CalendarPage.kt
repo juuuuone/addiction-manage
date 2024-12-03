@@ -50,6 +50,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -57,6 +58,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
@@ -72,6 +74,7 @@ import com.example.addiction_manage.ui.theme.WhiteBlue
 import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.MediumBlue
 import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 import com.example.addiction_manage.feature.mypage.checkUser
 import com.google.firebase.auth.FirebaseAuth
 
@@ -214,50 +217,105 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
     val day = date.dayOfMonth
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+
+    val mediumFont = FontFamily(Font(R.font.medium))
+
     Dialog(onDismissRequest = { onDismiss() }) {
-        // Dialog의 내용을 Card로 감싸서 디자인을 추가
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f)
-                .padding(bottom = 70.dp),
-            shape = RoundedCornerShape(8.dp),
-            color = White
+                .fillMaxHeight(0.6f) // 모달창 크기
+                .padding(bottom = 20.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = White,
+            border = BorderStroke(2.dp, color = MediumBlue)
         ) {
             Column(
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier
+                    .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Top
             ) {
+                // 닫기 버튼
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    IconButton(onClick = { onDismiss() }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(id = R.string.close),
+                            tint = Color.Gray
+                        )
+                    }
+                }
+
+                // 타이틀
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "$nickname ${stringResource(id = R.string.days1)} $day${stringResource(id = R.string.days2)}",
+                        color = DarkGray,
+                        fontFamily = mediumFont,
+                        fontSize = 20.sp
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(40.dp))
-                Row(){
-                    Text("$nickname ", color= MediumBlue, fontFamily = FontFamily(Font(R.font.bold)), fontSize = 24.sp)
-                    Text(stringResource(id=R.string.days1), color = MediumBlue, fontSize = 24.sp)
-                    Text(" $day", color = MediumBlue, fontSize = 24.sp, modifier = Modifier.padding(top=2.dp))
-                    Text(stringResource(id=R.string.days2), color = MediumBlue, fontSize = 24.sp)
-                }
-                Spacer(modifier = Modifier.height(60.dp))
 
-                Row(){
-                    Text("$day",)
-                    Text(stringResource(id = R.string.al_rec))
-                }
-                Text("데이터")
-                Spacer(modifier = Modifier.height(60.dp))
 
-                Row(){
-                    Text("$day",)
-                    Text(stringResource(id = R.string.sm_rec))
-                }
-                Text("데이터")
-                Spacer(modifier = Modifier.height(60.dp))
+                // 음주 기록
+                Text(
+                    text = stringResource(id = R.string.alcohol_record_title, day),
+                    fontSize = 25.sp,
+                    fontFamily = mediumFont,
+                    color = MediumBlue
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(id = R.string.alcohol_record_value, "3"), // 예시로 "3잔" 표시
+                    fontSize = 25.sp,
+                    fontFamily = mediumFont,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(20.dp))
 
-                Row(){
-                    Text("$day",)
-                    Text(stringResource(id = R.string.ca_rec))
-                }
-                Text("데이터")
-                Spacer(modifier = Modifier.height(60.dp))
+                // 흡연 기록
+                Text(
+                    text = stringResource(id = R.string.smoking_record_title, day),
+                    fontSize = 25.sp,
+                    fontFamily = mediumFont,
+                    color = MediumBlue
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(id = R.string.smoking_record_value, "5"), // 예시로 "5개피" 표시
+                    fontSize = 25.sp,
+                    fontFamily = mediumFont,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                // 카페인 기록
+                Text(
+                    text = stringResource(id = R.string.caffeine_record_title, day),
+                    fontSize = 25.sp,
+                    fontFamily = mediumFont,
+                    color = MediumBlue
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(id = R.string.caffeine_record_value, "2"), // 예시로 "2잔" 표시
+                    fontSize = 25.sp,
+                    fontFamily = mediumFont,
+                    color = Color.Black
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
