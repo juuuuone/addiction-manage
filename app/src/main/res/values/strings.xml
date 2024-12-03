@@ -70,12 +70,6 @@
     <string name="days1">님의</string>
     <string name="days2">일 기록을 볼까요?</string>
     <string name="close">닫기</string>
-    <string name="alcohol_record_title">%1$d일의 음주 기록</string>
-    <string name="alcohol_record_value">%1$s잔</string>
-    <string name="smoking_record_title">%1$d일의 흡연 기록</string>
-    <string name="smoking_record_value">%1$s개피</string>
-    <string name="caffeine_record_title">%1$d일의 카페인 기록</string>
-    <string name="caffeine_record_value">%1$s잔</string>
 
 
 

@@ -270,14 +270,14 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
 
                 // 음주 기록
                 Text(
-                    text = stringResource(id = R.string.alcohol_record_title, day),
+                    text = stringResource(id = R.string.alcohol) + " 🍺",
                     fontSize = 25.sp,
                     fontFamily = mediumFont,
                     color = MediumBlue
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = stringResource(id = R.string.alcohol_record_value, "3"), // 예시로 "3잔" 표시
+                    text =  "3" + stringResource(id = R.string.cup), // 예시로 "3잔" 표시
                     fontSize = 25.sp,
                     fontFamily = mediumFont,
                     color = Color.Black
@@ -286,14 +286,14 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
 
                 // 흡연 기록
                 Text(
-                    text = stringResource(id = R.string.smoking_record_title, day),
+                    text = stringResource(id = R.string.smoking) + " 🚬",
                     fontSize = 25.sp,
                     fontFamily = mediumFont,
                     color = MediumBlue
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = stringResource(id = R.string.smoking_record_value, "5"), // 예시로 "5개피" 표시
+                    text = "5"+ stringResource(id = R.string.gp), // 예시로 "5개피" 표시
                     fontSize = 25.sp,
                     fontFamily = mediumFont,
                     color = Color.Black
@@ -302,14 +302,14 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
 
                 // 카페인 기록
                 Text(
-                    text = stringResource(id = R.string.caffeine_record_title, day),
+                    text = stringResource(id = R.string.caffeine) + " ☕",
                     fontSize = 25.sp,
                     fontFamily = mediumFont,
                     color = MediumBlue
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = stringResource(id = R.string.caffeine_record_value, "2"), // 예시로 "2잔" 표시
+                    text = "2" + stringResource(id = R.string.cup), // 예시로 "2잔" 표시
                     fontSize = 25.sp,
                     fontFamily = mediumFont,
                     color = Color.Black
