@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.calendar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,6 +54,8 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
@@ -85,6 +88,8 @@ fun CalendarPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+
+
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -129,7 +134,7 @@ fun CalendarPage(
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
-                        .padding(end=16.dp)
+                        .padding(end = 16.dp)
                         .padding(top = 16.dp)
                 )
             }
@@ -154,6 +159,7 @@ fun CalendarPage(
 
     }
 }
+
 
 
 /*달력 생성 함수*/
@@ -205,55 +211,53 @@ fun SimpleCalendar() {
 /*날짜 클릭하면 뜨는 창 (어떤거 기록할건지)*/
 @Composable
 fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
+    val day = date.dayOfMonth
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    var nickname: String = currentUser?.let { checkUser(it) }.toString()
     Dialog(onDismissRequest = { onDismiss() }) {
         // Dialog의 내용을 Card로 감싸서 디자인을 추가
         Surface(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .fillMaxHeight(0.6f),
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f)
+                .padding(bottom = 70.dp),
             shape = RoundedCornerShape(8.dp),
-            color = LightBlue
+            color = White
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.SpaceEvenly
+                modifier = Modifier.padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .width(600.dp)
-                        .height(70.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
-                    shape = RectangleShape
-                ) {
-                    Text(
-                        "나의 음주 기록하기", color = LightRed, fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.minsans))
-                    )
+                Spacer(modifier = Modifier.height(40.dp))
+                Row(){
+                    Text("$nickname ", color= MediumBlue, fontFamily = FontFamily(Font(R.font.bold)), fontSize = 24.sp)
+                    Text(stringResource(id=R.string.days1), color = MediumBlue, fontSize = 24.sp)
+                    Text(" $day", color = MediumBlue, fontSize = 24.sp, modifier = Modifier.padding(top=2.dp))
+                    Text(stringResource(id=R.string.days2), color = MediumBlue, fontSize = 24.sp)
                 }
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .width(500.dp)
-                        .height(70.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
-                    shape = RectangleShape
-                ) {
-                    Text("나의 흡연 기록하기", color = LightRed, fontSize = 24.sp)
+                Spacer(modifier = Modifier.height(60.dp))
+
+                Row(){
+                    Text("$day",)
+                    Text(stringResource(id = R.string.al_rec))
                 }
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .width(600.dp)
-                        .height(70.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = BackgroundColor),
-                    shape = RectangleShape
-                ) {
-                    Text("나의 카페인 기록하기", color = LightRed, fontSize = 24.sp)
+                Text("데이터")
+                Spacer(modifier = Modifier.height(60.dp))
+
+                Row(){
+                    Text("$day",)
+                    Text(stringResource(id = R.string.sm_rec))
                 }
+                Text("데이터")
+                Spacer(modifier = Modifier.height(60.dp))
+
+                Row(){
+                    Text("$day",)
+                    Text(stringResource(id = R.string.ca_rec))
+                }
+                Text("데이터")
+                Spacer(modifier = Modifier.height(60.dp))
             }
         }
     }
