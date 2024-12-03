@@ -511,7 +511,7 @@ fun SmokingStatistic(
     weekSmoking: Int,
 ) {
     val smokingTitle = stringResource(id=R.string.weekly_smoking_statistic)
-    val current = currentSmoking.toInt().toString() + stringResource(id=R.string.gp)
+    val current = weekSmoking.toInt().toString() + stringResource(id=R.string.gp)
 
     Column(
         modifier = Modifier
@@ -609,7 +609,7 @@ fun CaffeineStatistic(
     weekCaffeine: Int,
 ) {
     val caffeineTitle = stringResource(id=R.string.weekly_caffeine_statistic)
-    val current = currentCaffeine.toInt().toString() + stringResource(id=R.string.cup)
+    val current = weekCaffeine.toInt().toString() + stringResource(id=R.string.cup)
 
     Column(
         modifier = Modifier
