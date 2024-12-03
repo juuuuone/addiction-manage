@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">addiction_manage</string>
+    <string name="calendar">캘린더</string>
+    <string name="home">홈</string>
+    <string name="statistics">통계</string>
     <string name="signin">Sign in</string>
     <string name="signintext">Don\'t have an account? Sign up!</string>
     <string name="signup">Sign Up</string>
@@ -19,4 +22,13 @@
     <string name="set_smoking_goal">흡연 목표를 설정하세요</string>
     <string name="write_smoking_goal">오늘 목표 흡연량을 작성하거나\n `흡연하지 않습니다`를 체크하세요.</string>
     <string name="not_smoking">흡연하지 않습니다.</string>
+
+    <string name="yes">네</string>
+    <string name="no">아니오</string>
+    <string name="record_button">기록하기</string>
+
+    <string name="today_alcohol">오늘 음주를 했나요?</string>
+    <string name="today_caffeine">오늘 카페인 음료를 몇 잔 마셨나요?</string>
+    <string name="today_smoking">오늘 담배를 얼마나 피웠나요?</string>
+
 </resources>

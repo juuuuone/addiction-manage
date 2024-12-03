@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -116,7 +117,7 @@ fun CaffeineRecording(
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            Text("오늘 카페인 음료를 몇 잔 마셨나요?", color = MediumBlue, fontSize = 24.sp)
+            Text(stringResource(id=R.string.today_caffeine), color = MediumBlue, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(60.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -193,7 +194,7 @@ fun CaffeineRecording(
                 border = BorderStroke(width = 2.dp, color = MediumBlue)
             ) {
                 Text(
-                    "기록하기",
+                    stringResource(id=R.string.record_button),
                     fontSize = 20.sp,
                     color = Black,
                     fontFamily = FontFamily(Font(R.font.minsans))

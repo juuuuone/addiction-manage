@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -124,7 +125,7 @@ fun AlcoholRecording(
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            Text("오늘 음주를 했나요?", color = MediumBlue, fontSize = 24.sp)
+            Text(stringResource(id=R.string.today_alcohol), color = MediumBlue, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(60.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -145,7 +146,7 @@ fun AlcoholRecording(
                     shape = RoundedCornerShape(20.dp),
                 ) {
                     Text(
-                        "네",
+                        stringResource(id=R.string.yes),
                         color = Black,
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.minsans))
@@ -168,7 +169,7 @@ fun AlcoholRecording(
                     shape = RoundedCornerShape(20.dp)
                 ) {
                     Text(
-                        "아니요",
+                        stringResource(id=R.string.no),
                         fontSize = 20.sp,
                         color = Black,
                         fontFamily = FontFamily(Font(R.font.minsans))
@@ -190,7 +191,7 @@ fun AlcoholRecording(
                 border = BorderStroke(width = 2.dp, color = MediumBlue)
             ) {
                 Text(
-                    "기록하기",
+                    stringResource(id=R.string.record_button),
                     fontSize = 20.sp,
                     color = Black,
                     fontFamily = FontFamily(Font(R.font.minsans))

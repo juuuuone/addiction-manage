@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Color.Companion.LightGray
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.fontResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import java.time.LocalDate
 import java.time.YearMonth
@@ -341,7 +342,7 @@ fun BottomAppBarComponent(
             TabItem(
                 text = {
                     Text(
-                        text = "캘린더",
+                        text = stringResource(id= R.string.calendar),
                         color = if (selectedItem == 0) Black else LightGray,
                         fontSize = 12.sp
                     )
@@ -362,7 +363,7 @@ fun BottomAppBarComponent(
             TabItem(
                 text = {
                     Text(
-                        text = "홈",
+                        text = stringResource(id= R.string.home),
                         color = if (selectedItem == 1) Black else LightGray,
                         fontSize = 12.sp
                     )
@@ -383,7 +384,7 @@ fun BottomAppBarComponent(
             TabItem(
                 text = {
                     Text(
-                        text = "통계",
+                        text = stringResource(id= R.string.statistics),
                         color = if (selectedItem == 2) Black else LightGray,
                         fontSize = 12.sp
                     )
