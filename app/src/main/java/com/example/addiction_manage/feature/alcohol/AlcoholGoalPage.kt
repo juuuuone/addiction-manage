@@ -3,11 +3,14 @@ package com.example.addiction_manage.feature.alcohol
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -41,13 +44,22 @@ fun AlcoholGoalPage(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "음주 목표 설정",
+                        text = stringResource(id = R.string.set_goal),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Black
                     )
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor)
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = BackgroundColor),
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigateUp()}) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                },
             )
         }
     ) { innerPadding ->
@@ -60,7 +72,7 @@ fun AlcoholGoalPage(
         ) {
             // 제목 및 설명
             Text(
-                text = "음주 목표를 설정하세요",
+                text = stringResource(id=R.string.set_alcohol_goal),
                 color = Black,
                 fontSize = 24.sp,
                 fontFamily = boldFontFamily,
@@ -69,7 +81,7 @@ fun AlcoholGoalPage(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "일주일 목표 음주 횟수를 입력하세요.\n음주를 하지 않으면 '음주하지 않습니다'를 체크하세요.",
+                text = stringResource(id=R.string.write_alcohol_goal),
                 fontSize = 19.sp,
                 color = Color.DarkGray,
                 fontFamily = lightFontFamily,
@@ -121,8 +133,8 @@ fun AlcoholGoalPage(
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
-                            text = "저장",
-                            fontFamily = lightFontFamily
+                          text = stringResource(id=R.string.save_button),
+                          fontFamily = lightFontFamily
                         )
                     }
 
@@ -130,7 +142,7 @@ fun AlcoholGoalPage(
 
                     // 체크박스: 음주하지 않습니다
                     CheckboxWithBorder(
-                        label = "음주하지 않습니다",
+                        label = stringResource(id=R.string.not_alcohol),
                         isChecked = isNoAlcoholChecked,
                         onCheckedChange = { viewModel.setNoAlcoholChecked(it) }
                     )
@@ -150,11 +162,11 @@ fun AlcoholGoalPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "다음", fontFamily = lightFontFamily, fontSize = 20.sp)
+                Text(text = stringResource(id=R.string.next_button), fontFamily = lightFontFamily, fontSize = 20.sp)
             }
 
             if (showDialog.value) {
-                showSaveDialog(
+                ShowSaveDialog(
                     onDismiss = { showDialog.value = false }
                 )
             }
@@ -163,17 +175,16 @@ fun AlcoholGoalPage(
 }
 
 @Composable
-fun showSaveDialog(onDismiss: () -> Unit) {
+fun ShowSaveDialog(onDismiss: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(onClick = { onDismiss() }) {
-                Text("확인")
+                Text(stringResource(id=R.string.check_button))
             }
         },
-        title = { Text("알림") },
-        text = { Text("저장되었습니다!") }
+        title = { Text(stringResource(id = R.string.notify)) },
+        text = { Text(stringResource(id=R.string.is_saving)) }
     )
-
 }

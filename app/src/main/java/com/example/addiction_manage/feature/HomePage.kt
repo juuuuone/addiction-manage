@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -120,7 +121,7 @@ fun SelectingPage(
                         .padding(top = 16.dp)
                 )
                 Text(
-                    text = " 님의 생활습관을 기록해볼까요?",
+                    text = stringResource(id=R.string.record_lifestyle),
                     color = Black,
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
@@ -139,7 +140,7 @@ fun SelectingPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 음주 기록하기", color = White, fontSize = 24.sp,
+                Text(stringResource(id=R.string.record_my_alcohol), color = White, fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -152,7 +153,7 @@ fun SelectingPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 흡연 기록하기", color = White, fontSize = 24.sp,
+                Text(stringResource(id=R.string.record_my_smoking), color = White, fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)))
             }
             Button(
@@ -164,7 +165,7 @@ fun SelectingPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text("나의 카페인 기록하기", color = White, fontSize = 24.sp,
+                Text(stringResource(id=R.string.record_my_caffeine), color = White, fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)))
             }
         }
