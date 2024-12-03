@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +54,7 @@ fun MyPage(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "마이페이지",
+                        text = stringResource(id = R.string.mypage),
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Black,
@@ -83,7 +84,7 @@ fun MyPage(
         ) {
             // 닉네임 섹션
             Text(
-                text = "닉네임",
+                text = stringResource(id=R.string.nickname),
                 fontSize = 24.sp,
                 color = Color.DarkGray,
                 fontFamily = FontFamily(Font(R.font.minsans)),
@@ -107,14 +108,14 @@ fun MyPage(
             }
             else if (alcoholGoal.isNotEmpty()) {
                 GoalSection(
-                    title = "나의 음주 목표",
-                    goals = listOf("1주일 " + alcoholGoal.joinToString{it.goal} + "회 이하"),
+                    title = stringResource(id = R.string.my_alcohol_goal),
+                    goals = listOf(stringResource(id = R.string.oneweek) + " " + alcoholGoal.joinToString{it.goal} + "회 이하"),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
                 GoalSection(
-                    title = "나의 음주 목표",
-                    goals = listOf("목표가 없습니다."),
+                    title = stringResource(id = R.string.my_alcohol_goal),
+                    goals = listOf(stringResource(id = R.string.nogoal)),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -131,14 +132,14 @@ fun MyPage(
             }
             else if (smokingGoals.isNotEmpty()) {
                 GoalSection(
-                    title = "나의 흡연 목표",
-                    goals = listOf("하루 " + smokingGoals.joinToString{it.goal} + "개피 이하"),
+                    title = stringResource(id = R.string.my_smoking_goal),
+                    goals = listOf(stringResource(id = R.string.oneday) + " " + smokingGoals.joinToString{it.goal} + "개피 이하"),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
                 GoalSection(
-                    title = "나의 흡연 목표",
-                    goals = listOf("목표가 없습니다."),
+                    title = stringResource(id = R.string.my_smoking_goal),
+                    goals = listOf(stringResource(id = R.string.nogoal)),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -154,14 +155,14 @@ fun MyPage(
             }
             else if (caffeineGoals.isNotEmpty()) {
                 GoalSection(
-                    title = "나의 카페인 목표",
-                    goals = listOf("하루 " + caffeineGoals.joinToString{it.goal} + "잔 이하"),
+                    title = stringResource(id = R.string.my_caffeine_goal),
+                    goals = listOf(stringResource(id = R.string.oneday) + " " + caffeineGoals.joinToString{it.goal} + "잔 이하"),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
                 GoalSection(
-                    title = "나의 카페인 목표",
-                    goals = listOf("목표가 없습니다."),
+                    title = stringResource(id = R.string.my_caffeine_goal),
+                    goals = listOf(stringResource(id = R.string.nogoal)),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -199,7 +200,7 @@ fun MyPage(
                     .padding(vertical = 16.dp)
             ) {
                 Text(
-                    text = "로그아웃",
+                    text = stringResource(id = R.string.logout),
                     fontSize = 18.sp,
                     color = White,
                     fontWeight = FontWeight.Bold,

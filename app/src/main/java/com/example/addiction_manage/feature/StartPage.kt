@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -41,14 +42,14 @@ fun StartPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text="나의 모든 중독을 DeTox하다",
+                    text=stringResource(id=R.string.mydetox),
                     fontFamily= FontFamily(Font(R.font.light)),
                     fontSize = 24.sp
                 )
                 Spacer(modifier=Modifier.height(60.dp))
                 Row {
                     androidx.compose.material3.Text(
-                        text = "DeToxify",
+                        text = stringResource(id=R.string.detoxify),
                         fontFamily = FontFamily(Font(R.font.bold)),
                         //modifier = Modifier.height(70.dp),
                         fontSize = 40.sp
@@ -74,7 +75,7 @@ fun StartPage(
                             .padding(end = 8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                     ) {
-                        Text(text = "로그인", color = Color.White,
+                        Text(text = stringResource(id=R.string.login), color = Color.White,
                             fontSize = 20.sp)
                     }
 
@@ -86,7 +87,7 @@ fun StartPage(
                         colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
 
                         ) {
-                        Text(text = "회원가입", color = Color.White,
+                        Text(text = stringResource(id=R.string.k_signin), color = Color.White,
                             fontSize = 20.sp)
                     }
                 }

@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -140,7 +141,7 @@ fun StatisticPage(
             Spacer(modifier = Modifier.padding(12.dp))
             // 카테고리 선택
             TimeframeSelector(
-                options = listOf("음주", "흡연", "카페인"),
+                options = listOf(stringResource(id=R.string.alcohol), stringResource(id=R.string.smoking), stringResource(id=R.string.caffeine)),
                 selectedOption = selectedOption,
                 onOptionSelected = { selectedOption = it }
             )
@@ -148,7 +149,7 @@ fun StatisticPage(
             Spacer(modifier = Modifier.padding(12.dp))
 
             // 통계 페이지
-            if (selectedOption == "음주") {
+            if (selectedOption == stringResource(id=R.string.alcohol)) {
                 AlcoholCount(
                     yesterdayAlcohol = yesterdayAlcohol,
                     currentAlcohol = currentAlcohol,
@@ -160,8 +161,8 @@ fun StatisticPage(
                     goalAlcohol = goalAlcohol,
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                ColumnGraph(unit = "잔", threshold = goalAlcohol)
-            } else if (selectedOption == "흡연") {
+                ColumnGraph(unit = stringResource(id=R.string.cup), threshold = goalAlcohol)
+            } else if (selectedOption == stringResource(id=R.string.smoking)) {
                 SmokingCount(
                     yesterdaySmoking = yesterdaySmoking,
                     currentSmoking = currentSmoking,
@@ -173,8 +174,8 @@ fun StatisticPage(
                     goalSmoking = goalSmoking
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                ColumnGraph(unit = "개피", threshold = goalSmoking)
-            } else if (selectedOption == "카페인") {
+                ColumnGraph(unit = stringResource(id=R.string.gp), threshold = goalSmoking)
+            } else if (selectedOption == stringResource(id=R.string.caffeine)) {
                 CaffeineCount(
                     yesterdayCaffeine = yesterdayCaffeine,
                     currentCaffeine = currentCaffeine,
@@ -186,7 +187,7 @@ fun StatisticPage(
                     goalCaffeine = goalCaffeine
                 )
                 Spacer(modifier = Modifier.padding(10.dp))
-                ColumnGraph(unit = "잔", threshold = goalCaffeine)
+                ColumnGraph(unit = stringResource(id=R.string.cup), threshold = goalCaffeine)
             }
         }
     }
@@ -271,7 +272,7 @@ fun GaugeGraph(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "현재 : $achievedText",
+                text = stringResource(id=R.string.now) + " : $achievedText",
                 fontSize = 14.sp,
                 fontFamily = minSansFontFamily,
                 color = Color.Black
@@ -304,10 +305,10 @@ fun AlcoholCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "어제", fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(text = stringResource(id=R.string.yesterday), fontSize = 14.sp, fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = if (yesterdayAlcohol) "음주" else "금주",
+                    text = if (yesterdayAlcohol) stringResource(id=R.string.alcohol) else stringResource(id=R.string.no_alcohol),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -317,10 +318,10 @@ fun AlcoholCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "오늘", fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(text = stringResource(id=R.string.today), fontSize = 14.sp, fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = if (currentAlcohol) "음주" else "금주",
+                    text = if (currentAlcohol) stringResource(id=R.string.alcohol) else stringResource(id=R.string.no_alcohol),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -348,9 +349,9 @@ fun AlcoholStatistic(
     weekAlcohol: Float,
     goalAlcohol: Float,
 ) {
-    val alcoholTitle = "일주일 음주 통계"
-    val current = weekAlcohol.toInt().toString() + "잔"
-    val goal = goalAlcohol.toInt().toString() + "잔"
+    val alcoholTitle = stringResource(id=R.string.weekly_alcohol_statistic)
+    val current = weekAlcohol.toInt().toString() + stringResource(id=R.string.cup)
+    val goal = goalAlcohol.toInt().toString() + stringResource(id=R.string.cup)
 
     Column(
         modifier = Modifier
@@ -397,10 +398,10 @@ fun SmokingCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "어제", fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(text = stringResource(id=R.string.yesterday), fontSize = 14.sp, fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = yesterdaySmoking.toInt().toString() + "개피",
+                    text = yesterdaySmoking.toInt().toString() + stringResource(id=R.string.gp),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -410,10 +411,10 @@ fun SmokingCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "오늘", fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(text = stringResource(id=R.string.today), fontSize = 14.sp, fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = currentSmoking.toInt().toString() + "개피",
+                    text = currentSmoking.toInt().toString() + stringResource(id=R.string.gp),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -449,9 +450,9 @@ fun SmokingStatistic(
     currentSmoking: Float,
     goalSmoking: Float,
 ) {
-    val smokingTitle = "일주일 흡연 통계"
-    val current = currentSmoking.toInt().toString() + "개피"
-    val goal = goalSmoking.toInt().toString() + "개피"
+    val smokingTitle = stringResource(id=R.string.weekly_smoking_statistic)
+    val current = currentSmoking.toInt().toString() + stringResource(id=R.string.gp)
+    val goal = goalSmoking.toInt().toString() + stringResource(id=R.string.gp)
 
     Column(
         modifier = Modifier
@@ -498,10 +499,10 @@ fun CaffeineCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "어제", fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(text = stringResource(id=R.string.yesterday), fontSize = 14.sp, fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = yesterdayCaffeine.toInt().toString() + "잔",
+                    text = yesterdayCaffeine.toInt().toString() + stringResource(id=R.string.cup),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -511,10 +512,10 @@ fun CaffeineCount(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = "오늘", fontSize = 14.sp, fontFamily = minSansFontFamily)
+                Text(text = stringResource(id=R.string.today), fontSize = 14.sp, fontFamily = minSansFontFamily)
                 Spacer(modifier = Modifier.padding(3.dp))
                 Text(
-                    text = currentCaffeine.toInt().toString() + "잔",
+                    text = currentCaffeine.toInt().toString() + stringResource(id=R.string.cup),
                     fontSize = 22.sp,
                     fontFamily = minSansFontFamily,
                 )
@@ -550,9 +551,9 @@ fun CaffeineStatistic(
     currentCaffeine: Float,
     goalCaffeine: Float,
 ) {
-    val caffeineTitle = "일주일 카페인 통계"
-    val current = currentCaffeine.toInt().toString() + "잔"
-    val goal = goalCaffeine.toInt().toString() + "잔"
+    val caffeineTitle = stringResource(id=R.string.weekly_caffeine_statistic)
+    val current = currentCaffeine.toInt().toString() + stringResource(id=R.string.cup)
+    val goal = goalCaffeine.toInt().toString() + stringResource(id=R.string.cup)
 
     Column(
         modifier = Modifier
