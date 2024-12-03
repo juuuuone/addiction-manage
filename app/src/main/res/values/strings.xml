@@ -71,11 +71,10 @@
     <string name="k_signin">회원가입</string>
 
 
-    <string name="days1">님의 </string>
-    <string name="days2">일의 기록이에요</string>
-    <string name="al_rec">일의 음주 기록</string>
-    <string name="sm_rec">일의 흡연 기록</string>
-    <string name="ca_rec">일의 카페인 기록</string>
+    <string name="days1">님의</string>
+    <string name="days2">일 기록을 볼까요?</string>
+    <string name="close">닫기</string>
+
 
 
 </resources>
