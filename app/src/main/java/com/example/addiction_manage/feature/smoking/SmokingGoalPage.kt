@@ -2,6 +2,7 @@ package com.example.addiction_manage.feature.smoking
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -75,7 +76,6 @@ fun SmokingGoalPage(
             // 제목 및 설명
             Text(
                 text = stringResource(id= R.string.set_smoking_goal),
-                text = "흡연 목표를 설정하세요",
                 color = Black,
                 fontSize = 24.sp,
                 fontFamily = boldFontFamily,

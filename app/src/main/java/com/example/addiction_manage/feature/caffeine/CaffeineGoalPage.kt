@@ -111,9 +111,9 @@ fun CaffeineGoalPage(
                                   showDialog.value = true},
                         colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                         shape = RoundedCornerShape(8.dp)
-                        ) {
+                    ) {
                         Text(
-                            text= Text(stringResource(id=R.string.save_button)),
+                            text= stringResource(id=R.string.save_button),
                             fontFamily = lightFontFamily
                         )
                     }
