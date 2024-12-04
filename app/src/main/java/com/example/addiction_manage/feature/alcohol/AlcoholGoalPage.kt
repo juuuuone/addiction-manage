@@ -32,10 +32,18 @@ fun AlcoholGoalPage(
     val isNoAlcoholChecked by viewModel.isAlcoholChecked.collectAsState()
     val showDialog = remember { mutableStateOf(false) }
     val currentUserGoal = viewModel.getCurrentUserGoal()
-    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
-
     val boldFontFamily = FontFamily(Font(R.font.bold))
     val lightFontFamily = FontFamily(Font(R.font.light))
+
+    val newGoal = remember { mutableStateOf("로딩 중...") }
+    val isLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(currentUserGoal) {
+        isLoading.value = true
+        val goal = currentUserGoal?.goal
+        newGoal.value = goal ?: ""
+        isLoading.value = false
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,29 +107,12 @@ fun AlcoholGoalPage(
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-//                    // 하루 목표 드롭다운
-//                    GoalDropdown(
-//                        label = "하루 목표 설정",
-//                        options = listOf("반 잔", "한 잔", "2~3 잔", "한 병"),
-//                        selectedOption = dailyGoal,
-//                        onOptionSelected = { dailyGoal = it }
-//                    )
-//
-//                    Spacer(modifier = Modifier.height(16.dp))
-//
-//                    // 일주일 목표 드롭다운
-//                    GoalDropdown(
-//                        label = "일주일 목표 설정 (횟수)",
-//                        options = listOf("1회", "2회", "3회", "4회 이상"),
-//                        selectedOption = weeklyGoal,
-//                        onOptionSelected = { weeklyGoal = it }
-//                    )
 
                     TextField(
-                        value = newGoal.value,
-                        onValueChange = { newGoal.value = it }
+                        value = if (isLoading.value) "로딩중 ..." else newGoal.value,
+                        onValueChange = { newGoal.value = it },
+                        enabled = true // 텍스트 필드는 항상 활성화
                     )
-
                     Spacer(modifier = Modifier.height(32.dp))
 
                     Button(
@@ -129,7 +120,7 @@ fun AlcoholGoalPage(
                             viewModel.addGoal(newGoal.value)
                             showDialog.value = true
                                   },
-                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(
@@ -174,6 +165,7 @@ fun AlcoholGoalPage(
     }
 }
 
+
 @Composable
 fun ShowSaveDialog(onDismiss: () -> Unit) {
 
@@ -188,3 +180,4 @@ fun ShowSaveDialog(onDismiss: () -> Unit) {
         text = { Text(stringResource(id=R.string.is_saving)) }
     )
 }
+
