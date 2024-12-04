@@ -35,10 +35,19 @@ fun SmokingGoalPage(
     var smokingDayGoal by remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
     val currentUserGoal = viewModel.getCurrentUserGoal()
-    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
     //폰트
     val boldFontFamily = FontFamily(Font(R.font.bold))
     val lightFontFamily = FontFamily(Font(R.font.light))
+
+    val newGoal = remember { mutableStateOf("로딩 중...") }
+    val isLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(currentUserGoal) {
+        isLoading.value = true
+        val goal = currentUserGoal?.goal
+        newGoal.value = goal ?: ""
+        isLoading.value = false
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,17 +108,11 @@ fun SmokingGoalPage(
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // 드롭다운 메뉴
-//                    GoalDropdown(
-//                        label = "하루 목표 설정",
-//                        options = listOf("1~2개피", "3~5개피", "반 갑", "한 갑"),
-//                        selectedOption = selectedOption,
-//                        onOptionSelected = { selectedOption = it }
-//                    )
 
                     TextField(
-                        value = newGoal.value,
-                        onValueChange = { newGoal.value = it }
+                        value = if (isLoading.value) "로딩중 ..." else newGoal.value,
+                        onValueChange = { newGoal.value = it },
+                        enabled = true // 텍스트 필드는 항상 활성화
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -120,7 +123,7 @@ fun SmokingGoalPage(
                             viewModel.addGoal(newGoal.value)
                             showDialog.value = true
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                        colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Text(

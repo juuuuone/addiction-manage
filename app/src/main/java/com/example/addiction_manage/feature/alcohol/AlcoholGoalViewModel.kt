@@ -42,12 +42,16 @@ class AlcoholGoalViewModel @Inject constructor(
 
     private fun saveState(checked: Boolean) {
         val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
-        sharedPreferences.edit().putBoolean("isAlcoholChecked_${firebaseAuth.currentUser?.uid}", checked).apply()
+        sharedPreferences.edit()
+            .putBoolean("isAlcoholChecked_${firebaseAuth.currentUser?.uid}", checked).apply()
     }
 
     private fun loadState(): Boolean {
         val sharedPreferences = context.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
-        return sharedPreferences.getBoolean("isAlcoholChecked_${firebaseAuth.currentUser?.uid}", false)
+        return sharedPreferences.getBoolean(
+            "isAlcoholChecked_${firebaseAuth.currentUser?.uid}",
+            false
+        )
     }
 
     init {
@@ -82,7 +86,6 @@ class AlcoholGoalViewModel @Inject constructor(
             _isLoading.value = false
         }
     }
-
 
 
     override fun onCleared() {

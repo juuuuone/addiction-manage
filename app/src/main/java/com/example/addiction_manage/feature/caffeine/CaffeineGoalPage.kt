@@ -35,10 +35,19 @@ fun CaffeineGoalPage(
     var caffeineDayGoal by remember { mutableStateOf("") }
     val showDialog = remember { mutableStateOf(false) }
     val currentUserGoal = viewModel.getCurrentUserGoal()
-    val newGoal = remember { mutableStateOf(currentUserGoal?.goal ?: "") }
     // 폰트
     val boldFontFamily = FontFamily(Font(R.font.bold))
     val lightFontFamily = FontFamily(Font(R.font.light))
+
+    val newGoal = remember { mutableStateOf("로딩 중...") }
+    val isLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(currentUserGoal) {
+        isLoading.value = true
+        val goal = currentUserGoal?.goal
+        newGoal.value = goal ?: ""
+        isLoading.value = false
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -99,9 +108,11 @@ fun CaffeineGoalPage(
                     .padding(16.dp)
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
                     TextField(
-                        value = newGoal.value,
-                        onValueChange = { newGoal.value = it }
+                        value = if (isLoading.value) "로딩중 ..." else newGoal.value,
+                        onValueChange = { newGoal.value = it },
+                        enabled = true // 텍스트 필드는 항상 활성화
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -109,8 +120,8 @@ fun CaffeineGoalPage(
                     Button(
                         onClick = { viewModel.addGoal(newGoal.value)
                                   showDialog.value = true},
-                        colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
-                        shape = RoundedCornerShape(8.dp)
+                        colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
+                        shape = RoundedCornerShape(8.dp),
                     ) {
                         Text(
                             text= stringResource(id=R.string.save_button),

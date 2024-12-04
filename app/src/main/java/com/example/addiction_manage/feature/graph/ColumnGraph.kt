@@ -58,7 +58,7 @@ import kotlin.random.Random
 @Composable
 fun ColumnGraph(
     unit: String,
-    threshold: Float,
+    data: List<Pair<String, Int>>,
     modifier: Modifier = Modifier
 ) {
     val stepSize = 1.0f
@@ -67,7 +67,7 @@ fun ColumnGraph(
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
             columnSeries {
-                series(x = listOf(1, 2, 3, 4, 5, 6, 7), y = List(7) { Random.nextInt(1, 7) })
+                series(x = (1..data.size).toList(), y = data.map { it.second })
             }
         }
     }
@@ -88,7 +88,13 @@ fun ColumnGraph(
             startAxis = rememberStartAxis(
                 label = rememberStartAxisLabel(),
                 guideline = null,
-                valueFormatter = { value, _, _ -> "${value.toInt()}" + unit },
+                valueFormatter = { value, _, _ ->
+                    when {
+                        unit == "술" && value.toInt() == 0 -> "금주"  // 술일 때 0이면 금주
+                        unit == "술" && value.toInt() == 1 -> "음주"  // 술일 때 1이면 음주
+                        else -> "${value.toInt()}$unit"  // 그 외에는 값과 단위 출력
+                    }
+                },
                 itemPlacer = AxisItemPlacer.Vertical.step(
                     { extraStore -> stepSize },
                     shiftTopLines = true
@@ -105,11 +111,14 @@ fun ColumnGraph(
                 ),
                 guideline = null,
                 valueFormatter = { value, _, _ ->
-                    ("${value.toInt()}DAY")
+                    val index = value.toInt() - 1
+                    if (index in data.indices) {
+                        val date = data[index].first
+                        date.substring(5).replace("-", "/")
+                    } else ""
                 },
                 sizeConstraint = BaseAxis.SizeConstraint.Auto(),
-            ),
-//            legend = rememberLegend(), // 범례
+            )
 //            decorations = listOf(
 //                HorizontalLine(
 //                    y = { threshold },  // y값 3에서 수평선 추가
@@ -167,30 +176,6 @@ fun rememberStartAxisLabel() =
 fun rememberBottomAxisLabel() =
     rememberAxisLabelComponent(
         color = Black,
-    )
-
-// 범례
-@Composable
-private fun rememberLegend(
-    title: String = "Smoking"
-) =
-    rememberHorizontalLegend<CartesianMeasureContext, CartesianDrawContext>(
-        items = chartColors.mapIndexed { index, chartColor ->
-            rememberLegendItem(
-                icon = rememberShapeComponent(Shape.Pill, chartColor),
-                label =
-                rememberTextComponent(
-                    color = Black,
-                    textSize = 12.sp,
-                    typeface = Typeface.MONOSPACE,
-                ),
-                labelText = listOf(title)[index]
-            )
-        },
-        iconSize = 8.dp,
-        iconPadding = 8.dp,
-        spacing = 4.dp,
-        padding = Dimensions.of(top = 8.dp),
     )
 
 class XYValueFormatter : CartesianMarkerValueFormatter {
