@@ -98,6 +98,7 @@ fun CalendarPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToFriends:()->Unit,
     navigateToMyPage: () -> Unit,
     selectedItem: Int,
     navController: NavController,
@@ -120,6 +121,7 @@ fun CalendarPage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
+                navigateToFriends=navigateToFriends,
                 isCalendarPage = true,
                 selectedItem = selectedItem,
             )
@@ -369,7 +371,11 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = if(isExistsAlcohol!=null) alcoholString else "기록 없음",
+                        text = if (isExistsAlcohol != null) {
+                            if (currentAlcohol) stringResource(id = R.string.alcohol) else stringResource(
+                                id = R.string.no_alcohol
+                            )
+                        } else stringResource(id = R.string.no_record),
                         fontSize = 25.sp,
                         fontFamily = mediumFont,
                         color = Color.Black
@@ -479,6 +485,7 @@ fun BottomAppBarComponent(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToFriends:()->Unit,
     selectedItem: Int,
     isCalendarPage: Boolean = false,
     isHomePage: Boolean = false,
@@ -559,6 +566,27 @@ fun BottomAppBarComponent(
                 isSelected = isStatisticPage,
                 onSelect = {
                     navigateToStatistic()
+                },
+                modifier = Modifier.weight(1f)
+            )
+            TabItem(
+                text = {
+                    Text(
+                        text = stringResource(id = R.string.friends),
+                        color = if (selectedItem == 3) Black else LightGray,
+                        fontSize = 12.sp
+                    )
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.group_24px),
+                        contentDescription = "friends",
+                        tint = if (selectedItem == 3) Black else LightGray
+                    )
+                },
+                isSelected = isStatisticPage,
+                onSelect = {
+                    navigateToFriends()
                 },
                 modifier = Modifier.weight(1f)
             )
