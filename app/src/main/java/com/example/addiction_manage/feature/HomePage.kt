@@ -58,6 +58,7 @@ fun HomePage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToFriends:()->Unit,
     navigateToMyPage: () -> Unit,
     navigateToAlcohol: () -> Unit,
     navigateToCaffeine: () -> Unit,
@@ -112,6 +113,7 @@ fun HomePage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
+                navigateToFriends = navigateToFriends,
                 isHomePage = true,
                 selectedItem = selectedItem
             )

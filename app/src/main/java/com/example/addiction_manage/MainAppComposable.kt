@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -20,6 +21,7 @@ import com.example.addiction_manage.feature.smoking.SmokingPage
 import com.example.addiction_manage.feature.StartPage
 import com.example.addiction_manage.feature.alcohol.AlcoholGoalPage
 import com.example.addiction_manage.feature.caffeine.CaffeineGoalPage
+import com.example.addiction_manage.feature.friends.FriendsPage
 import com.example.addiction_manage.feature.smoking.SmokingGoalPage
 import com.example.addiction_manage.feature.statistic.StatisticPage
 import com.google.firebase.auth.FirebaseAuth
@@ -77,6 +79,10 @@ fun MainApp() {
                         selectedItem = 2
                         navController.navigate(route = "statistic")
                     },
+                    navigateToFriends = {
+                        selectedItem = 3
+                        navController.navigate(route = "friends")
+                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     navigateToAlcohol = { navController.navigate(route = "alcohol") },
                     navigateToCaffeine = { navController.navigate(route = "caffeine") },
@@ -99,6 +105,10 @@ fun MainApp() {
                         selectedItem = 2
                         navController.navigate(route = "statistic")
                     },
+                    navigateToFriends = {
+                        selectedItem = 3
+                        navController.navigate(route = "friends")
+                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     selectedItem = selectedItem,
                     navController = navController
@@ -117,6 +127,33 @@ fun MainApp() {
                     navigateToStatistic = {
                         selectedItem = 2
                         navController.navigate(route = "statistic")
+                    },
+                    navigateToFriends = {
+                        selectedItem = 3
+                        navController.navigate(route = "friends")
+                    },
+                    navigateToMyPage = { navController.navigate(route = "mypage") },
+                    selectedItem = selectedItem,
+                    navController = navController
+                )
+            }
+            composable(route = "friends") {
+                FriendsPage(
+                    navigateToCalendar = {
+                        selectedItem = 0
+                        navController.navigate(route = "calendar")
+                    },
+                    navigateToHome = {
+                        selectedItem = 1
+                        navController.navigate(route = "home")
+                    },
+                    navigateToStatistic = {
+                        selectedItem = 2
+                        navController.navigate(route = "statistic")
+                    },
+                    navigateToFriends = {
+                        selectedItem = 3
+                        navController.navigate(route = "friends")
                     },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     selectedItem = selectedItem,
@@ -168,3 +205,4 @@ fun MainApp() {
         }
     }
 }
+

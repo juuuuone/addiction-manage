@@ -70,6 +70,7 @@ fun StatisticPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
+    navigateToFriends:()->Unit,
     navigateToMyPage: () -> Unit,
     navController: NavController,
     selectedItem: Int,
@@ -204,6 +205,7 @@ fun StatisticPage(
                 navigateToCalendar = navigateToCalendar,
                 navigateToHome = navigateToHome,
                 navigateToStatistic = navigateToStatistic,
+                navigateToFriends=navigateToFriends,
                 isStatisticPage = true,
                 selectedItem = selectedItem,
             )
