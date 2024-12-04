@@ -93,6 +93,13 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun getCaffeineRecord(caffeineRecords: List<Caffeine>, date: LocalDate): Caffeine? {
+        val today = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        return caffeineRecords.find { data ->
+            data.createdAt == today
+        }
+    }
+
     fun getWeekCaffeineRecord(caffeineRecords: List<Caffeine>): List<Pair<String, Int>> {
         val today = LocalDate.now()
         val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)

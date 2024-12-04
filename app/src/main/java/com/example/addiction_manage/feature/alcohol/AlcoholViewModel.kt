@@ -94,6 +94,13 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun getAlcoholRecord(alcoholRecords: List<Alcohol>, date: LocalDate): Alcohol? {
+        val day = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        return alcoholRecords.find { data ->
+            data.createdAt == day
+        }
+    }
+
     fun getWeekAlcoholRecord(alcoholRecords: List<Alcohol>): List<Pair<String, Int>> {
         val today = LocalDate.now()
         val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)

@@ -57,6 +57,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.LightGray
@@ -75,7 +78,17 @@ import com.example.addiction_manage.ui.theme.LightGrey
 import com.example.addiction_manage.ui.theme.MediumBlue
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.addiction_manage.feature.alcohol.AlcoholGoalViewModel
+import com.example.addiction_manage.feature.alcohol.AlcoholViewModel
+import com.example.addiction_manage.feature.caffeine.CaffeineGoalViewModel
+import com.example.addiction_manage.feature.caffeine.CaffeineViewModel
+import com.example.addiction_manage.feature.model.Alcohol
+import com.example.addiction_manage.feature.model.Caffeine
+import com.example.addiction_manage.feature.model.Smoking
 import com.example.addiction_manage.feature.mypage.checkUser
+import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
+import com.example.addiction_manage.feature.smoking.SmokingViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -91,7 +104,6 @@ fun CalendarPage(
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
-
 
 
     Scaffold(
@@ -122,9 +134,9 @@ fun CalendarPage(
         ) {
             Spacer(modifier = Modifier.height(40.dp))
             // 여기에 텍스트를 독립적으로 배치합니다.
-            Row(){
+            Row() {
                 Text(
-                    text="$nickname",
+                    text = "$nickname",
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.bold)),
                     modifier = Modifier
@@ -162,7 +174,6 @@ fun CalendarPage(
 
     }
 }
-
 
 
 /*달력 생성 함수*/
@@ -214,9 +225,86 @@ fun SimpleCalendar() {
 /*날짜 클릭하면 뜨는 창 (어떤거 기록할건지)*/
 @Composable
 fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
+    val alcoholString = stringResource(id = R.string.alcohol)
+    val smokingString = stringResource(id = R.string.smoking)
+    val caffeineString = stringResource(id = R.string.caffeine)
+
     val day = date.dayOfMonth
     val currentUser = FirebaseAuth.getInstance().currentUser
+    val userId = currentUser?.uid ?: return
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
+    var isLoading by remember { mutableStateOf(true) }
+
+    val alcoholViewModel = hiltViewModel<AlcoholViewModel>()
+    val alcoholGoalViewModel = hiltViewModel<AlcoholGoalViewModel>()
+    val smokingViewModel = hiltViewModel<SmokingViewModel>()
+    val smokingGoalViewModel = hiltViewModel<SmokingGoalViewModel>()
+    val caffeineViewModel = hiltViewModel<CaffeineViewModel>()
+    val caffeineGoalViewModel = hiltViewModel<CaffeineGoalViewModel>()
+
+    LaunchedEffect(key1 = true) {
+        alcoholViewModel.listenForAlcoholRecords(userId)
+        smokingViewModel.listenForSmokingRecords(userId)
+        caffeineViewModel.listenForCaffeineRecords(userId)
+    }
+
+    var currentAlcohol by remember { mutableStateOf(true) }
+    var hasAlcohol by remember { mutableStateOf(false) }
+    var currentSmoking by remember { mutableIntStateOf(0) }
+    var hasSmoking by remember { mutableStateOf(false) }
+    var currentCaffeine by remember { mutableIntStateOf(0) }
+    var hasCaffeine by remember { mutableStateOf(false) }
+
+    var isExistsAlcohol by remember { mutableStateOf<Alcohol?>(null) }
+    var isExistsSmoking by remember { mutableStateOf<Smoking?>(null) }
+    var isExistsCaffeine by remember { mutableStateOf<Caffeine?>(null) }
+
+    val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
+    val hasAlcoholGoal = alcoholGoalViewModel.isAlcoholChecked.collectAsState()
+    val smokingRecords = smokingViewModel.smokingRecords.collectAsState()
+    val hasSmokingGoal = smokingGoalViewModel.isSmokingChecked.collectAsState()
+    val caffeineRecords = caffeineViewModel.caffeineRecords.collectAsState()
+    val hasCaffeineGoal = caffeineGoalViewModel.isCaffeineChecked.collectAsState()
+
+    LaunchedEffect(
+        alcoholRecords.value,
+        smokingRecords.value,
+        caffeineRecords.value,
+        hasAlcoholGoal.value,
+        hasSmokingGoal.value,
+        hasCaffeineGoal.value,
+    ) {
+        if (alcoholRecords.value.isNotEmpty() && smokingRecords.value.isNotEmpty() && caffeineRecords.value.isNotEmpty()) {
+            isLoading = false
+        }
+        if (alcoholRecords.value.isNotEmpty()) {
+            currentAlcohol =
+                alcoholViewModel.getAlcoholRecord(alcoholRecords.value, date)?.doDrink ?: false
+            isExistsAlcohol =
+                alcoholViewModel.getAlcoholRecord(alcoholRecords.value, date)
+        }
+        if (smokingRecords.value.isNotEmpty()) {
+            currentSmoking =
+                smokingViewModel.getSmokingRecord(smokingRecords.value, date)?.cigarettes ?: 0
+            isExistsSmoking =
+                smokingViewModel.getSmokingRecord(smokingRecords.value, date)
+        }
+        if (caffeineRecords.value.isNotEmpty()) {
+            currentCaffeine =
+                caffeineViewModel.getCaffeineRecord(caffeineRecords.value, date)?.drinks ?: 0
+            isExistsCaffeine =
+                caffeineViewModel.getCaffeineRecord(caffeineRecords.value, date)
+        }
+        if (!hasAlcoholGoal.value) {
+            hasAlcohol = true
+        }
+        if (!hasSmokingGoal.value) {
+            hasSmoking = true
+        }
+        if (!hasCaffeineGoal.value) {
+            hasCaffeine = true
+        }
+    }
 
     val mediumFont = FontFamily(Font(R.font.medium))
 
@@ -258,7 +346,11 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "$nickname ${stringResource(id = R.string.days1)} $day${stringResource(id = R.string.days2)}",
+                        text = "$nickname ${stringResource(id = R.string.days1)} $day${
+                            stringResource(
+                                id = R.string.days2
+                            )
+                        }",
                         color = DarkGray,
                         fontFamily = mediumFont,
                         fontSize = 20.sp
@@ -267,53 +359,59 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-
                 // 음주 기록
-                Text(
-                    text = stringResource(id = R.string.alcohol) + " 🍺",
-                    fontSize = 25.sp,
-                    fontFamily = mediumFont,
-                    color = MediumBlue
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text =  "3" + stringResource(id = R.string.cup), // 예시로 "3잔" 표시
-                    fontSize = 25.sp,
-                    fontFamily = mediumFont,
-                    color = Color.Black
-                )
+                if (hasAlcohol) {
+                    Text(
+                        text = stringResource(id = R.string.soju) + " 🍺",
+                        fontSize = 25.sp,
+                        fontFamily = mediumFont,
+                        color = MediumBlue
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = if(isExistsAlcohol!=null) alcoholString else "기록 없음",
+                        fontSize = 25.sp,
+                        fontFamily = mediumFont,
+                        color = Color.Black
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 흡연 기록
-                Text(
-                    text = stringResource(id = R.string.smoking) + " 🚬",
-                    fontSize = 25.sp,
-                    fontFamily = mediumFont,
-                    color = MediumBlue
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "5"+ stringResource(id = R.string.gp), // 예시로 "5개피" 표시
-                    fontSize = 25.sp,
-                    fontFamily = mediumFont,
-                    color = Color.Black
-                )
+                if (hasSmoking) {
+                    // 흡연 기록
+                    Text(
+                        text = "$smokingString 🚬",
+                        fontSize = 25.sp,
+                        fontFamily = mediumFont,
+                        color = MediumBlue
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = if(isExistsSmoking!=null) currentSmoking.toString() + stringResource(id = R.string.gp) else "기록 없음",
+                        fontSize = 25.sp,
+                        fontFamily = mediumFont,
+                        color = Color.Black
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 카페인 기록
-                Text(
-                    text = stringResource(id = R.string.caffeine) + " ☕",
-                    fontSize = 25.sp,
-                    fontFamily = mediumFont,
-                    color = MediumBlue
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "2" + stringResource(id = R.string.cup), // 예시로 "2잔" 표시
-                    fontSize = 25.sp,
-                    fontFamily = mediumFont,
-                    color = Color.Black
-                )
+                if (hasCaffeine) {
+                    // 카페인 기록
+                    Text(
+                        text = "$caffeineString ☕",
+                        fontSize = 25.sp,
+                        fontFamily = mediumFont,
+                        color = MediumBlue
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = if(isExistsCaffeine!=null) currentCaffeine.toString() + stringResource(id = R.string.cup) else "기록 없음", // 예시로 "2잔" 표시
+                        fontSize = 25.sp,
+                        fontFamily = mediumFont,
+                        color = Color.Black
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -404,7 +502,7 @@ fun BottomAppBarComponent(
             TabItem(
                 text = {
                     Text(
-                        text = stringResource(id= R.string.calendar),
+                        text = stringResource(id = R.string.calendar),
                         color = if (selectedItem == 0) Black else LightGray,
                         fontSize = 12.sp
                     )
@@ -425,7 +523,7 @@ fun BottomAppBarComponent(
             TabItem(
                 text = {
                     Text(
-                        text = stringResource(id= R.string.home),
+                        text = stringResource(id = R.string.home),
                         color = if (selectedItem == 1) Black else LightGray,
                         fontSize = 12.sp
                     )
@@ -446,7 +544,7 @@ fun BottomAppBarComponent(
             TabItem(
                 text = {
                     Text(
-                        text = stringResource(id= R.string.statistics),
+                        text = stringResource(id = R.string.statistics),
                         color = if (selectedItem == 2) Black else LightGray,
                         fontSize = 12.sp
                     )

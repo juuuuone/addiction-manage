@@ -93,6 +93,11 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
         return smokingRecords.find { it.createdAt == today }
     }
 
+    fun getSmokingRecord(smokingRecords: List<Smoking>, date: LocalDate): Smoking? {
+        val today = date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        return smokingRecords.find { it.createdAt == today }
+    }
+
     fun getWeekSmokingRecord(smokingRecords: List<Smoking>): List<Pair<String, Int>> {
         val today = LocalDate.now()
         val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
