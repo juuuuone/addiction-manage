@@ -139,6 +139,22 @@ fun StatisticPage(
         hasSmokingGoal.value,
         hasCaffeineGoal.value,
     ) {
+
+        var updatedOptions = mutableListOf<String>()
+
+        if (!hasAlcoholGoal.value) {
+            updatedOptions.add(alcoholString)
+        }
+        if (!hasSmokingGoal.value) {
+            updatedOptions.add(smokingString)
+        }
+        if (!hasCaffeineGoal.value) {
+            updatedOptions.add(caffeineString)
+        }
+        options = updatedOptions
+        selectedOption = options.firstOrNull() ?: ""
+
+
         if (alcoholRecords.value.isNotEmpty() && smokingRecords.value.isNotEmpty() && caffeineRecords.value.isNotEmpty()) {
             isLoading = false
         }
@@ -175,20 +191,6 @@ fun StatisticPage(
         if (caffeineGoal.value.isNotEmpty()) {
             goalCaffeine = caffeineGoalViewModel.getCurrentUserGoal()?.goal?.toInt() ?: 0
         }
-
-        var updatedOptions = mutableListOf<String>()
-
-        if (!hasAlcoholGoal.value) {
-            updatedOptions.add(alcoholString)
-        }
-        if (!hasSmokingGoal.value) {
-            updatedOptions.add(smokingString)
-        }
-        if (!hasCaffeineGoal.value) {
-            updatedOptions.add(caffeineString)
-        }
-        options = updatedOptions
-        selectedOption = options.firstOrNull() ?: ""
     }
 
     Scaffold(
