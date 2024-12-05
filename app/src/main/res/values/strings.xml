@@ -9,7 +9,7 @@
     <string name="signup">Sign Up</string>
     <string name="signuptext">Already have an account? Sign in!</string>
     <string name="save_button">저장</string>
-    <string name="is_saving">저장되었습니다!</string>
+    <string name="is_saving">성공적으로 저장되었습니다!</string>
     <string name="check_button">확인</string>
     <string name="notify">알림</string>
     <string name="next_button">다음</string>
@@ -82,6 +82,8 @@
     <string name="sm_status">흡연 현황</string>
     <string name="ca_status">카페인 현황</string>
     <string name="select_friends">친구 선택</string>
+    <string name="add_friends">친구 추가</string>
+    <string name="friends_email">친구의 E-mail</string>
 
 
 </resources>
