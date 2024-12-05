@@ -113,6 +113,8 @@ fun StatisticPage(
     val caffeineViewModel = hiltViewModel<CaffeineViewModel>()
     val caffeineGoalViewModel = hiltViewModel<CaffeineGoalViewModel>()
 
+    var isEmpty by remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = true) {
         alcoholViewModel.listenForAlcoholRecords(userId)
         smokingViewModel.listenForSmokingRecords(userId)
@@ -142,22 +144,26 @@ fun StatisticPage(
 
         var updatedOptions = mutableListOf<String>()
 
-        if (!hasAlcoholGoal.value) {
+        if (!hasAlcoholGoal.value && alcoholRecords.value.isNotEmpty()) {
             updatedOptions.add(alcoholString)
         }
-        if (!hasSmokingGoal.value) {
+        if (!hasSmokingGoal.value&& smokingRecords.value.isNotEmpty()) {
             updatedOptions.add(smokingString)
         }
-        if (!hasCaffeineGoal.value) {
+        if (!hasCaffeineGoal.value&& caffeineRecords.value.isNotEmpty()) {
             updatedOptions.add(caffeineString)
         }
         options = updatedOptions
         selectedOption = options.firstOrNull() ?: ""
 
-
-        if (alcoholRecords.value.isNotEmpty() && smokingRecords.value.isNotEmpty() && caffeineRecords.value.isNotEmpty()) {
+        if(updatedOptions.isEmpty()){
+            isEmpty = true
+            isLoading = false
+        }else{
+            isEmpty = false
             isLoading = false
         }
+
         if (alcoholRecords.value.isNotEmpty()) {
             yesterdayAlcohol =
                 alcoholViewModel.getYesterdayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
@@ -236,65 +242,132 @@ fun StatisticPage(
                     color = Color.Black
                 )
             } else {
-                Spacer(modifier = Modifier.padding(12.dp))
-                TimeframeSelector(
-                    options = options,
-                    selectedOption = selectedOption,
-                    onOptionSelected = { selectedOption = it }
-                )
-                Spacer(modifier = Modifier.padding(12.dp))
-                if (selectedOption == alcoholString) {
-                    AlcoholCount(
-                        yesterdayAlcohol = yesterdayAlcohol,
-                        currentAlcohol = currentAlcohol,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    AlcoholStatistic(
-                        progress = weekAlcohol.toFloat() / goalAlcohol,
-                        weekAlcohol = weekAlcohol,
-                        goalAlcohol = goalAlcohol,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    ColumnGraph(
-                        unit = stringResource(id = R.string.soju),
-                        data = alcoholGraphData,
-                    )
-                } else if (selectedOption == smokingString) {
-                    SmokingCount(
-                        yesterdaySmoking = yesterdaySmoking,
-                        currentSmoking = currentSmoking,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    SmokingStatistic(
-                        progress = weekSmoking.toFloat() / (goalSmoking * 7),
-                        weekSmoking = weekSmoking,
-                        goalSmoking = goalSmoking * 7,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    ColumnGraph(
-                        unit = stringResource(id = R.string.gp),
-                        data = smokingGraphData,
-                    )
-                } else if (selectedOption == caffeineString) {
-                    CaffeineCount(
-                        yesterdayCaffeine = yesterdayCaffeine,
-                        currentCaffeine = currentCaffeine,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    CaffeineStatistic(
-                        progress = weekCaffeine.toFloat() / (goalCaffeine * 7),
-                        weekCaffeine = weekCaffeine,
-                        goalCaffeine = goalCaffeine * 7,
-                    )
-                    Spacer(modifier = Modifier.padding(10.dp))
-                    ColumnGraph(
-                        unit = stringResource(id = R.string.cup),
-                        data = caffeineGraphData,
-                    )
+                if(isEmpty){
+                    EmptyRecordsScreen()
+                }else{
+                    RecordScreen(
+                        options,
+                    alcoholString,
+                    selectedOption,
+                    yesterdayAlcohol,
+                    currentAlcohol,
+                    weekAlcohol,
+                    goalAlcohol,
+                    alcoholGraphData,
+                    smokingString,
+                    yesterdaySmoking,
+                    currentSmoking,
+                    weekSmoking,
+                    goalSmoking,
+                    smokingGraphData,
+                    caffeineString,
+                    yesterdayCaffeine,
+                    currentCaffeine,
+                    weekCaffeine,
+                    goalCaffeine,
+                    caffeineGraphData,
+                        onOptionSelected =  {selectedOption = it})
+
                 }
+
+
             }
         }
     }
+}
+
+
+@Composable
+fun EmptyRecordsScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("기록이 없습니다.")
+    }
+}
+
+@Composable
+fun RecordScreen(
+    options: List<String>,
+    alcoholString : String,
+    selectedOption: String,
+    yesterdayAlcohol: Boolean,
+    currentAlcohol: Boolean,
+    weekAlcohol: Int,
+    goalAlcohol: Int,
+    alcoholGraphData: List<Pair<String,Int>>,
+    smokingString: String,
+    yesterdaySmoking: Int,
+    currentSmoking: Int,
+    weekSmoking: Int,
+    goalSmoking: Int,
+    smokingGraphData: List<Pair<String,Int>>,
+    caffeineString: String,
+    yesterdayCaffeine: Int,
+    currentCaffeine: Int,
+    weekCaffeine: Int,
+    goalCaffeine: Int,
+    caffeineGraphData: List<Pair<String,Int>>,
+    onOptionSelected: (String) -> Unit,
+) {
+    Spacer(modifier = Modifier.padding(12.dp))
+    TimeframeSelector(
+        options = options,
+        selectedOption = selectedOption,
+        onOptionSelected = onOptionSelected
+    )
+    Spacer(modifier = Modifier.padding(12.dp))
+    if (selectedOption == alcoholString) {
+        AlcoholCount(
+            yesterdayAlcohol = yesterdayAlcohol,
+            currentAlcohol = currentAlcohol,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        AlcoholStatistic(
+            progress = weekAlcohol.toFloat() / goalAlcohol,
+            weekAlcohol = weekAlcohol,
+            goalAlcohol = goalAlcohol,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        ColumnGraph(
+            unit = stringResource(id = R.string.soju),
+            data = alcoholGraphData,
+        )
+    } else if (selectedOption == smokingString) {
+        SmokingCount(
+            yesterdaySmoking = yesterdaySmoking,
+            currentSmoking = currentSmoking,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        SmokingStatistic(
+            progress = weekSmoking.toFloat() / (goalSmoking * 7),
+            weekSmoking = weekSmoking,
+            goalSmoking = goalSmoking * 7,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        ColumnGraph(
+            unit = stringResource(id = R.string.gp),
+            data = smokingGraphData,
+        )
+    } else if (selectedOption == caffeineString) {
+        CaffeineCount(
+            yesterdayCaffeine = yesterdayCaffeine,
+            currentCaffeine = currentCaffeine,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        CaffeineStatistic(
+            progress = weekCaffeine.toFloat() / (goalCaffeine * 7),
+            weekCaffeine = weekCaffeine,
+            goalCaffeine = goalCaffeine * 7,
+        )
+        Spacer(modifier = Modifier.padding(10.dp))
+        ColumnGraph(
+            unit = stringResource(id = R.string.cup),
+            data = caffeineGraphData,
+        )
+    }
+
 }
 
 @Composable
