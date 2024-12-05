@@ -79,6 +79,7 @@ import com.example.addiction_manage.ui.theme.MediumBlue
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.addiction_manage.feature.alcohol.AlcoholGoalViewModel
 import com.example.addiction_manage.feature.alcohol.AlcoholViewModel
 import com.example.addiction_manage.feature.caffeine.CaffeineGoalViewModel
@@ -118,12 +119,7 @@ fun CalendarPage(
         },
         bottomBar = {
             BottomAppBarComponent(
-                navigateToCalendar = navigateToCalendar,
-                navigateToHome = navigateToHome,
-                navigateToStatistic = navigateToStatistic,
-                navigateToFriends=navigateToFriends,
-                isCalendarPage = true,
-                selectedItem = selectedItem,
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -482,23 +478,24 @@ fun TopAppBarComponent(
 /*바텀바*/
 @Composable
 fun BottomAppBarComponent(
-    navigateToCalendar: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToStatistic: () -> Unit,
-    navigateToFriends:()->Unit,
-    selectedItem: Int,
-    isCalendarPage: Boolean = false,
-    isHomePage: Boolean = false,
-    isStatisticPage: Boolean = false,
+    navController: NavController
 ) {
-    val painter: Painter = painterResource(id = R.drawable.bar_chart_24px)  // Drawable 리소스 ID
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    val selectedItem = when (currentRoute) {
+        "calendar" -> 0
+        "home" -> 1
+        "statistic" -> 2
+        "friends" -> 3
+        else -> -1 // 기본값 (선택되지 않은 상태)
+    }
 
     BottomAppBar(
         modifier = Modifier
             .padding(0.dp)
-            .fillMaxWidth(), // 하단 바를 전체 너비로 설정
-        containerColor = BackgroundColor, // 기본 하단 바의 배경색 설정
-        contentColor = Black // 아이콘 및 텍스트 색상
+            .fillMaxWidth(),
+        containerColor = BackgroundColor,
+        contentColor = Black
     ) {
         Row(
             modifier = Modifier
@@ -517,14 +514,12 @@ fun BottomAppBarComponent(
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.calendar_month_24px),
-                        contentDescription = "Calender",
+                        contentDescription = "Calendar",
                         tint = if (selectedItem == 0) Black else LightGray
                     )
                 },
-                isSelected = isCalendarPage,
-                onSelect = {
-                    navigateToCalendar()
-                },
+                isSelected = selectedItem == 0,
+                onSelect = { navController.navigate("calendar") },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
@@ -542,10 +537,8 @@ fun BottomAppBarComponent(
                         tint = if (selectedItem == 1) Black else LightGray
                     )
                 },
-                isSelected = isHomePage,
-                onSelect = {
-                    navigateToHome()
-                },
+                isSelected = selectedItem == 1,
+                onSelect = { navController.navigate("home") },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
@@ -559,14 +552,12 @@ fun BottomAppBarComponent(
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.database_24px),
-                        contentDescription = "Bar Chart",
+                        contentDescription = "Statistic",
                         tint = if (selectedItem == 2) Black else LightGray
                     )
                 },
-                isSelected = isStatisticPage,
-                onSelect = {
-                    navigateToStatistic()
-                },
+                isSelected = selectedItem == 2,
+                onSelect = { navController.navigate("statistic") },
                 modifier = Modifier.weight(1f)
             )
             TabItem(
@@ -580,19 +571,18 @@ fun BottomAppBarComponent(
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.group_24px),
-                        contentDescription = "friends",
+                        contentDescription = "Friends",
                         tint = if (selectedItem == 3) Black else LightGray
                     )
                 },
-                isSelected = isStatisticPage,
-                onSelect = {
-                    navigateToFriends()
-                },
+                isSelected = selectedItem == 3,
+                onSelect = { navController.navigate("friends") },
                 modifier = Modifier.weight(1f)
             )
         }
     }
 }
+
 
 /*캘린더 탭*/
 @Composable

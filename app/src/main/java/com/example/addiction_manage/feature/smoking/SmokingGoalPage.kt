@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.smoking
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.R
@@ -109,10 +111,15 @@ fun SmokingGoalPage(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    TextField(
+                    OutlinedTextField(
                         value = if (isLoading.value) "로딩중 ..." else newGoal.value,
                         onValueChange = { newGoal.value = it },
-                        enabled = true // 텍스트 필드는 항상 활성화
+                        enabled = true, // 텍스트 필드는 항상 활성화
+                        label = { Text(stringResource(id =R.string.set_smoking_goal)) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        singleLine = true
                     )
 
                     Spacer(modifier = Modifier.height(32.dp))
@@ -195,15 +202,60 @@ fun CheckboxWithBorder(label: String, isChecked: Boolean, onCheckedChange: (Bool
 
 @Composable
 fun ShowSaveDialog(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.2f) // 모달창 크기
+                .padding(bottom = 10.dp),
+            shape = RoundedCornerShape(16.dp),
+            color = Color.White,
+            border = BorderStroke(2.dp, color = MediumBlue)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(5.dp),
+                horizontalAlignment = Alignment.Start, // 왼쪽 정렬
+                verticalArrangement = Arrangement.Top
+            ) {
+                // 제목 : 알림 (왼쪽 정렬 및 적절한 패딩 추가)
+                Text(
+                    text = stringResource(id = R.string.notify),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+                    textAlign = TextAlign.Start,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
 
-    AlertDialog(
-        onDismissRequest = { onDismiss() },
-        confirmButton = {
-            TextButton(onClick = { onDismiss() }) {
-                Text(stringResource(id=R.string.check_button))
+                // 내용 (굵은 글씨)
+                Text(
+                    text = stringResource(id = R.string.is_saving),
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontFamily = FontFamily(Font(R.font.minsans)),
+                    fontSize = 20.sp
+                )
+
+                // 버튼 행 (확인 버튼과 닫기 버튼)
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(5.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 확인 버튼
+                    TextButton(
+                        onClick = { onDismiss() },
+                        colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.check_button),
+                            fontFamily = FontFamily(Font(R.font.minsans))
+                        )
+                    }
+                }
             }
-        },
-        title = { Text(stringResource(id = R.string.notify)) },
-        text = { Text(stringResource(id=R.string.is_saving)) }
-    )
+        }
+    }
 }

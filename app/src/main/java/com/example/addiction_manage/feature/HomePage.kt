@@ -110,12 +110,7 @@ fun HomePage(
         },
         bottomBar = {
             BottomAppBarComponent(
-                navigateToCalendar = navigateToCalendar,
-                navigateToHome = navigateToHome,
-                navigateToStatistic = navigateToStatistic,
-                navigateToFriends = navigateToFriends,
-                isHomePage = true,
-                selectedItem = selectedItem
+                navController = navController
             )
         }
     ) { innerPadding ->

@@ -210,12 +210,7 @@ fun StatisticPage(
         },
         bottomBar = {
             BottomAppBarComponent(
-                navigateToCalendar = navigateToCalendar,
-                navigateToHome = navigateToHome,
-                navigateToStatistic = navigateToStatistic,
-                navigateToFriends=navigateToFriends,
-                isStatisticPage = true,
-                selectedItem = selectedItem,
+                navController = navController
             )
         }
     ) { innerPadding ->

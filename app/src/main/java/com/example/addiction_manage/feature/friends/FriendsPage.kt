@@ -4,6 +4,7 @@ package com.example.addiction_manage.feature.friends
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -84,12 +85,7 @@ fun FriendsPage(
         },
         bottomBar = {
             BottomAppBarComponent(
-                navigateToCalendar = navigateToCalendar,
-                navigateToHome = navigateToHome,
-                navigateToStatistic = navigateToStatistic,
-                navigateToFriends=navigateToFriends,
-                isHomePage = true,
-                selectedItem = selectedItem
+                navController = navController
             )
         }
     ) { innerPadding ->
@@ -120,6 +116,8 @@ fun ComparePage(
     if (showDialog) {
         SelectFriends { showDialog = false }  // 다이얼로그 닫기
     }
+
+
 
     Surface(
         modifier = Modifier
@@ -275,53 +273,218 @@ fun SelectFriends(onDismiss: () -> Unit) {
     val friendsList = listOf("Alice", "Bob", "Charlie")  // 친구 목록 예시
     var expanded by remember { mutableStateOf(false) }  // 드롭다운 상태
     var selectedFriend by remember { mutableStateOf("") }  // 선택된 친구
+    var showAddFriendDialog by remember { mutableStateOf(false) } // 친구 추가 모달창
+
+    // AddNewFriendDialog 다이얼로그
+    if (showAddFriendDialog) {
+        AddNewFriendDialog(
+            onDismiss = { showAddFriendDialog = false },
+            onAddFriend = { email ->
+                showAddFriendDialog = false
+            }
+        )
+    }
+
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.6f),  // 모달창 크기 조절
+                .fillMaxHeight(0.4f),  // 모달창 크기 조절
             shape = RoundedCornerShape(16.dp),
             color = White,
-            border = BorderStroke(2.dp, color = MediumBlue)
+            border = BorderStroke(2.dp, MediumBlue)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start // 왼쪽 정렬
             ) {
-                Text("Select a friend", fontSize = 24.sp)
+                // 제목
+                Text(
+                    text = stringResource(id = R.string.select_friends),
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    modifier = Modifier
+                        .padding(start = 8.dp, bottom = 16.dp)
+                )
 
+                // 드롭다운 버튼
                 OutlinedButton(
-                    onClick = { expanded = !expanded }  // 드롭다운 열고 닫기
+                    onClick = { expanded = !expanded },
+                    border = BorderStroke(3.dp, MediumBlue),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = White,
+                        contentColor = MediumBlue
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
                 ) {
-                    Text(if (selectedFriend.isEmpty()) "Choose a friend" else selectedFriend)
+                    Text(
+                        text = if (selectedFriend.isEmpty()) stringResource(id = R.string.select_friends) else selectedFriend,
+                        fontFamily = FontFamily(Font(R.font.minsans)),
+                        fontSize = 18.sp
+                    )
                 }
 
+                // 드롭다운 메뉴
                 DropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }  // 메뉴 바깥을 클릭하면 닫힘
+                    onDismissRequest = { expanded = false }
                 ) {
                     friendsList.forEach { friend ->
                         DropdownMenuItem(onClick = {
-                            selectedFriend = friend  // 친구 선택
+                            selectedFriend = friend
                             expanded = false
                         }) {
-                            Text(friend)
+                            Text(
+                                text = friend,
+                                fontFamily = FontFamily(Font(R.font.minsans)),
+                                fontSize = 18.sp
+                            )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Button(onClick = { /* TODO: 친구 추가 로직 */ }) {
-                    Text("Add new friend")
+                // 친구 추가 버튼
+                Button(
+                    onClick = { showAddFriendDialog = true },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MediumBlue,
+                        contentColor = White
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.add_friends),
+                        fontFamily = FontFamily(Font(R.font.minsans)),
+                        fontSize = 18.sp
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
-                Button(onClick = { onDismiss() }) {
-                    Text("Close")
+                // 닫기 버튼
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.BottomEnd // 우측 하단 정렬
+                ) {
+                    Button(
+                        onClick = { onDismiss() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightGrey,
+                            contentColor = Black
+                        ),
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.close),
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            fontSize = 18.sp
+                        )
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+// 친구 추가 누르면 나오는 모달창
+@Composable
+fun AddNewFriendDialog(onDismiss: () -> Unit, onAddFriend: (String) -> Unit) {
+    var email by remember { mutableStateOf("") } // 입력값 상태
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.4f), // 모달창 크기
+            shape = RoundedCornerShape(16.dp),
+            color = White,
+            border = BorderStroke(2.dp, MediumBlue)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start // 왼쪽 정렬
+            ) {
+                // 제목 : 상단 왼쪽
+                Text(
+                    text = stringResource(id = R.string.add_friends),
+                    fontSize = 24.sp,
+                    fontFamily = FontFamily(Font(R.font.bold)),
+                    modifier = Modifier
+                        .padding(start = 8.dp, bottom = 16.dp)
+                )
+
+                // 입력창
+                androidx.compose.material3.OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text(stringResource(id =R.string.friends_email)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    singleLine = true
+                )
+
+                Spacer(modifier = Modifier.weight(1f)) // 여백 추가
+
+                // 저장, 닫기 버튼
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Button(
+                        onClick = {
+                            onDismiss() // 다이얼로그 닫기
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = LightGrey,
+                            contentColor = Black
+                        ),
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id =R.string.close),
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            fontSize = 18.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.padding(4.dp))
+                    Button(
+                        onClick = {
+                            onAddFriend(email) // 입력값 전달
+                            onDismiss() // 다이얼로그 닫기
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MediumBlue,
+                            contentColor = White
+                        ),
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id =R.string.save_button),
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            fontSize = 18.sp
+                        )
+                    }
                 }
             }
         }
