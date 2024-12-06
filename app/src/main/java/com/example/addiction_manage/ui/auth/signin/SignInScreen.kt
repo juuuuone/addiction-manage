@@ -65,15 +65,17 @@ fun SignInScreen(
 
     val context = LocalContext.current
     LaunchedEffect(key1 = uiState.value) { // key 값이 바뀌면 이걸 먼저 수행
-        when(uiState.value){
+        when (uiState.value) {
             is SignInState.Success -> {
-                navController.navigate("home"){
+                navController.navigate("home") {
                     popUpTo("login") { inclusive = true }//  홈 화면 밑에 깔린 로그인 페이지를 스택에서 제거하는거
                 }
             }
+
             is SignInState.Error -> {
                 Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
             }
+
             else -> {}
         }
     }
@@ -119,14 +121,17 @@ fun SignInScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Row(){
-                Text("로그인하고 중독을 ",fontSize = 22.sp,
+            Row() {
+                Text(
+                    "로그인하고 중독을 ", fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
-                Text("DeTox",fontSize = 22.sp,
+                Text(
+                    "DeTox", fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.bold))
                 )
-                Text(" 해보세요!",fontSize = 22.sp,
+                Text(
+                    " 해보세요!", fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -136,8 +141,10 @@ fun SignInScreen(
                 value = email,
                 onValueChange = { email = it },
                 label = {
-                    Text("이메일",
-                        fontFamily = FontFamily(Font(R.font.minsans)))
+                    Text(
+                        "이메일",
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             )
@@ -147,8 +154,10 @@ fun SignInScreen(
                 value = password,
                 onValueChange = { password = it },
                 label = {
-                    Text("비밀번호",
-                        fontFamily = FontFamily(Font(R.font.minsans)))
+                    Text(
+                        "비밀번호",
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -156,22 +165,26 @@ fun SignInScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            if(uiState.value == SignInState.Loading){
+            if (uiState.value == SignInState.Loading) {
                 CircularProgressIndicator() // 동그라미 로딩 창
-            }else{
+            } else {
                 Button(
-                    onClick = {viewModel.signIn(email, password)},
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        viewModel.signIn(email, password)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
-                ){
-                    Text(text = "로그인", fontSize=16.sp)
+                ) {
+                    Text(text = "로그인", fontSize = 16.sp)
                 }
                 TextButton(
-                    onClick = {navController.navigate("signup")},
-                    modifier = Modifier.fillMaxWidth()
-                    .height(40.dp),
-                ){
+                    onClick = { navController.navigate("signup") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp),
+                ) {
                     Text(text = "계정이 없다면? 회원가입하기", color = MediumBlue, fontSize = 16.sp)
                 }
             }

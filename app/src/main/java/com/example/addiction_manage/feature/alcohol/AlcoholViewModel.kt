@@ -47,7 +47,6 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
         val currentUser = firebaseAuth.currentUser
         val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
         val alcoholRecord = Alcohol(
             id = firebaseDatabase.reference.child("Alcohol").push().key ?: UUID.randomUUID()
                 .toString(),
