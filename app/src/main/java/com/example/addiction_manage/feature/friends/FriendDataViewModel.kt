@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.friends
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.addiction_manage.feature.model.User
 import com.google.firebase.Firebase
@@ -22,7 +23,7 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
     private val firebaseAuth = Firebase.auth
 
     fun listenForUsers() {
-        firebaseDatabase.reference.child("User").orderByChild("createdAt")
+        firebaseDatabase.reference.child("User")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<User>()
@@ -51,7 +52,11 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
 
         if (friend != null) {
             user?.friends?.add(friend)
+            Log.d("current", user.toString())
         }
+        firebaseDatabase.reference.child("User").child(currentUser?.uid!!).setValue(user)
+
+        Log.d("friend", friend.toString())
     }
 
     // 친구 선택할 때 닉네임 리스트업

@@ -28,12 +28,13 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
     private val firebaseAuth = Firebase.auth
     val currentUser = firebaseAuth.currentUser
     val uid = currentUser?.uid!!
+    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
     fun addAlcoholRecord(doDrink: Boolean) {
 
         currentUser?.email?.let { Log.d("email", it) }
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        //val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         val alcoholRecord = Alcohol(
             id = currentUser.uid,
             email = email,
@@ -47,6 +48,7 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     fun listenForAlcoholRecords() {
         firebaseDatabase.reference.child("Alcohol").child(uid).orderByChild("createdAt")
+            .equalTo(today)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Alcohol>()
@@ -66,6 +68,8 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
     }
 
     fun getTodayAlcoholRecordByEmail(alcoholRecords: List<Alcohol>, email: String): Alcohol? {
+        Log.d("test", alcoholRecords.toString())
+        Log.d("email", email)
         return alcoholRecords.find { data ->
             data.email == email
         }

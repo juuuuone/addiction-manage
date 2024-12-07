@@ -27,10 +27,11 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
     private val firebaseAuth = Firebase.auth
     val currentUser = firebaseAuth.currentUser
     val uid = currentUser?.uid!!
+    val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
     fun addCaffeineRecord(drinks: Int) {
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+//        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         val caffeineRecord = Caffeine(
             id = currentUser.uid,
@@ -45,6 +46,7 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
 
     fun listenForCaffeineRecords() {
         firebaseDatabase.reference.child("Caffeine").child(uid).orderByChild("createdAt")
+            .equalTo(today)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Caffeine>()

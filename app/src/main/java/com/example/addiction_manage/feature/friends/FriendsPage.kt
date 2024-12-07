@@ -1,6 +1,7 @@
 package com.example.addiction_manage.feature.friends
 
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -129,6 +130,12 @@ fun ComparePage(
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
     val smokingRecords = smokingViewModel.smokingRecords.collectAsState()
     val caffeineRecords = caffeineViewModel.caffeineRecords.collectAsState()
+
+    Log.d("users", users.value.toString())
+    Log.d("al", alcoholRecords.value.toString())
+    Log.d("sm", smokingRecords.value.toString())
+    Log.d("ca", caffeineRecords.value.toString())
+
 
     val friendsList = friendDataViewModel.getAllFriendsNickname(users.value) ?: emptyList()
     val friendEmail = friendDataViewModel.getFriendEmail(users.value, friendNickname)
@@ -317,6 +324,9 @@ fun ComparePage(
                         .padding(top = 16.dp)
                         .padding(bottom = 16.dp)
                 )
+                Log.d("fA", friendAlcohol.toString())
+                Log.d("fS", friendSmoking.toString())
+                Log.d("fC", friendCaffeine.toString())
             }
         }
 
