@@ -23,6 +23,9 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
 
     private val _caffeineRecords = MutableStateFlow<List<Caffeine>>(emptyList())
     val caffeineRecords = _caffeineRecords.asStateFlow()
+    private val _friendCaffeineRecords = MutableStateFlow<List<Caffeine>>(emptyList())
+    val friendCaffeineRecords = _friendCaffeineRecords.asStateFlow()
+
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
     val currentUser = firebaseAuth.currentUser
@@ -31,8 +34,6 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
 
     fun addCaffeineRecord(drinks: Int) {
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
-//        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
         val caffeineRecord = Caffeine(
             id = currentUser.uid,
             email = email,
@@ -65,10 +66,25 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    fun getTodayCaffeineRecordByEmail(caffeineRecords: List<Caffeine>, email: String): Caffeine? {
-        return caffeineRecords.find { data ->
-            data.email == email
-        }
+    fun listenForFriendCaffeineRecords(id: String) {
+        firebaseDatabase.reference.child("Caffeine").child(id).orderByChild("createdAt")
+            .equalTo(today)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Caffeine>()
+                    snapshot.children.forEach { data ->
+                        val caffeine = data.getValue(Caffeine::class.java)
+                        caffeine?.let {
+                            list.add(caffeine)
+                        }
+                    }
+                    _friendCaffeineRecords.value = list
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
     }
 
     fun getYesterdayCaffeineRecord(caffeineRecords: List<Caffeine>): Caffeine? {

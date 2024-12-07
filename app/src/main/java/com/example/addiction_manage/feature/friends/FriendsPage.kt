@@ -4,6 +4,7 @@ package com.example.addiction_manage.feature.friends
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,10 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -110,16 +114,22 @@ fun ComparePage(
 
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
-    val email = currentUser?.email ?: return
-    val nickname: String = currentUser?.let { checkUser(it) }.toString()
-    var friendNickname by remember { mutableStateOf("") } // 친구 닉네임 받아오기
-    var showDialog by remember { mutableStateOf(false) }  // 다이얼로그 표시 상태
+    val nickname = currentUser?.let { checkUser(it) }.toString()
+    var showDialog by remember { mutableStateOf(false) }
 
     val friendDataViewModel = hiltViewModel<FriendDataViewModel>()
     val alcoholViewModel = hiltViewModel<AlcoholViewModel>()
     val smokingViewModel = hiltViewModel<SmokingViewModel>()
     val caffeineViewModel = hiltViewModel<CaffeineViewModel>()
 
+    var myAlcohol by remember { mutableStateOf(false) }
+    var mySmoking by remember { mutableStateOf(0) }
+    var myCaffeine by remember { mutableStateOf(0) }
+    var friendAlcohol by remember { mutableStateOf(false) }
+    var friendSmoking by remember { mutableStateOf(0) }
+    var friendCaffeine by remember { mutableStateOf(0) }
+
+    // 사용자 데이터 처리
     LaunchedEffect(key1 = true) {
         friendDataViewModel.listenForUsers()
         alcoholViewModel.listenForAlcoholRecords()
@@ -130,38 +140,61 @@ fun ComparePage(
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
     val smokingRecords = smokingViewModel.smokingRecords.collectAsState()
     val caffeineRecords = caffeineViewModel.caffeineRecords.collectAsState()
+    LaunchedEffect(
+        key1 = alcoholRecords.value,
+        key2 = smokingRecords.value,
+        key3 = caffeineRecords.value
+    ) {
+        myAlcohol =
+            alcoholViewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
+        mySmoking =
+            smokingViewModel.getTodaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
+        myCaffeine =
+            caffeineViewModel.getTodayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
 
-    Log.d("users", users.value.toString())
-    Log.d("al", alcoholRecords.value.toString())
-    Log.d("sm", smokingRecords.value.toString())
-    Log.d("ca", caffeineRecords.value.toString())
+    }
 
-
+    // 친구 데이터 처리
+    var friendNickname by remember { mutableStateOf("") }
     val friendsList = friendDataViewModel.getAllFriendsNickname(users.value) ?: emptyList()
-    val friendEmail = friendDataViewModel.getFriendEmail(users.value, friendNickname)
-    val myAlcohol =
-        alcoholViewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
-    val mySmoking =
-        smokingViewModel.getTodaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
-    val myCaffeine =
-        caffeineViewModel.getTodayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
-    val friendAlcohol =
-        alcoholViewModel.getTodayAlcoholRecordByEmail(alcoholRecords.value, friendEmail)?.doDrink
-            ?: false
-    val friendSmoking =
-        smokingViewModel.getTodaySmokingRecordByEmail(smokingRecords.value, friendEmail)?.cigarettes
-            ?: 0
-    val friendCaffeine =
-        caffeineViewModel.getTodayCaffeineRecordByEmail(caffeineRecords.value, friendEmail)?.drinks
-            ?: 0
+    val friendId = friendDataViewModel.getFriendId(users.value, friendNickname)
+    LaunchedEffect(users.value) {
+        friendNickname = friendDataViewModel.getDefaultFriendNickname(users.value)
+    }
+    LaunchedEffect(friendNickname) {
+        alcoholViewModel.listenForFriendAlcoholRecords(friendId)
+        smokingViewModel.listenForFriendSmokingRecords(friendId)
+        caffeineViewModel.listenForFriendCaffeineRecords(friendId)
+        friendDataViewModel.setDefaultFriend(users.value, friendId)
+    }
+    val friendAlcoholRecords = alcoholViewModel.friendAlcoholRecords.collectAsState()
+    val friendSmokingRecords = smokingViewModel.friendSmokingRecords.collectAsState()
+    val friendCaffeineRecords = caffeineViewModel.friendCaffeineRecords.collectAsState()
+    LaunchedEffect(
+        key1 = friendAlcoholRecords.value,
+        key2 = friendSmokingRecords.value,
+        key3 = friendCaffeineRecords.value
+    ) {
+        friendAlcohol =
+            alcoholViewModel.getTodayAlcoholRecord(friendAlcoholRecords.value)?.doDrink ?: false
+        friendSmoking =
+            smokingViewModel.getTodaySmokingRecord(friendSmokingRecords.value)?.cigarettes ?: 0
+        friendCaffeine =
+            caffeineViewModel.getTodayCaffeineRecord(friendCaffeineRecords.value)?.drinks ?: 0
+    }
 
     if (showDialog) {
         SelectFriends(
             onDismiss = { showDialog = false },
-            setFriendNickname = { friendNickname = it },
+            setFriendNickname = {
+                friendNickname = it
+            },
             friendNickname = friendNickname,
             friendsList = friendsList,
-            addFriend = { friendDataViewModel.addFriend(users.value, it) }
+            addFriend = {
+                friendDataViewModel.addFriend(users.value, it)
+                friendDataViewModel.listenForUsers()
+            }
         )
     }
 
@@ -209,7 +242,7 @@ fun ComparePage(
             ) {
                 Row() {
                     Text(
-                        text = "$nickname",
+                        text = nickname,
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.bold)),
                         modifier = Modifier
@@ -228,10 +261,10 @@ fun ComparePage(
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = stringResource(id = R.string.al_status) + if (myAlcohol) stringResource(
+                    text = "🍺 : " + if (myAlcohol) stringResource(
                         id = R.string.alcohol
                     ) else stringResource(id = R.string.no_alcohol),
-                    color = MediumBlue,
+                    color = Black,
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
@@ -239,10 +272,10 @@ fun ComparePage(
                         .padding(top = 16.dp)
                 )
                 Text(
-                    text = stringResource(id = R.string.sm_status) + mySmoking.toString() + stringResource(
+                    text = "🚬 : $mySmoking" + stringResource(
                         id = R.string.gp
                     ),
-                    color = MediumRed,
+                    color = Black,
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
@@ -250,10 +283,10 @@ fun ComparePage(
                         .padding(top = 16.dp)
                 )
                 Text(
-                    text = stringResource(id = R.string.ca_status) + myCaffeine.toString() + stringResource(
+                    text = "☕ : $myCaffeine" + stringResource(
                         id = R.string.cup
                     ),
-                    color = MediumBlue,
+                    color = Black,
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
@@ -263,73 +296,71 @@ fun ComparePage(
                 )
             }
             Spacer(modifier = Modifier.height(50.dp))
-            Column(
-                modifier = Modifier
-                    .background(color = WhiteRed, shape = RoundedCornerShape(10.dp))
-                    .fillMaxWidth()
-                    .height(240.dp)
-            ) {
-                Row() {
+            if (friendNickname.isNotEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .background(color = WhiteRed, shape = RoundedCornerShape(10.dp))
+                        .fillMaxWidth()
+                        .height(240.dp)
+                ) {
+                    Row() {
+                        Text(
+                            text = friendNickname,
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.bold)),
+                            modifier = Modifier
+                                .padding(start = 20.dp)
+                                .padding(top = 16.dp)
+                        )
+                        Text(
+                            text = stringResource(id = R.string.status),
+                            color = Black,
+                            fontSize = 24.sp,
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .padding(top = 16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+
                     Text(
-                        text = friendNickname,
-                        fontSize = 24.sp,
-                        fontFamily = FontFamily(Font(R.font.bold)),
-                        modifier = Modifier
-                            .padding(start = 20.dp)
-                            .padding(top = 16.dp)
-                    )
-                    Text(
-                        text = stringResource(id = R.string.status),
+                        text = "🍺 : " + if (friendAlcohol) stringResource(
+                            id = R.string.alcohol
+                        ) else stringResource(id = R.string.no_alcohol),
                         color = Black,
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.minsans)),
                         modifier = Modifier
-                            .padding(end = 16.dp)
+                            .padding(start = 16.dp)
                             .padding(top = 16.dp)
                     )
+                    Text(
+                        text = "🚬 : $friendSmoking" + stringResource(
+                            id = R.string.gp
+                        ),
+                        color = Black,
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.minsans)),
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .padding(top = 16.dp)
+                    )
+                    Text(
+                        text = "☕ : $friendCaffeine" + stringResource(
+                            id = R.string.cup
+                        ),
+                        color = Black,
+                        fontSize = 24.sp,
+                        fontFamily = FontFamily(Font(R.font.minsans)),
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .padding(top = 16.dp)
+                            .padding(bottom = 16.dp)
+                    )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Text(
-                    text = stringResource(id = R.string.al_status) + if (friendAlcohol) stringResource(
-                        id = R.string.alcohol
-                    ) else stringResource(id = R.string.no_alcohol),
-                    color = MediumRed,
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.minsans)),
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .padding(top = 16.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.sm_status) + friendSmoking.toString() + stringResource(
-                        id = R.string.gp
-                    ),
-                    color = MediumBlue,
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.minsans)),
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .padding(top = 16.dp)
-                )
-                Text(
-                    text = stringResource(id = R.string.ca_status) + friendCaffeine.toString() + stringResource(
-                        id = R.string.cup
-                    ),
-                    color = MediumRed,
-                    fontSize = 24.sp,
-                    fontFamily = FontFamily(Font(R.font.minsans)),
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .padding(top = 16.dp)
-                        .padding(bottom = 16.dp)
-                )
-                Log.d("fA", friendAlcohol.toString())
-                Log.d("fS", friendSmoking.toString())
-                Log.d("fC", friendCaffeine.toString())
             }
         }
-
     }
 }
 
@@ -381,40 +412,55 @@ fun SelectFriends(
                         .padding(start = 8.dp, bottom = 16.dp)
                 )
 
-                // 드롭다운 버튼
-                OutlinedButton(
-                    onClick = { expanded = !expanded },
-                    border = BorderStroke(3.dp, MediumBlue),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = White,
-                        contentColor = MediumBlue
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 8.dp)
-                ) {
-                    Text(
-                        text = if (friendNickname.isEmpty()) stringResource(id = R.string.select_friends) else friendNickname,
-                        fontFamily = FontFamily(Font(R.font.minsans)),
-                        fontSize = 18.sp
-                    )
-                }
+                Box {
+                    // 드롭다운 버튼
+                    OutlinedButton(
+                        onClick = { expanded = !expanded },
+                        border = BorderStroke(3.dp, MediumBlue),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = White,
+                            contentColor = MediumBlue
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = if (friendNickname.isEmpty()) stringResource(id = R.string.select_friends) else friendNickname,
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            fontSize = 18.sp
+                        )
+                    }
 
-                // 드롭다운 메뉴
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    friendsList.forEach { friend ->
-                        DropdownMenuItem(onClick = {
-                            setFriendNickname(friend)
-                            expanded = false
-                        }) {
-                            Text(
-                                text = friend,
-                                fontFamily = FontFamily(Font(R.font.minsans)),
-                                fontSize = 18.sp
-                            )
+                    // 드롭다운 메뉴
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .background(White)
+                            .border(0.dp, Color.Transparent)
+                            .shadow(0.dp)
+                    ) {
+                        friendsList.forEach { friend ->
+                            DropdownMenuItem(
+                                onClick = {
+                                    setFriendNickname(friend)
+                                    expanded = false
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(White, RoundedCornerShape(12.dp))
+                            ) {
+                                Text(
+                                    text = friend,
+                                    fontFamily = FontFamily(Font(R.font.minsans)),
+                                    fontSize = 18.sp,
+                                    textAlign = TextAlign.Center,
+                                    color = MediumBlue,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }
@@ -442,18 +488,17 @@ fun SelectFriends(
                 Spacer(modifier = Modifier.height(15.dp))
 
                 // 닫기 버튼
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
-                    contentAlignment = Alignment.BottomEnd // 우측 하단 정렬
+                    contentAlignment = Alignment.BottomEnd
                 ) {
                     Button(
                         onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = LightGrey,
-                            contentColor = Black
+                            containerColor = MediumBlue,
+                            contentColor = White
                         ),
                         modifier = Modifier
                             .padding(horizontal = 8.dp, vertical = 8.dp)

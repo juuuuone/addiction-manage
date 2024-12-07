@@ -24,6 +24,9 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     private val _alcoholRecords = MutableStateFlow<List<Alcohol>>(emptyList())
     val alcoholRecords = _alcoholRecords.asStateFlow()
+    private val _friendAlcoholRecords = MutableStateFlow<List<Alcohol>>(emptyList())
+    val friendAlcoholRecords = _friendAlcoholRecords.asStateFlow()
+
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
     val currentUser = firebaseAuth.currentUser
@@ -31,17 +34,13 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
     val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
     fun addAlcoholRecord(doDrink: Boolean) {
-
-        currentUser?.email?.let { Log.d("email", it) }
-        val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
-        //val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val email = currentUser?.email ?: return
         val alcoholRecord = Alcohol(
             id = currentUser.uid,
             email = email,
             doDrink = doDrink,
             createdAt = today
         )
-
         firebaseDatabase.reference.child("Alcohol").child(currentUser.uid).child(today)
             .setValue(alcoholRecord)
     }
@@ -67,12 +66,25 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    fun getTodayAlcoholRecordByEmail(alcoholRecords: List<Alcohol>, email: String): Alcohol? {
-        Log.d("test", alcoholRecords.toString())
-        Log.d("email", email)
-        return alcoholRecords.find { data ->
-            data.email == email
-        }
+    fun listenForFriendAlcoholRecords(id: String) {
+        firebaseDatabase.reference.child("Alcohol").child(id).orderByChild("createdAt")
+            .equalTo(today)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Alcohol>()
+                    snapshot.children.forEach { data ->
+                        val alcohol = data.getValue(Alcohol::class.java)
+                        alcohol?.let {
+                            list.add(alcohol)
+                        }
+                    }
+                    _friendAlcoholRecords.value = list
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
     }
 
     fun getYesterdayAlcoholRecord(alcoholRecords: List<Alcohol>): Alcohol? {

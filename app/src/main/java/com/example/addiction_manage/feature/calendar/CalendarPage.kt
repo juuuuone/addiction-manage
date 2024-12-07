@@ -229,9 +229,7 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
 
     val day = date.dayOfMonth
     val currentUser = FirebaseAuth.getInstance().currentUser
-    val userId = currentUser?.uid ?: return
-    val email = currentUser.email ?: return
-    var nickname: String = currentUser?.let { checkUser(it) }.toString()
+    val nickname: String = currentUser?.let { checkUser(it) }.toString()
     var isLoading by remember { mutableStateOf(true) }
 
     val alcoholViewModel = hiltViewModel<AlcoholViewModel>()

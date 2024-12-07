@@ -23,6 +23,9 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
 
     private val _smokingRecords = MutableStateFlow<List<Smoking>>(emptyList())
     val smokingRecords = _smokingRecords.asStateFlow()
+    private val _friendSmokingRecords = MutableStateFlow<List<Smoking>>(emptyList())
+    val friendSmokingRecords = _friendSmokingRecords.asStateFlow()
+
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
     val currentUser = firebaseAuth.currentUser
@@ -31,8 +34,6 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
 
     fun addSmokingRecord(cigarettes: Int) {
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
-//        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
         val smokingRecord = Smoking(
             id = currentUser.uid,
             email = email,
@@ -65,10 +66,25 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    fun getTodaySmokingRecordByEmail(smokingRecords: List<Smoking>, email: String): Smoking? {
-        return smokingRecords.find { data ->
-            data.email == email
-        }
+    fun listenForFriendSmokingRecords(id: String) {
+        firebaseDatabase.reference.child("Smoking").child(id).orderByChild("createdAt")
+            .equalTo(today)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val list = mutableListOf<Smoking>()
+                    snapshot.children.forEach { data ->
+                        val smoking = data.getValue(Smoking::class.java)
+                        smoking?.let {
+                            list.add(smoking)
+                        }
+                    }
+                    _friendSmokingRecords.value = list
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
     }
 
     fun getYesterdaySmokingRecord(smokingRecords: List<Smoking>): Smoking? {

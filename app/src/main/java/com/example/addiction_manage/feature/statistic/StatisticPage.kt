@@ -263,8 +263,6 @@ fun StatisticPage(
                         onOptionSelected = { selectedOption = it })
 
                 }
-
-
             }
         }
     }

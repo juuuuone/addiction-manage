@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.alcohol
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -41,6 +42,7 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.addiction_manage.feature.calendar.TopAppBarComponent
 import com.example.addiction_manage.feature.model.Alcohol
@@ -74,6 +77,12 @@ fun AlcoholPage(
     navigateToHome: () -> Unit
 ) {
     var answer by rememberSaveable { mutableStateOf(false) }
+    val viewModel = hiltViewModel<AlcoholViewModel>()
+    val alcoholRecords = viewModel.alcoholRecords.collectAsState()
+    LaunchedEffect(alcoholRecords.value) {
+        answer = viewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
+        Log.d("술 마셨나", answer.toString())
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -97,7 +106,8 @@ fun AlcoholPage(
             AlcoholRecording(
                 answer = answer,
                 setAnswer = { answer = it },
-                navigateToHome = navigateToHome
+                navigateToHome = navigateToHome,
+                addAlcohol = { viewModel.addAlcoholRecord(it) }
             )
         }
     }
@@ -107,10 +117,10 @@ fun AlcoholPage(
 fun AlcoholRecording(
     answer: Boolean,
     setAnswer: (Boolean) -> Unit,
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
+    addAlcohol: (Boolean) -> Unit,
 ) {
-    val viewModel = hiltViewModel<AlcoholViewModel>()
-    var selected by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableStateOf(answer) }
 
     Surface(
         modifier = Modifier
@@ -125,7 +135,7 @@ fun AlcoholRecording(
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            Text(stringResource(id=R.string.today_alcohol), color = MediumBlue, fontSize = 24.sp)
+            Text(stringResource(id = R.string.today_alcohol), color = MediumBlue, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(60.dp))
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -146,7 +156,7 @@ fun AlcoholRecording(
                     shape = RoundedCornerShape(20.dp),
                 ) {
                     Text(
-                        stringResource(id=R.string.yes),
+                        stringResource(id = R.string.yes),
                         color = Black,
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.minsans))
@@ -169,7 +179,7 @@ fun AlcoholRecording(
                     shape = RoundedCornerShape(20.dp)
                 ) {
                     Text(
-                        stringResource(id=R.string.no),
+                        stringResource(id = R.string.no),
                         fontSize = 20.sp,
                         color = Black,
                         fontFamily = FontFamily(Font(R.font.minsans))
@@ -179,7 +189,7 @@ fun AlcoholRecording(
             Spacer(modifier = Modifier.padding(vertical = 20.dp))
             OutlinedButton(
                 onClick = {
-                    viewModel.addAlcoholRecord(answer)
+                    addAlcohol(answer)
                     navigateToHome()
                 },
                 modifier = Modifier
@@ -191,7 +201,7 @@ fun AlcoholRecording(
                 border = BorderStroke(width = 2.dp, color = MediumBlue)
             ) {
                 Text(
-                    stringResource(id=R.string.record_button),
+                    stringResource(id = R.string.record_button),
                     fontSize = 20.sp,
                     color = Black,
                     fontFamily = FontFamily(Font(R.font.minsans))

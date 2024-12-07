@@ -42,6 +42,34 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
             })
     }
 
+    // 가장 최근에 선택한 친구를 DefaultFriend로 설정한다
+    fun setDefaultFriend(users: List<User>, friendId: String) {
+        val currentUser = firebaseAuth.currentUser
+        val userId = currentUser?.uid
+
+        val user = users.find { data -> data.id == userId }
+        val friend = users.find { data -> data.id == friendId }
+
+        if (user != null && friend != null) {
+            val updates = mapOf(
+                "defaultFriendEmail" to friend.email
+            )
+            firebaseDatabase.reference.child("User").child(currentUser?.uid!!)
+                .updateChildren(updates)
+        }
+    }
+
+    // 사용자의 defaultFriend의 nickname을 가져온다
+    fun getDefaultFriendNickname(users: List<User>): String {
+        val currentUser = firebaseAuth.currentUser
+        val userId = currentUser?.uid
+
+        val user = users.find { data -> data.id == userId }
+        val defaultFriendEmail = user?.defaultFriendEmail
+        val friend = users.find { data -> data.email == defaultFriendEmail }
+        return friend?.nickname ?: ""
+    }
+
     // 친구 email 저장하기
     fun addFriend(users: List<User>, friendEmail: String) {
         val currentUser = firebaseAuth.currentUser
@@ -52,11 +80,8 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
 
         if (friend != null) {
             user?.friends?.add(friend)
-            Log.d("current", user.toString())
         }
         firebaseDatabase.reference.child("User").child(currentUser?.uid!!).setValue(user)
-
-        Log.d("friend", friend.toString())
     }
 
     // 친구 선택할 때 닉네임 리스트업
@@ -71,10 +96,10 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    // 선택한 친구의 Email 가져오기
-    fun getFriendEmail(users: List<User>, nickname: String): String {
+    // 선택한 친구의 id 가져오기
+    fun getFriendId(users: List<User>, nickname: String): String {
         return users.find { data ->
             data.nickname == nickname
-        }?.email ?: ""
+        }?.id ?: ""
     }
 }

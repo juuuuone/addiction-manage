@@ -55,8 +55,6 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         val currentUser = firebaseAuth.currentUser
         val id = currentUser?.uid!!
         val user = User(
-//            id = firebaseDatabase.reference.child("User").push().key ?: UUID.randomUUID()
-//                .toString(),
             id = id,
             email = email,
             nickname = nickname,
