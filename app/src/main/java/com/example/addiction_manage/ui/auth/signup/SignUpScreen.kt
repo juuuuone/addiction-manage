@@ -59,23 +59,25 @@ import com.google.firebase.auth.FirebaseAuth
 fun SignUpScreen(
     backToMainPage: () -> Unit,
     navController: NavController
-){
+) {
     val viewModel: SignUpViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsState()
-    var name by remember{ mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirm by remember{ mutableStateOf("") }
+    var confirm by remember { mutableStateOf("") }
 
     val context = LocalContext.current
     LaunchedEffect(key1 = uiState.value) { // key 값이 바뀌면 이걸 먼저 수행
-        when(uiState.value){
+        when (uiState.value) {
             is SignUpState.Success -> {
                 navController.navigate("alcohol-goal")
             }
+
             is SignUpState.Error -> {
                 Toast.makeText(context, "Sign Up Failed", Toast.LENGTH_SHORT).show()
             }
+
             else -> {}
         }
     }
@@ -111,24 +113,27 @@ fun SignUpScreen(
 
     ) { innerPadding ->
 
-        Column (
+        Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
                 .padding(16.dp)
-                .padding(top=50.dp) ,
+                .padding(top = 50.dp),
 
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
-        ){
-            Row(){
-                Text("회원가입하고 중독을 ",fontSize = 22.sp,
+        ) {
+            Row() {
+                Text(
+                    "회원가입하고 중독을 ", fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
-                Text("DeTox",fontSize = 22.sp,
+                Text(
+                    "DeTox", fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.bold))
                 )
-                Text(" 해보세요!",fontSize = 22.sp,
+                Text(
+                    " 해보세요!", fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -137,20 +142,24 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = name,
-                onValueChange = {name = it},
+                onValueChange = { name = it },
                 label = {
-                    Text("닉네임",
-                        fontFamily = FontFamily(Font(R.font.minsans)))
+                    Text(
+                        "닉네임",
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
                 },
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = email,
-                onValueChange = {email = it},
+                onValueChange = { email = it },
                 label = {
-                    Text("이메일",
-                        fontFamily = FontFamily(Font(R.font.minsans)))
+                    Text(
+                        "이메일",
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             )
@@ -158,10 +167,12 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = password,
-                onValueChange = {password = it},
+                onValueChange = { password = it },
                 label = {
-                    Text("비밀번호",
-                        fontFamily = FontFamily(Font(R.font.minsans)))
+                    Text(
+                        "비밀번호",
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -171,10 +182,12 @@ fun SignUpScreen(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = confirm,
-                onValueChange = {confirm = it},
+                onValueChange = { confirm = it },
                 label = {
-                    Text("비밀번호 확인",
-                        fontFamily = FontFamily(Font(R.font.minsans)))
+                    Text(
+                        "비밀번호 확인",
+                        fontFamily = FontFamily(Font(R.font.minsans))
+                    )
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -182,24 +195,29 @@ fun SignUpScreen(
             )
             Spacer(modifier = Modifier.height(20.dp))
 
-            if(uiState.value == SignUpState.Loading){
+            if (uiState.value == SignUpState.Loading) {
                 CircularProgressIndicator() // 동그라미 로딩 창
-            }else{
+            } else {
                 Button(
-                    onClick = {viewModel.signUp(name, email, password)},
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        viewModel.signUp(name, email, password)
+                        viewModel.addUser(email, name)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(40.dp),
                     enabled = name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirm.isNotEmpty() && password == confirm,
                     colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
-                ){
-                    Text(text ="회원가입", fontSize=16.sp)
+                ) {
+                    Text(text = "회원가입", fontSize = 16.sp)
                 }
                 TextButton(
-                    onClick = {navController.navigate("signin")},
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = { navController.navigate("signin") },
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(40.dp)
-                ){
-                    Text(text = "이미 계정이 있다면? 로그인하기", color= MediumBlue, fontSize = 16.sp)
+                ) {
+                    Text(text = "이미 계정이 있다면? 로그인하기", color = MediumBlue, fontSize = 16.sp)
                 }
             }
         }

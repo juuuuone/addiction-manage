@@ -99,7 +99,7 @@ fun CalendarPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToFriends:()->Unit,
+    navigateToFriends: () -> Unit,
     navigateToMyPage: () -> Unit,
     selectedItem: Int,
     navController: NavController,
@@ -230,6 +230,7 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
     val day = date.dayOfMonth
     val currentUser = FirebaseAuth.getInstance().currentUser
     val userId = currentUser?.uid ?: return
+    val email = currentUser.email ?: return
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
     var isLoading by remember { mutableStateOf(true) }
 
@@ -241,9 +242,9 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
     val caffeineGoalViewModel = hiltViewModel<CaffeineGoalViewModel>()
 
     LaunchedEffect(key1 = true) {
-        alcoholViewModel.listenForAlcoholRecords(userId)
-        smokingViewModel.listenForSmokingRecords(userId)
-        caffeineViewModel.listenForCaffeineRecords(userId)
+        alcoholViewModel.listenForAlcoholRecords(email)
+        smokingViewModel.listenForSmokingRecords(email)
+        caffeineViewModel.listenForCaffeineRecords(email)
     }
 
     var currentAlcohol by remember { mutableStateOf(true) }
@@ -389,7 +390,9 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = if(isExistsSmoking!=null) currentSmoking.toString() + stringResource(id = R.string.gp) else "기록 없음",
+                        text = if (isExistsSmoking != null) currentSmoking.toString() + stringResource(
+                            id = R.string.gp
+                        ) else "기록 없음",
                         fontSize = 25.sp,
                         fontFamily = mediumFont,
                         color = Color.Black
@@ -407,7 +410,9 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                     )
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = if(isExistsCaffeine!=null) currentCaffeine.toString() + stringResource(id = R.string.cup) else "기록 없음", // 예시로 "2잔" 표시
+                        text = if (isExistsCaffeine != null) currentCaffeine.toString() + stringResource(
+                            id = R.string.cup
+                        ) else "기록 없음", // 예시로 "2잔" 표시
                         fontSize = 25.sp,
                         fontFamily = mediumFont,
                         color = Color.Black

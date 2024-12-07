@@ -70,7 +70,7 @@ fun StatisticPage(
     navigateToCalendar: () -> Unit,
     navigateToHome: () -> Unit,
     navigateToStatistic: () -> Unit,
-    navigateToFriends:()->Unit,
+    navigateToFriends: () -> Unit,
     navigateToMyPage: () -> Unit,
     navController: NavController,
     selectedItem: Int,
@@ -105,6 +105,7 @@ fun StatisticPage(
 
     val currentUser = FirebaseAuth.getInstance().currentUser
     val userId = currentUser?.uid ?: return
+    val email = currentUser.email ?: return
 
     val alcoholViewModel = hiltViewModel<AlcoholViewModel>()
     val alcoholGoalViewModel = hiltViewModel<AlcoholGoalViewModel>()
@@ -116,9 +117,9 @@ fun StatisticPage(
     var isEmpty by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
-        alcoholViewModel.listenForAlcoholRecords(userId)
-        smokingViewModel.listenForSmokingRecords(userId)
-        caffeineViewModel.listenForCaffeineRecords(userId)
+        alcoholViewModel.listenForAlcoholRecords(email)
+        smokingViewModel.listenForSmokingRecords(email)
+        caffeineViewModel.listenForCaffeineRecords(email)
     }
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
     val alcoholGoal = alcoholGoalViewModel.goal.collectAsState()
@@ -147,19 +148,19 @@ fun StatisticPage(
         if (!hasAlcoholGoal.value && alcoholRecords.value.isNotEmpty()) {
             updatedOptions.add(alcoholString)
         }
-        if (!hasSmokingGoal.value&& smokingRecords.value.isNotEmpty()) {
+        if (!hasSmokingGoal.value && smokingRecords.value.isNotEmpty()) {
             updatedOptions.add(smokingString)
         }
-        if (!hasCaffeineGoal.value&& caffeineRecords.value.isNotEmpty()) {
+        if (!hasCaffeineGoal.value && caffeineRecords.value.isNotEmpty()) {
             updatedOptions.add(caffeineString)
         }
         options = updatedOptions
         selectedOption = options.firstOrNull() ?: ""
 
-        if(updatedOptions.isEmpty()){
+        if (updatedOptions.isEmpty()) {
             isEmpty = true
             isLoading = false
-        }else{
+        } else {
             isEmpty = false
             isLoading = false
         }
@@ -237,31 +238,31 @@ fun StatisticPage(
                     color = Color.Black
                 )
             } else {
-                if(isEmpty){
+                if (isEmpty) {
                     EmptyRecordsScreen()
-                }else{
+                } else {
                     RecordScreen(
                         options,
-                    alcoholString,
-                    selectedOption,
-                    yesterdayAlcohol,
-                    currentAlcohol,
-                    weekAlcohol,
-                    goalAlcohol,
-                    alcoholGraphData,
-                    smokingString,
-                    yesterdaySmoking,
-                    currentSmoking,
-                    weekSmoking,
-                    goalSmoking,
-                    smokingGraphData,
-                    caffeineString,
-                    yesterdayCaffeine,
-                    currentCaffeine,
-                    weekCaffeine,
-                    goalCaffeine,
-                    caffeineGraphData,
-                        onOptionSelected =  {selectedOption = it})
+                        alcoholString,
+                        selectedOption,
+                        yesterdayAlcohol,
+                        currentAlcohol,
+                        weekAlcohol,
+                        goalAlcohol,
+                        alcoholGraphData,
+                        smokingString,
+                        yesterdaySmoking,
+                        currentSmoking,
+                        weekSmoking,
+                        goalSmoking,
+                        smokingGraphData,
+                        caffeineString,
+                        yesterdayCaffeine,
+                        currentCaffeine,
+                        weekCaffeine,
+                        goalCaffeine,
+                        caffeineGraphData,
+                        onOptionSelected = { selectedOption = it })
 
                 }
 
@@ -285,25 +286,25 @@ fun EmptyRecordsScreen() {
 @Composable
 fun RecordScreen(
     options: List<String>,
-    alcoholString : String,
+    alcoholString: String,
     selectedOption: String,
     yesterdayAlcohol: Boolean,
     currentAlcohol: Boolean,
     weekAlcohol: Int,
     goalAlcohol: Int,
-    alcoholGraphData: List<Pair<String,Int>>,
+    alcoholGraphData: List<Pair<String, Int>>,
     smokingString: String,
     yesterdaySmoking: Int,
     currentSmoking: Int,
     weekSmoking: Int,
     goalSmoking: Int,
-    smokingGraphData: List<Pair<String,Int>>,
+    smokingGraphData: List<Pair<String, Int>>,
     caffeineString: String,
     yesterdayCaffeine: Int,
     currentCaffeine: Int,
     weekCaffeine: Int,
     goalCaffeine: Int,
-    caffeineGraphData: List<Pair<String,Int>>,
+    caffeineGraphData: List<Pair<String, Int>>,
     onOptionSelected: (String) -> Unit,
 ) {
     Spacer(modifier = Modifier.padding(12.dp))

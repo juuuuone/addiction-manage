@@ -26,42 +26,25 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
 
-//    init {
-//        getCaffeineRecords()
-//    }
-//
-//    private fun getCaffeineRecords() {
-//        // 비동기 함수, DB에서 데이터 받아오기
-//        firebaseDatabase.getReference("Caffeine").get()
-//            .addOnSuccessListener {
-//                val list = mutableListOf<Caffeine>()
-//                it.children.forEach { data ->
-//                    val caffeine = Caffeine(data.key!!, data.value.toString())
-//                    list.add(caffeine)
-//                }
-//                _caffeineRecords.value = list
-//            }
-//    }
-
     fun addCaffeineRecord(drinks: Int) {
         val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
+        val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         val caffeineRecord = Caffeine(
             id = firebaseDatabase.reference.child("Caffeine").push().key ?: UUID.randomUUID()
                 .toString(),
-            userId = uid,
+            email = email,
             drinks = drinks,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("Caffeine").child(uid).child(today)
+        firebaseDatabase.reference.child("Caffeine").child(email).child(today)
             .setValue(caffeineRecord)
     }
 
-    fun listenForCaffeineRecords(userId: String) {
-        firebaseDatabase.reference.child("Caffeine").child(userId).orderByChild("createdAt")
+    fun listenForCaffeineRecords(email: String) {
+        firebaseDatabase.reference.child("Caffeine").child(email).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Caffeine>()
@@ -78,6 +61,12 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
                     TODO("Not yet implemented")
                 }
             })
+    }
+
+    fun getTodayCaffeineRecordByEmail(caffeineRecords: List<Caffeine>, email: String): Caffeine? {
+        return caffeineRecords.find { data ->
+            data.email == email
+        }
     }
 
     fun getYesterdayCaffeineRecord(caffeineRecords: List<Caffeine>): Caffeine? {
