@@ -170,7 +170,7 @@ fun MyPage(
 
             // 편집 버튼 -> 목표 설정 페이지 재사용...?
             Row(){
-                Spacer(modifier=Modifier.fillMaxWidth(0.8f))
+                Spacer(modifier=Modifier.fillMaxWidth(0.85f))
                 Box(
                     modifier = Modifier
                         .clickable { navController.navigate("alcohol-goal") }

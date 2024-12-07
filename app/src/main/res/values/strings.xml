@@ -61,7 +61,8 @@
     <string name="cup">잔</string>
 
 
-    <string name="record_lifestyle"> 님의 생활습관을 기록해볼까요?</string>
+    <string name="record_lifestyle"> 님의 생활습관을</string>
+    <string name="record_2">기록해볼까요?</string>
     <string name="record_my_alcohol">나의 음주 기록하기</string>
     <string name="record_my_smoking">나의 흡연 기록하기</string>
     <string name="record_my_caffeine">나의 카페인 기록하기</string>
