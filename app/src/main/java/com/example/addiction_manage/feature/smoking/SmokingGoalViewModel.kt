@@ -72,7 +72,6 @@ class SmokingGoalViewModel @Inject constructor(
             valueEventListener = object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     // 체크 상태에 따라 데이터 불러오기 또는 비우기
-                    Log.d("re", isSmokingChecked.value.toString())
                     if (!_isSmokingChecked.value) {
                         val smokingGoal = snapshot.child(uid).getValue(SmokingGoal::class.java)
                         _goal.value = if (smokingGoal != null) {
@@ -104,7 +103,7 @@ class SmokingGoalViewModel @Inject constructor(
 
     fun getCurrentUserGoal(): SmokingGoal? {
         val uid = firebaseAuth.currentUser?.uid ?: return null
-        return _goal.value.firstOrNull { it.userId == uid }
+        return _goal.value.firstOrNull { it.id == uid }
     }
 
     fun addGoal(newGoal: String) {
@@ -112,7 +111,6 @@ class SmokingGoalViewModel @Inject constructor(
         val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
         val smokingGoal = SmokingGoal(
             id = uid, // 유저 ID를 그대로 사용
-            userId = uid,
             goal = newGoal,
             createdAt = System.currentTimeMillis()
         )

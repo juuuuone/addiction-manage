@@ -76,7 +76,7 @@ fun CaffeinePage(
     val userId = currentUser?.uid ?: return
     var count by remember { mutableIntStateOf(0) }
     LaunchedEffect(key1 = true) {
-        viewModel.listenForCaffeineRecords(userId)
+        viewModel.listenForCaffeineRecords()
     }
     val caffeineRecords = viewModel.caffeineRecords.collectAsState()
     val todayRecord = viewModel.getTodayCaffeineRecord(caffeineRecords.value)

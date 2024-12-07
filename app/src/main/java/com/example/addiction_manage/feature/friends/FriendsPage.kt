@@ -121,9 +121,9 @@ fun ComparePage(
 
     LaunchedEffect(key1 = true) {
         friendDataViewModel.listenForUsers()
-        alcoholViewModel.listenForAlcoholRecords(email)
-        smokingViewModel.listenForSmokingRecords(email)
-        caffeineViewModel.listenForCaffeineRecords(email)
+        alcoholViewModel.listenForAlcoholRecords()
+        smokingViewModel.listenForSmokingRecords()
+        caffeineViewModel.listenForCaffeineRecords()
     }
     val users = friendDataViewModel.users.collectAsState()
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()

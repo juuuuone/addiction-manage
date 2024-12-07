@@ -104,8 +104,6 @@ fun StatisticPage(
     var options by remember { mutableStateOf<List<String>>(emptyList()) }
 
     val currentUser = FirebaseAuth.getInstance().currentUser
-    val userId = currentUser?.uid ?: return
-    val email = currentUser.email ?: return
 
     val alcoholViewModel = hiltViewModel<AlcoholViewModel>()
     val alcoholGoalViewModel = hiltViewModel<AlcoholGoalViewModel>()
@@ -117,9 +115,9 @@ fun StatisticPage(
     var isEmpty by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
-        alcoholViewModel.listenForAlcoholRecords(email)
-        smokingViewModel.listenForSmokingRecords(email)
-        caffeineViewModel.listenForCaffeineRecords(email)
+        alcoholViewModel.listenForAlcoholRecords()
+        smokingViewModel.listenForSmokingRecords()
+        caffeineViewModel.listenForCaffeineRecords()
     }
     val alcoholRecords = alcoholViewModel.alcoholRecords.collectAsState()
     val alcoholGoal = alcoholGoalViewModel.goal.collectAsState()

@@ -242,9 +242,9 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
     val caffeineGoalViewModel = hiltViewModel<CaffeineGoalViewModel>()
 
     LaunchedEffect(key1 = true) {
-        alcoholViewModel.listenForAlcoholRecords(email)
-        smokingViewModel.listenForSmokingRecords(email)
-        caffeineViewModel.listenForCaffeineRecords(email)
+        alcoholViewModel.listenForAlcoholRecords()
+        smokingViewModel.listenForSmokingRecords()
+        caffeineViewModel.listenForCaffeineRecords()
     }
 
     var currentAlcohol by remember { mutableStateOf(true) }

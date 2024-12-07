@@ -25,26 +25,26 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
     val smokingRecords = _smokingRecords.asStateFlow()
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
+    val currentUser = firebaseAuth.currentUser
+    val uid = currentUser?.uid!!
 
     fun addSmokingRecord(cigarettes: Int) {
-        val currentUser = firebaseAuth.currentUser
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         val smokingRecord = Smoking(
-            id = firebaseDatabase.reference.child("Smoking").push().key ?: UUID.randomUUID()
-                .toString(),
+            id = currentUser.uid,
             email = email,
             cigarettes = cigarettes,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("Smoking").child(email).child(today)
+        firebaseDatabase.reference.child("Smoking").child(currentUser.uid).child(today)
             .setValue(smokingRecord)
     }
 
-    fun listenForSmokingRecords(email: String) {
-        firebaseDatabase.reference.child("Smoking").child(email).orderByChild("createdAt")
+    fun listenForSmokingRecords() {
+        firebaseDatabase.reference.child("Smoking").child(uid).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Smoking>()

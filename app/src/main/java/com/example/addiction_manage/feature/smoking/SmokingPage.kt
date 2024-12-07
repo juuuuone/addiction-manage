@@ -57,7 +57,7 @@ fun SmokingPage(
     val userId = currentUser?.uid ?: return
     var count by remember { mutableIntStateOf(0) }
     LaunchedEffect(key1 = true) {
-        viewModel.listenForSmokingRecords(userId)
+        viewModel.listenForSmokingRecords()
     }
     val smokingRecords = viewModel.smokingRecords.collectAsState()
     val todayRecord = viewModel.getTodaySmokingRecord(smokingRecords.value)
