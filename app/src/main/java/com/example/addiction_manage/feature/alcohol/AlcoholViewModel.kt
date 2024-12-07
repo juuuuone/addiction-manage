@@ -26,40 +26,24 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
 
-//    init {
-//        getAlcoholRecords()
-//    }
-//
-//    private fun getAlcoholRecords() {
-//        // 비동기 함수, DB에서 데이터 받아오기
-//        firebaseDatabase.getReference("Alcohol").get()
-//            .addOnSuccessListener {
-//                val list = mutableListOf<Alcohol>()
-//                it.children.forEach { data ->
-//                    val alcohol = Alcohol(data.key!!, data.value.toString())
-//                    list.add(alcohol)
-//                }
-//                _alcoholRecords.value = list
-//            }
-//    }
-
     fun addAlcoholRecord(doDrink: Boolean) {
         val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
+        val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         val alcoholRecord = Alcohol(
             id = firebaseDatabase.reference.child("Alcohol").push().key ?: UUID.randomUUID()
                 .toString(),
-            userId = uid,
+            email = email,
             doDrink = doDrink,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("Alcohol").child(uid).child(today).setValue(alcoholRecord)
+        firebaseDatabase.reference.child("Alcohol").child(email).child(today)
+            .setValue(alcoholRecord)
     }
 
-    fun listenForAlcoholRecords(userId: String) {
-        firebaseDatabase.reference.child("Alcohol").child(userId).orderByChild("createdAt")
+    fun listenForAlcoholRecords(email: String) {
+        firebaseDatabase.reference.child("Alcohol").child(email).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Alcohol>()
@@ -76,6 +60,12 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
                     TODO("Not yet implemented")
                 }
             })
+    }
+
+    fun getTodayAlcoholRecordByEmail(alcoholRecords: List<Alcohol>, email: String): Alcohol? {
+        return alcoholRecords.find { data ->
+            data.email == email
+        }
     }
 
     fun getYesterdayAlcoholRecord(alcoholRecords: List<Alcohol>): Alcohol? {

@@ -2,6 +2,7 @@ package com.example.addiction_manage.feature.smoking
 
 import androidx.lifecycle.ViewModel
 import com.example.addiction_manage.feature.model.Alcohol
+import com.example.addiction_manage.feature.model.Caffeine
 import com.example.addiction_manage.feature.model.Smoking
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -25,44 +26,25 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
 
-//    init {
-//        getSmokingRecords()
-//    }
-//
-//    private fun getSmokingRecords() {
-//        // 비동기 함수, DB에서 데이터 받아오기
-//        firebaseDatabase.getReference("Smoking").get()
-//            .addOnSuccessListener {
-//                val list = mutableListOf<Smoking>()
-//                it.children.forEach { data ->
-//                    // 데이터를 Map 형태로 변환하여 파싱
-//                    val smoking = data.getValue(Smoking::class.java)
-//                    smoking?.let {
-//                        list.add(smoking)
-//                    }
-//                }
-//                _smokingRecords.value = list
-//            }
-//    }
-
     fun addSmokingRecord(cigarettes: Int) {
         val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
+        val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         val smokingRecord = Smoking(
             id = firebaseDatabase.reference.child("Smoking").push().key ?: UUID.randomUUID()
                 .toString(),
-            userId = uid,
+            email = email,
             cigarettes = cigarettes,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("Smoking").child(uid).child(today).setValue(smokingRecord)
+        firebaseDatabase.reference.child("Smoking").child(email).child(today)
+            .setValue(smokingRecord)
     }
 
-    fun listenForSmokingRecords(userId: String) {
-        firebaseDatabase.reference.child("Smoking").child(userId).orderByChild("createdAt")
+    fun listenForSmokingRecords(email: String) {
+        firebaseDatabase.reference.child("Smoking").child(email).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Smoking>()
@@ -79,6 +61,12 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
                     TODO("Not yet implemented")
                 }
             })
+    }
+
+    fun getTodaySmokingRecordByEmail(smokingRecords: List<Smoking>, email: String): Smoking? {
+        return smokingRecords.find { data ->
+            data.email == email
+        }
     }
 
     fun getYesterdaySmokingRecord(smokingRecords: List<Smoking>): Smoking? {

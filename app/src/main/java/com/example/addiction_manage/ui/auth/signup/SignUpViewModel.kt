@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,13 +43,11 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
             }
     }
 
-
     fun addUser(email: String, nickname: String) {
-        val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         val user = User(
-            id = uid,
+            id = firebaseDatabase.reference.child("User").push().key ?: UUID.randomUUID()
+                .toString(),
             email = email,
             nickname = nickname,
             createdAt = today

@@ -21,7 +21,7 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
 
-    fun listenForUsers(email: String) {
+    fun listenForUsers() {
         firebaseDatabase.reference.child("User").orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -41,27 +41,35 @@ class FriendDataViewModel @Inject constructor() : ViewModel() {
             })
     }
 
-    fun addFriend(users: List<User>, email: String) {
+    // 친구 email 저장하기
+    fun addFriend(users: List<User>, friendEmail: String) {
         val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid
+        val userEmail = currentUser?.email
 
-        val user = users.find { data -> data.id == uid }
-        val friend = users.find { data -> data.email == email }
+        val user = users.find { data -> data.email == userEmail }
+        val friend = users.find { data -> data.email == friendEmail }
 
         if (friend != null) {
             user?.friends?.add(friend)
         }
     }
 
-    fun getAllFriends(users: List<User>): List<String>? {
+    // 친구 선택할 때 닉네임 리스트업
+    fun getAllFriendsNickname(users: List<User>): List<String>? {
         val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid
+        val email = currentUser?.email
 
         return users.find { data ->
-            data.id == uid
+            data.email == email
         }?.friends?.map { data ->
             data.nickname
         }
     }
 
+    // 선택한 친구의 Email 가져오기
+    fun getFriendEmail(users: List<User>, nickname: String): String {
+        return users.find { data ->
+            data.nickname == nickname
+        }?.email ?: ""
+    }
 }

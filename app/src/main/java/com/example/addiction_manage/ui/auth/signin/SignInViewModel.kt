@@ -31,7 +31,6 @@ class SignInViewModel @Inject constructor() : ViewModel() {
                 }
             }
     }
-
 }
 
 sealed class SignInState { // 이 안에서 제안한 것만 자식으로 인정한다?
