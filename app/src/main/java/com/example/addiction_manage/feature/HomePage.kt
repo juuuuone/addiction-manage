@@ -181,6 +181,15 @@ fun SelectingPage(
                         .padding(top = 16.dp)
                 )
             }
+            Text(
+                text = stringResource(id = R.string.record_2),
+                color = Black,
+                fontSize = 24.sp,
+                fontFamily = FontFamily(Font(R.font.minsans)),
+                modifier = Modifier
+                    .padding(start = 18.dp)
+                    .padding(top = 8.dp)
+            )
             Spacer(modifier = Modifier.height(100.dp))
             if (options.contains(alcoholString)) {
                 Button(
