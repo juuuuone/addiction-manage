@@ -96,7 +96,7 @@ class AlcoholGoalViewModel @Inject constructor(
 
     fun getCurrentUserGoal(): AlcoholGoal? {
         val uid = firebaseAuth.currentUser?.uid ?: return null
-        return _goal.value.firstOrNull { it.userId == uid }
+        return _goal.value.firstOrNull { it.id == uid }
     }
 
     fun addGoal(newGoal: String) {
@@ -105,7 +105,6 @@ class AlcoholGoalViewModel @Inject constructor(
 
         val alcoholGoal = AlcoholGoal(
             id = uid, // 유저 ID를 그대로 사용
-            userId = uid,
             goal = newGoal,
             createdAt = System.currentTimeMillis()
         )

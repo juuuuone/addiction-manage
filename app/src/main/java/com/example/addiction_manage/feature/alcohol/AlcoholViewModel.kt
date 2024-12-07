@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.alcohol
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.addiction_manage.feature.model.Alcohol
 import com.example.addiction_manage.feature.model.Caffeine
@@ -25,25 +26,27 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
     val alcoholRecords = _alcoholRecords.asStateFlow()
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
+    val currentUser = firebaseAuth.currentUser
+    val uid = currentUser?.uid!!
 
     fun addAlcoholRecord(doDrink: Boolean) {
-        val currentUser = firebaseAuth.currentUser
+
+        currentUser?.email?.let { Log.d("email", it) }
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         val alcoholRecord = Alcohol(
-            id = firebaseDatabase.reference.child("Alcohol").push().key ?: UUID.randomUUID()
-                .toString(),
+            id = currentUser.uid,
             email = email,
             doDrink = doDrink,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("Alcohol").child(email).child(today)
+        firebaseDatabase.reference.child("Alcohol").child(currentUser.uid).child(today)
             .setValue(alcoholRecord)
     }
 
-    fun listenForAlcoholRecords(email: String) {
-        firebaseDatabase.reference.child("Alcohol").child(email).orderByChild("createdAt")
+    fun listenForAlcoholRecords() {
+        firebaseDatabase.reference.child("Alcohol").child(uid).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Alcohol>()

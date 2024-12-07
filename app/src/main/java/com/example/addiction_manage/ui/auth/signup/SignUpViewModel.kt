@@ -32,11 +32,18 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
                                 .Builder()
                                 .setDisplayName(name)
                                 .build()
-                        ).addOnCompleteListener { // 위 함수가  complete 됐을 때만 성공처리
-                            _state.value = SignUpState.Success
+                        ).addOnCompleteListener { profileTask ->
+                            if (profileTask.isSuccessful) {
+                                // 프로필 업데이트가 성공하면 addUser 호출
+                                addUser(email, name)
+                                _state.value = SignUpState.Success
+                            } else {
+                                _state.value = SignUpState.Error
+                            }
                         }
+                    } ?: run {
+                        _state.value = SignUpState.Error
                     }
-                    _state.value = SignUpState.Success
                 } else {
                     _state.value = SignUpState.Error
                 }
@@ -45,15 +52,18 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
 
     fun addUser(email: String, nickname: String) {
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val currentUser = firebaseAuth.currentUser
+        val id = currentUser?.uid!!
         val user = User(
-            id = firebaseDatabase.reference.child("User").push().key ?: UUID.randomUUID()
-                .toString(),
+//            id = firebaseDatabase.reference.child("User").push().key ?: UUID.randomUUID()
+//                .toString(),
+            id = id,
             email = email,
             nickname = nickname,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("User").push().setValue(user)
+        firebaseDatabase.reference.child("User").child(id).setValue(user)
     }
 }
 

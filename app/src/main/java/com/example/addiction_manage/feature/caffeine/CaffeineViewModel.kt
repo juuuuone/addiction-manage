@@ -25,26 +25,26 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
     val caffeineRecords = _caffeineRecords.asStateFlow()
     private val firebaseDatabase = Firebase.database
     private val firebaseAuth = Firebase.auth
+    val currentUser = firebaseAuth.currentUser
+    val uid = currentUser?.uid!!
 
     fun addCaffeineRecord(drinks: Int) {
-        val currentUser = firebaseAuth.currentUser
         val email = currentUser?.email ?: return // 로그인하지 않은 경우 종료
         val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         val caffeineRecord = Caffeine(
-            id = firebaseDatabase.reference.child("Caffeine").push().key ?: UUID.randomUUID()
-                .toString(),
+            id = currentUser.uid,
             email = email,
             drinks = drinks,
             createdAt = today
         )
 
-        firebaseDatabase.reference.child("Caffeine").child(email).child(today)
+        firebaseDatabase.reference.child("Caffeine").child(currentUser.uid).child(today)
             .setValue(caffeineRecord)
     }
 
-    fun listenForCaffeineRecords(email: String) {
-        firebaseDatabase.reference.child("Caffeine").child(email).orderByChild("createdAt")
+    fun listenForCaffeineRecords() {
+        firebaseDatabase.reference.child("Caffeine").child(uid).orderByChild("createdAt")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Caffeine>()
