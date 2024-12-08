@@ -52,6 +52,8 @@ import com.example.addiction_manage.ui.theme.MediumBlue
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.White
 import com.google.firebase.auth.FirebaseAuth
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Composable
 fun HomePage(
@@ -119,8 +121,8 @@ fun HomePage(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(innerPadding)
+                .padding(top=20.dp)
                 .padding(horizontal = 8.dp)
-                .padding(top = 100.dp)
                 .background(color = MediumBlue, shape = RoundedCornerShape(10.dp)),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -151,6 +153,15 @@ fun SelectingPage(
     val currentUser = FirebaseAuth.getInstance().currentUser
     var nickname: String = currentUser?.let { checkUser(it) }.toString()
 
+    val currentTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
+    val currentHour = currentTime.hour
+    val greeting = when {
+        currentHour in 5..10 -> stringResource(id = R.string.morning)
+        currentHour in 11..16 -> stringResource(id = R.string.afternoon)
+        currentHour in 17..22 -> stringResource(id = R.string.dinner)
+        else -> stringResource(id = R.string.evening)
+    }
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -162,6 +173,14 @@ fun SelectingPage(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
+            Text(text = "$greeting",
+                fontSize = 20.sp,
+                fontFamily = FontFamily(Font(R.font.light)),
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .padding(top = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(60.dp))
             Row() {
                 Text(
                     text = "$nickname",
@@ -190,7 +209,7 @@ fun SelectingPage(
                     .padding(start = 18.dp)
                     .padding(top = 8.dp)
             )
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
             if (options.contains(alcoholString)) {
                 Button(
                     onClick = navigateToAlcohol,

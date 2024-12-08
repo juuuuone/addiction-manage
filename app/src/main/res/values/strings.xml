@@ -87,4 +87,12 @@
     <string name="friends_email">친구의 E-mail</string>
 
 
+    <string name="morning">상쾌한 아침이에요! 건강한 하루를 시작해보세요☀️</string>
+    <string name="afternoon">활기찬 오후입니다! 목표를 향해 나아가고 있나요?🌞️</string>
+    <string name="dinner">오늘도 한 걸음 더 나아갔나요?🌇</string>
+    <string name="evening">편안한 밤이에요. 내일도 힘내요!🌙</string>
+
+    <string name="success">이번주의 목표 달성 여부</string>
+
+
 </resources>

@@ -51,12 +51,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -91,6 +85,11 @@ import com.example.addiction_manage.feature.mypage.checkUser
 import com.example.addiction_manage.feature.smoking.SmokingGoalViewModel
 import com.example.addiction_manage.feature.smoking.SmokingViewModel
 import com.google.firebase.auth.FirebaseAuth
+import java.time.DayOfWeek
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoField
+import java.time.temporal.TemporalAdjusters
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,9 +129,16 @@ fun CalendarPage(
                 .fillMaxHeight()
                 .padding(innerPadding)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            val currentMonth = YearMonth.now()
+            val formatter = DateTimeFormatter.ofPattern("MMMM", Locale.US)
+            val formatterKor=DateTimeFormatter.ofPattern("MMMM",Locale.KOREA)
+            val monthName = currentMonth.format(formatter)
+            val monthNameKor=currentMonth.format(formatterKor)
+
+            Spacer(modifier = Modifier.height(30.dp))
             // 여기에 텍스트를 독립적으로 배치합니다.
             Row() {
+
                 Text(
                     text = "$nickname",
                     fontSize = 24.sp,
@@ -142,7 +148,7 @@ fun CalendarPage(
                         .padding(top = 16.dp)
                 )
                 Text(
-                    text = " 님의 12월을 확인해볼까요?",
+                    text = " 님의 ${monthNameKor}을 확인해볼까요?",
                     color = Black,
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
@@ -151,7 +157,7 @@ fun CalendarPage(
                         .padding(top = 16.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             Column(
                 modifier = Modifier
@@ -164,11 +170,31 @@ fun CalendarPage(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                val currentMonth = YearMonth.now()
-                Text(text = currentMonth.toString(), fontSize = 32.sp)
+
+                Text(text = monthName, fontSize = 32.sp, fontFamily = FontFamily(Font(R.font.medium))) // "December"와 같이 출력됩니다.
                 SimpleCalendar()
             }
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Row(modifier = Modifier.padding(start=16.dp)){
+                Text(text = stringResource(id = R.string.success),
+                    fontSize = 20.sp,
+                    fontFamily = FontFamily(Font(R.font.minsans))
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.8f)
+                    //.padding(innerPadding)
+                    .padding(horizontal = 16.dp)
+                    .background(color = WhiteBlue, shape = RoundedCornerShape(10.dp)),
+            ) {
+                WeeklySuccessCalendar()
+            }
         }
+
 
     }
 }
@@ -196,6 +222,19 @@ fun SimpleCalendar() {
         items((1..daysInMonth).toList()) { day ->
             val isSelected =
                 selectedDate.dayOfMonth == day && selectedDate.month == currentMonth.month
+
+            val date = currentMonth.atDay(day)
+            val dayOfWeek = date.get(ChronoField.DAY_OF_WEEK)
+
+            val textColor = when {
+                isSelected -> Color.White
+                dayOfWeek == 6 -> Color.Blue    // Saturday
+                dayOfWeek == 7 -> Color.Red     // Sunday
+                else -> Color.Black
+            }
+
+
+
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
@@ -212,12 +251,114 @@ fun SimpleCalendar() {
             ) {
                 Text(
                     text = day.toString(),
-                    color = if (isSelected) Color.White else Color.Black
+                    color = textColor,
+                    fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
         }
     }
 }
+
+@Composable
+fun WeeklySuccessCalendar() {
+
+    val smokingViewModel: SmokingViewModel = hiltViewModel()
+    val smokingGoalViewModel: SmokingGoalViewModel = hiltViewModel()
+    var smokingGoals = smokingGoalViewModel.goal.collectAsState().value
+    var smokingGoalsNum= 0
+    if(smokingGoals.isNotEmpty()){
+       var smokingGoalsString= smokingGoals.joinToString{it.goal}
+        smokingGoalsNum=smokingGoalsString.toInt()
+    }
+
+    val caffeineViewModel: CaffeineViewModel = hiltViewModel()
+    val caffeineGoalViewModel: CaffeineGoalViewModel = hiltViewModel()
+    val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
+    var caffeineGoalsNum=0
+    if(caffeineGoals.isNotEmpty()){
+        var caffeineGoalsString= caffeineGoals.joinToString{it.goal}
+        caffeineGoalsNum=caffeineGoalsString.toInt()
+    }
+
+    LaunchedEffect(key1 = true) {
+        smokingViewModel.listenForSmokingRecords()
+        caffeineViewModel.listenForCaffeineRecords()
+    }
+
+    val smokingRecords = smokingViewModel.smokingRecords.collectAsState().value
+    val caffeineRecords = caffeineViewModel.caffeineRecords.collectAsState().value
+
+    val today = LocalDate.now()
+    val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+
+    Column {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+        ) {
+            (0..6).forEach { i ->
+                val day = startOfWeek.plusDays(i.toLong())
+
+                // 각 습관에 대한 성공 여부 계산
+                val smokingAmount = smokingViewModel.getSmokingRecord(smokingRecords, day)?.cigarettes ?: -1
+                val caffeineAmount = caffeineViewModel.getCaffeineRecord(caffeineRecords, day)?.drinks ?: -1
+                var dayEmoji=""
+                var isSmokingSuccess = false
+                var isCaffeineSuccess=false
+
+                if(smokingAmount==-1 && caffeineAmount==-1){
+                    dayEmoji=""
+                }
+
+                else{
+                    if(smokingGoals.isEmpty() || smokingAmount<=smokingGoalsNum){
+                        isSmokingSuccess = true
+                    }
+
+                    if(caffeineGoals.isEmpty() || caffeineAmount<=caffeineGoalsNum){
+                        isCaffeineSuccess = true
+                    }
+
+                    dayEmoji = when {
+                        isSmokingSuccess && isCaffeineSuccess -> "🤗"
+                        else -> "😭"
+                    }
+                }
+
+
+                // 날짜 및 상태 이모지 표시
+                Box(
+                    modifier = Modifier.padding(4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Spacer(modifier=Modifier.height(5.dp))
+                        Text(
+                            text = day.dayOfMonth.toString(),
+                            color = Color.Black,
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            fontSize = 16.sp
+                        )
+                        Spacer(modifier=Modifier.height(5.dp))
+                        Text(
+                            text = dayEmoji,
+                            fontFamily = FontFamily(Font(R.font.minsans)),
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
 
 
 /*날짜 클릭하면 뜨는 창 (어떤거 기록할건지)*/
