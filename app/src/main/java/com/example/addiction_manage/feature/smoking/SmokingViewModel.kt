@@ -47,7 +47,7 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
 
     fun listenForSmokingRecords() {
         firebaseDatabase.reference.child("Smoking").child(uid).orderByChild("createdAt")
-            .equalTo(today)
+//            .equalTo(today)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Smoking>()
