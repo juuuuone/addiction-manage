@@ -519,7 +519,7 @@ fun AlcoholCount(
             ) {
                 Image(
                     painter = painterResource(
-                        id = if (currentAlcohol) R.drawable.downarrow else R.drawable.uparrow
+                        id = if (currentAlcohol) R.drawable.uparrow else R.drawable.downarrow
                     ),
                     contentDescription = null,
                     modifier = Modifier.size(20.dp)
