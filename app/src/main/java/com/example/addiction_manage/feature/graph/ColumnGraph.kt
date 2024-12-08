@@ -16,8 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.addiction_manage.R
 import com.example.addiction_manage.ui.theme.Black
 import com.example.addiction_manage.ui.theme.DarkRed
 import com.example.addiction_manage.ui.theme.MediumBlue
@@ -59,10 +61,12 @@ import kotlin.random.Random
 fun ColumnGraph(
     unit: String,
     data: List<Pair<String, Int>>,
-    modifier: Modifier = Modifier
 ) {
     val stepSize = 1.0f
     val modelProducer = remember { CartesianChartModelProducer() }
+    val soju = stringResource(id = R.string.soju)
+    val alcohol = stringResource(id = R.string.alcohol)
+    val no_alcohol = stringResource(id = R.string.no_alcohol)
 
     LaunchedEffect(Unit) {
         modelProducer.runTransaction {
@@ -75,7 +79,6 @@ fun ColumnGraph(
     CartesianChartHost(
         chart = rememberCartesianChart(
             rememberColumnCartesianLayer(
-                // 막대색깔인 chatColors는 코드 맨 밑에 있음
                 columnProvider = ColumnCartesianLayer.ColumnProvider.series(
                     chartColors.map { color ->
                         rememberLineComponent(
@@ -90,9 +93,9 @@ fun ColumnGraph(
                 guideline = null,
                 valueFormatter = { value, _, _ ->
                     when {
-                        unit == "술" && value.toInt() == 0 -> "금주"  // 술일 때 0이면 금주
-                        unit == "술" && value.toInt() == 1 -> "음주"  // 술일 때 1이면 음주
-                        else -> "${value.toInt()}$unit"  // 그 외에는 값과 단위 출력
+                        unit == soju && value.toInt() == 0 -> no_alcohol
+                        unit == soju && value.toInt() == 1 -> alcohol
+                        else -> "${value.toInt()}$unit"
                     }
                 },
                 itemPlacer = AxisItemPlacer.Vertical.step(
@@ -119,33 +122,16 @@ fun ColumnGraph(
                 },
                 sizeConstraint = BaseAxis.SizeConstraint.Auto(),
             )
-//            decorations = listOf(
-//                HorizontalLine(
-//                    y = { threshold },  // y값 3에서 수평선 추가
-//                    line = rememberLineComponent(
-//                        color = DarkRed,
-//                        thickness = 2.dp,
-//                    ),
-////                            labelComponent = rememberTextComponent(
-////                                color = Black,
-////                                textSize = 14.sp,
-////                            ),
-////                            label = { "목표 : ${threshold.toInt()} " + unit },
-//                    horizontalLabelPosition = HorizontalPosition.Start,
-//                    verticalLabelPosition = VerticalPosition.Top,
-//                    labelRotationDegrees = 0f,
-//                )
-//            ),
         ),
         marker = rememberDefaultCartesianMarker(
             valueFormatter = remember { XYValueFormatter() },
             label = rememberTextComponent(
-                color = Black, // 막대 눌렀을 때 위에 나오는 값(텍스트 색깔)
+                color = Black,
                 textSize = 16.sp,
             ),
             indicator = rememberShapeComponent(
                 shape = Shape.Rectangle,
-                color = Black, // 막대 눌렀을 때 위에 나오는 직사각형 색깔
+                color = Black,
             ),
             indicatorSize = 8.dp,
             labelPosition = DefaultCartesianMarker.LabelPosition.AbovePoint,
@@ -157,21 +143,16 @@ fun ColumnGraph(
             .fillMaxWidth()
             .background(color = White, shape = RoundedCornerShape(10.dp)),
     )
-
 }
 
-// color는 y축 텍스트 색깔
 @Composable
 fun rememberStartAxisLabel() =
     rememberAxisLabelComponent(
         color = Black,
-//        background = rememberShapeComponent(shape = Shape.rounded(4.dp)),
         padding = Dimensions.of(horizontal = 8.dp, vertical = 2.dp),
         margins = Dimensions.of(all = 4.dp),
-
         )
 
-// color는 x축 텍스트 색깔
 @Composable
 fun rememberBottomAxisLabel() =
     rememberAxisLabelComponent(
@@ -193,10 +174,6 @@ class XYValueFormatter : CartesianMarkerValueFormatter {
                         result.append("$y" + "번")
                     }
                 }
-
-                else -> {
-                    result.append("Non-line target\n")
-                }
             }
         }
 
@@ -204,7 +181,6 @@ class XYValueFormatter : CartesianMarkerValueFormatter {
     }
 }
 
-// 막대 색깔!!
 private val chartColors = listOf(MediumBlue)
 
 

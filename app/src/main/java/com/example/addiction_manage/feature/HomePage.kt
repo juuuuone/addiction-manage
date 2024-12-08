@@ -57,15 +57,10 @@ import java.time.ZonedDateTime
 
 @Composable
 fun HomePage(
-    navigateToCalendar: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToStatistic: () -> Unit,
-    navigateToFriends:()->Unit,
     navigateToMyPage: () -> Unit,
     navigateToAlcohol: () -> Unit,
     navigateToCaffeine: () -> Unit,
     navigateToSmoking: () -> Unit,
-    selectedItem: Int,
     navController: NavController,
 ) {
     val alcoholString = stringResource(id = R.string.alcohol)
@@ -151,7 +146,7 @@ fun SelectingPage(
     navigateToSmoking: () -> Unit,
 ) {
     val currentUser = FirebaseAuth.getInstance().currentUser
-    var nickname: String = currentUser?.let { checkUser(it) }.toString()
+    val nickname: String = currentUser?.let { checkUser(it) }.toString()
 
     val currentTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
     val currentHour = currentTime.hour

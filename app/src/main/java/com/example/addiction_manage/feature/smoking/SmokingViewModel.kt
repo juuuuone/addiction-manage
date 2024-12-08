@@ -1,5 +1,6 @@
 package com.example.addiction_manage.feature.smoking
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.addiction_manage.feature.model.Alcohol
 import com.example.addiction_manage.feature.model.Caffeine
@@ -47,7 +48,6 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
 
     fun listenForSmokingRecords() {
         firebaseDatabase.reference.child("Smoking").child(uid).orderByChild("createdAt")
-//            .equalTo(today)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Smoking>()
@@ -106,8 +106,8 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekSmokingRecord(smokingRecords: List<Smoking>): List<Pair<String, Int>> {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
-        // 일주일 날짜를 초기화 (월요일부터 일요일까지)
+        val dayOfWeek = today.dayOfWeek.value % 7
+        val startOfWeek = today.minusDays(dayOfWeek.toLong())
         val weekDates = (0..6).map { offset ->
             val date = startOfWeek.plusDays(offset.toLong())
             date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -117,7 +117,6 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
             val recordDate =
                 LocalDate.parse(record.createdAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             val recordDateString = recordDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
             if (recordDateString in weekData) {
                 weekData[recordDateString] = weekData[recordDateString]!! + record.cigarettes
             }
@@ -127,8 +126,9 @@ class SmokingViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekTotalSmokingRecord(smokingRecords: List<Smoking>): Int {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
-        val endOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
+        val dayOfWeek = today.dayOfWeek.value % 7
+        val startOfWeek = today.minusDays(dayOfWeek.toLong())
+        val endOfWeek = startOfWeek.plusDays(6)
         var count = 0
 
         smokingRecords.filter { record ->

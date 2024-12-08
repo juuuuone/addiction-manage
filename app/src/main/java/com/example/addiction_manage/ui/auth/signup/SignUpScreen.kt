@@ -68,7 +68,7 @@ fun SignUpScreen(
     var confirm by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    LaunchedEffect(key1 = uiState.value) { // key 값이 바뀌면 이걸 먼저 수행
+    LaunchedEffect(key1 = uiState.value) {
         when (uiState.value) {
             is SignUpState.Success -> {
                 navController.navigate("alcohol-goal")
@@ -89,14 +89,14 @@ fun SignUpScreen(
                 title = {
                     Row {
                         Text(
-                            text = "DeToxify",
+                            text = stringResource(id = R.string.detoxify),
                             fontFamily = FontFamily(Font(R.font.bold)),
                             fontSize = 30.sp
                         )
                         Image(
                             painter = painterResource(id = R.drawable.leaf),
                             contentDescription = "Logo",
-                            modifier = Modifier.height(40.dp) // 이미지 높이 조절
+                            modifier = Modifier.height(40.dp)
                         )
                     }
                 },
@@ -125,20 +125,19 @@ fun SignUpScreen(
         ) {
             Row() {
                 Text(
-                    "회원가입하고 중독을 ", fontSize = 22.sp,
+                    stringResource(id = R.string.open_mem_1), fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
                 Text(
-                    "DeTox", fontSize = 22.sp,
+                    stringResource(id = R.string.open_mem_2), fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.bold))
                 )
                 Text(
-                    " 해보세요!", fontSize = 22.sp,
+                    stringResource(id = R.string.open_mem_3), fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
             Spacer(modifier = Modifier.height(50.dp))
-
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = name,
@@ -157,7 +156,7 @@ fun SignUpScreen(
                 onValueChange = { email = it },
                 label = {
                     Text(
-                        "이메일",
+                        stringResource(id = R.string.email),
                         fontFamily = FontFamily(Font(R.font.minsans))
                     )
                 },
@@ -170,13 +169,12 @@ fun SignUpScreen(
                 onValueChange = { password = it },
                 label = {
                     Text(
-                        "비밀번호",
+                        stringResource(id = R.string.password),
                         fontFamily = FontFamily(Font(R.font.minsans))
                     )
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-//                textStyle = LocalTextStyle.current.copy(color = Color.White)
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
@@ -185,7 +183,7 @@ fun SignUpScreen(
                 onValueChange = { confirm = it },
                 label = {
                     Text(
-                        "비밀번호 확인",
+                        stringResource(id = R.string.password_check),
                         fontFamily = FontFamily(Font(R.font.minsans))
                     )
                 },
@@ -196,12 +194,11 @@ fun SignUpScreen(
             Spacer(modifier = Modifier.height(20.dp))
 
             if (uiState.value == SignUpState.Loading) {
-                CircularProgressIndicator() // 동그라미 로딩 창
+                CircularProgressIndicator()
             } else {
                 Button(
                     onClick = {
                         viewModel.signUp(name, email, password)
-                        //viewModel.addUser(email, name)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -209,7 +206,7 @@ fun SignUpScreen(
                     enabled = name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirm.isNotEmpty() && password == confirm,
                     colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 ) {
-                    Text(text = "회원가입", fontSize = 16.sp)
+                    Text(text = stringResource(id = R.string.k_signin), fontSize = 16.sp)
                 }
                 TextButton(
                     onClick = { navController.navigate("signin") },
@@ -217,7 +214,11 @@ fun SignUpScreen(
                         .fillMaxWidth()
                         .height(40.dp)
                 ) {
-                    Text(text = "이미 계정이 있다면? 로그인하기", color = MediumBlue, fontSize = 16.sp)
+                    Text(
+                        text = stringResource(id = R.string.yes_id),
+                        color = MediumBlue,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }

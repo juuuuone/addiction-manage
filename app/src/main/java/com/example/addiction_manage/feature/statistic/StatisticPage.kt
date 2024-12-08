@@ -64,16 +64,10 @@ import kotlin.math.absoluteValue
 
 val minSansFontFamily = FontFamily(Font(R.font.minsans))
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StatisticPage(
-    navigateToCalendar: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToStatistic: () -> Unit,
-    navigateToFriends: () -> Unit,
     navigateToMyPage: () -> Unit,
     navController: NavController,
-    selectedItem: Int,
 ) {
     val alcoholString = stringResource(id = R.string.alcohol)
     val smokingString = stringResource(id = R.string.smoking)
@@ -102,8 +96,6 @@ fun StatisticPage(
     var caffeineGraphData by remember { mutableStateOf(emptyList<Pair<String, Int>>()) }
 
     var options by remember { mutableStateOf<List<String>>(emptyList()) }
-
-    val currentUser = FirebaseAuth.getInstance().currentUser
 
     val alcoholViewModel = hiltViewModel<AlcoholViewModel>()
     val alcoholGoalViewModel = hiltViewModel<AlcoholGoalViewModel>()
@@ -275,7 +267,7 @@ fun EmptyRecordsScreen() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("기록이 없습니다.")
+        Text(stringResource(id = R.string.no_record))
     }
 }
 
@@ -417,7 +409,6 @@ fun GaugeGraph(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 진행 바
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -431,8 +422,6 @@ fun GaugeGraph(
                     .background(progressColor, shape = RoundedCornerShape(10.dp))
             )
         }
-
-        // 목표 & 현재 기록량
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -531,7 +520,7 @@ fun AlcoholCount(
 
 @Composable
 fun AlcoholStatistic(
-    progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
+    progress: Float,
     weekAlcohol: Int,
     goalAlcohol: Int,
 ) {
@@ -640,7 +629,7 @@ fun SmokingCount(
 
 @Composable
 fun SmokingStatistic(
-    progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
+    progress: Float,
     weekSmoking: Int,
     goalSmoking: Int,
 ) {
@@ -749,7 +738,7 @@ fun CaffeineCount(
 
 @Composable
 fun CaffeineStatistic(
-    progress: Float, // 목표 대비 진행률 (0.0f ~ 1.0f)
+    progress: Float,
     weekCaffeine: Int,
     goalCaffeine: Int,
 ) {

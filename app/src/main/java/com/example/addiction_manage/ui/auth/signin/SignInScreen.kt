@@ -64,18 +64,16 @@ fun SignInScreen(
     var password by remember { mutableStateOf("") }
 
     val context = LocalContext.current
-    LaunchedEffect(key1 = uiState.value) { // key 값이 바뀌면 이걸 먼저 수행
+    LaunchedEffect(key1 = uiState.value) {
         when (uiState.value) {
             is SignInState.Success -> {
                 navController.navigate("home") {
-                    popUpTo("login") { inclusive = true }//  홈 화면 밑에 깔린 로그인 페이지를 스택에서 제거하는거
+                    popUpTo("login") { inclusive = true }
                 }
             }
-
             is SignInState.Error -> {
                 Toast.makeText(context, "Sign In Failed", Toast.LENGTH_SHORT).show()
             }
-
             else -> {}
         }
     }
@@ -87,14 +85,14 @@ fun SignInScreen(
                 title = {
                     Row {
                         Text(
-                            text = "DeToxify",
+                            text = stringResource(id = R.string.detoxify),
                             fontFamily = FontFamily(Font(R.font.bold)),
                             fontSize = 30.sp
                         )
                         Image(
                             painter = painterResource(id = R.drawable.leaf),
                             contentDescription = "Logo",
-                            modifier = Modifier.height(40.dp) // 이미지 높이 조절
+                            modifier = Modifier.height(40.dp)
                         )
                     }
                 },
@@ -106,8 +104,7 @@ fun SignInScreen(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                )
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors()
             )
         }
     ) { innerPadding ->
@@ -123,15 +120,15 @@ fun SignInScreen(
         ) {
             Row() {
                 Text(
-                    "로그인하고 중독을 ", fontSize = 22.sp,
+                    stringResource(id = R.string.open_mem_1), fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
                 Text(
-                    "DeTox", fontSize = 22.sp,
+                    stringResource(id = R.string.open_mem_2), fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.bold))
                 )
                 Text(
-                    " 해보세요!", fontSize = 22.sp,
+                    stringResource(id = R.string.open_mem_3), fontSize = 22.sp,
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             }
@@ -142,7 +139,7 @@ fun SignInScreen(
                 onValueChange = { email = it },
                 label = {
                     Text(
-                        "이메일",
+                        stringResource(id = R.string.email),
                         fontFamily = FontFamily(Font(R.font.minsans))
                     )
                 },
@@ -155,18 +152,16 @@ fun SignInScreen(
                 onValueChange = { password = it },
                 label = {
                     Text(
-                        "비밀번호",
+                        stringResource(id = R.string.password),
                         fontFamily = FontFamily(Font(R.font.minsans))
                     )
                 },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             )
-
             Spacer(modifier = Modifier.height(20.dp))
-
             if (uiState.value == SignInState.Loading) {
-                CircularProgressIndicator() // 동그라미 로딩 창
+                CircularProgressIndicator()
             } else {
                 Button(
                     onClick = {
@@ -177,7 +172,7 @@ fun SignInScreen(
                         .height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MediumBlue),
                 ) {
-                    Text(text = "로그인", fontSize = 16.sp)
+                    Text(text = stringResource(id = R.string.login), fontSize = 16.sp)
                 }
                 TextButton(
                     onClick = { navController.navigate("signup") },
@@ -185,7 +180,11 @@ fun SignInScreen(
                         .fillMaxWidth()
                         .height(40.dp),
                 ) {
-                    Text(text = "계정이 없다면? 회원가입하기", color = MediumBlue, fontSize = 16.sp)
+                    Text(
+                        text = stringResource(id = R.string.no_id),
+                        color = MediumBlue,
+                        fontSize = 16.sp
+                    )
                 }
             }
         }
