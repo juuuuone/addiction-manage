@@ -66,6 +66,8 @@ import com.example.addiction_manage.ui.theme.MediumRed
 import com.example.addiction_manage.ui.theme.White
 import com.example.addiction_manage.ui.theme.WhiteBlue
 import com.example.addiction_manage.ui.theme.WhiteRed
+import com.example.addiction_manage.ui.theme.getColorBasedOnAlcoholWin
+import com.example.addiction_manage.ui.theme.getColorBasedOnMyScore
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -190,6 +192,50 @@ fun ComparePage(
         )
     }
 
+    var friendScore=0
+    var myScore=0
+
+    var myAlcoholWin: Boolean? = null
+    var mySmokingWin: Boolean? = null
+    var myCaffeineWin: Boolean? = null
+    var friendAlcoholWin: Boolean? = null
+    var friendSmokingWin: Boolean? = null
+    var friendCaffeineWin: Boolean? = null
+
+    if(myAlcohol && !friendAlcohol){
+        //난 술마시고 친구는 안마심
+        friendScore++
+        friendAlcoholWin=true
+        myAlcoholWin=false
+    }
+    else if(!myAlcohol && friendAlcohol){
+        myScore++
+        myAlcoholWin=true
+        friendAlcoholWin=false
+    }
+
+    if(mySmoking>friendSmoking){
+        friendScore++
+        friendSmokingWin=true
+        mySmokingWin=false
+    }
+    else if(mySmoking<friendSmoking){
+        myScore++
+        mySmokingWin=true
+        friendSmokingWin=false
+    }
+
+    if(myCaffeine>friendCaffeine){
+        friendScore++
+        friendCaffeineWin=true
+        myCaffeineWin=false
+    }
+    else if(myCaffeine<friendCaffeine){
+        myScore++
+        myCaffeineWin=true
+        friendCaffeineWin=false
+    }
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -226,7 +272,7 @@ fun ComparePage(
             Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
-                    .background(color = WhiteBlue, shape = RoundedCornerShape(10.dp))
+                    .background(color = getColorBasedOnMyScore(myScore>friendScore), shape = RoundedCornerShape(10.dp))
                     .fillMaxWidth()
                     .height(240.dp),
             ) {
@@ -254,7 +300,7 @@ fun ComparePage(
                     text = "🍺 : " + if (myAlcohol) stringResource(
                         id = R.string.alcohol
                     ) else stringResource(id = R.string.no_alcohol),
-                    color = Black,
+                    color = getColorBasedOnAlcoholWin(myAlcoholWin),
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
@@ -265,7 +311,7 @@ fun ComparePage(
                     text = "🚬 : $mySmoking" + stringResource(
                         id = R.string.gp
                     ),
-                    color = Black,
+                    color = getColorBasedOnAlcoholWin(mySmokingWin),
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
@@ -276,7 +322,7 @@ fun ComparePage(
                     text = "☕ : $myCaffeine" + stringResource(
                         id = R.string.cup
                     ),
-                    color = Black,
+                    color = getColorBasedOnAlcoholWin(myCaffeineWin),
                     fontSize = 24.sp,
                     fontFamily = FontFamily(Font(R.font.minsans)),
                     modifier = Modifier
@@ -289,7 +335,7 @@ fun ComparePage(
             if (friendNickname.isNotEmpty()) {
                 Column(
                     modifier = Modifier
-                        .background(color = WhiteRed, shape = RoundedCornerShape(10.dp))
+                        .background(color = getColorBasedOnMyScore(friendScore>myScore), shape = RoundedCornerShape(10.dp))
                         .fillMaxWidth()
                         .height(240.dp)
                 ) {
@@ -318,7 +364,7 @@ fun ComparePage(
                         text = "🍺 : " + if (friendAlcohol) stringResource(
                             id = R.string.alcohol
                         ) else stringResource(id = R.string.no_alcohol),
-                        color = Black,
+                        color = getColorBasedOnAlcoholWin(friendAlcoholWin),
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.minsans)),
                         modifier = Modifier
@@ -329,7 +375,7 @@ fun ComparePage(
                         text = "🚬 : $friendSmoking" + stringResource(
                             id = R.string.gp
                         ),
-                        color = Black,
+                        color = getColorBasedOnAlcoholWin(friendSmokingWin),
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.minsans)),
                         modifier = Modifier
@@ -340,7 +386,7 @@ fun ComparePage(
                         text = "☕ : $friendCaffeine" + stringResource(
                             id = R.string.cup
                         ),
-                        color = Black,
+                        color = getColorBasedOnAlcoholWin(friendCaffeineWin),
                         fontSize = 24.sp,
                         fontFamily = FontFamily(Font(R.font.minsans)),
                         modifier = Modifier
@@ -363,8 +409,16 @@ fun SelectFriends(
     friendsList: List<String>,
     addFriend: (String) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var showAddFriendDialog by remember { mutableStateOf(false) }
+    val friendDataViewModel: FriendDataViewModel = hiltViewModel()
+
+    var expanded by remember { mutableStateOf(false) }  // 드롭다운 상태
+    var showAddFriendDialog by remember { mutableStateOf(false) } // 친구 추가 모달창
+
+    LaunchedEffect(Unit) {
+        friendDataViewModel.listenForUsers() // ViewModel에서 친구 목록 감시 시작
+    }
+
+    // AddNewFriendDialog 다이얼로그
 
     if (showAddFriendDialog) {
         AddNewFriendDialog(
@@ -372,9 +426,11 @@ fun SelectFriends(
             onAddFriend = {
                 addFriend(it)
                 showAddFriendDialog = false
+                friendDataViewModel.listenForUsers() // 친구 추가 후 목록 새로고침
             }
         )
     }
+
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(

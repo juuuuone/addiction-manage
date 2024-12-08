@@ -479,12 +479,20 @@ fun DateDialog(date: LocalDate, onDismiss: () -> Unit) {
                 }
 
                 // 타이틀
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "$nickname ${stringResource(id = R.string.days1)} $day${
+                        text = "$nickname ${
+                            stringResource(id = R.string.days1)
+                        } ",
+                        color = DarkGray,
+                        fontFamily = mediumFont,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = "$day${
                             stringResource(
                                 id = R.string.days2
                             )

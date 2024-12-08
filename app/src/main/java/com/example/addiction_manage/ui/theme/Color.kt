@@ -38,3 +38,18 @@ val WhiteBlue = Color(0xFFE8F5E9) // 예: 매우 연한 녹색, Android Material
 
 val WhiteRed=Color(0xFFFFEBEE)
 val MediumRed=Color(0xFFF44336)
+
+fun getColorBasedOnAlcoholWin(myAlcoholWin: Boolean?): Color {
+    return when (myAlcoholWin) {
+        true -> MediumBlue
+        false -> MediumRed
+        null -> Black
+    }
+}
+
+fun getColorBasedOnMyScore(myAlcoholWin: Boolean): Color {
+    return when (myAlcoholWin) {
+        true -> WhiteBlue
+        false -> WhiteRed
+    }
+}
