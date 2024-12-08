@@ -631,7 +631,7 @@ fun BottomAppBarComponent(
         "home" -> 1
         "statistic" -> 2
         "friends" -> 3
-        else -> -1 // 기본값 (선택되지 않은 상태)
+        else -> -1
     }
 
     BottomAppBar(

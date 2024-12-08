@@ -90,7 +90,6 @@ class AlcoholGoalViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        // ViewModel이 클리어되면 리스너 제거
         valueEventListener?.let { databaseReference.removeEventListener(it) }
     }
 
@@ -101,17 +100,12 @@ class AlcoholGoalViewModel @Inject constructor(
 
     fun addGoal(newGoal: String) {
         val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid ?: return // 로그인하지 않은 경우 종료
-
+        val uid = currentUser?.uid ?: return
         val alcoholGoal = AlcoholGoal(
-            id = uid, // 유저 ID를 그대로 사용
+            id = uid,
             goal = newGoal,
             createdAt = System.currentTimeMillis()
         )
-
-        // uid 아래 데이터를 덮어쓰기 => 뒤로 돌아가서 다시 목표 설정해도 새로 안생기고 덮어써짐
         firebaseDatabase.reference.child("AlcoholGoal").child(uid).setValue(alcoholGoal)
     }
-
-
 }

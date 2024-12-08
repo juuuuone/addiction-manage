@@ -82,9 +82,8 @@ fun MyPage(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            // 닉네임 섹션
             Text(
-                text = stringResource(id=R.string.nickname),
+                text = stringResource(id = R.string.nickname),
                 fontSize = 24.sp,
                 color = Color.DarkGray,
                 fontFamily = FontFamily(Font(R.font.minsans)),
@@ -99,17 +98,13 @@ fun MyPage(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            // 음주 목표 섹션
             val alcoholGoal = alcoholGoalViewModel.goal.collectAsState().value
-//            val doAlcohol = alcoholGoalViewModel.isAlcoholChecked.collectAsState().value
-            if(isLoadingAlcohol){
+            if (isLoadingAlcohol) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            else if (alcoholGoal.isNotEmpty()) {
+            } else if (alcoholGoal.isNotEmpty()) {
                 GoalSection(
                     title = stringResource(id = R.string.my_alcohol_goal),
-                    goals = listOf(stringResource(id = R.string.oneweek) + " " + alcoholGoal.joinToString{it.goal} + "회 이하"),
+                    goals = listOf(stringResource(id = R.string.oneweek) + " " + alcoholGoal.joinToString { it.goal } + "회 이하"),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
@@ -122,18 +117,13 @@ fun MyPage(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 흡연 목표 섹션
             val smokingGoals = smokingGoalViewModel.goal.collectAsState().value
-//            val doSmoking = smokingGoalViewModel.isSmokingChecked.collectAsState().value
-//            Log.d("Mypage", doSmoking.toString())
-
-            if(isLoadingSmoking){
+            if (isLoadingSmoking) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            else if (smokingGoals.isNotEmpty()) {
+            } else if (smokingGoals.isNotEmpty()) {
                 GoalSection(
                     title = stringResource(id = R.string.my_smoking_goal),
-                    goals = listOf(stringResource(id = R.string.oneday) + " " + smokingGoals.joinToString{it.goal} + "개피 이하"),
+                    goals = listOf(stringResource(id = R.string.oneday) + " " + smokingGoals.joinToString { it.goal } + "개피 이하"),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
@@ -146,17 +136,13 @@ fun MyPage(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 카페인 목표 섹션
             val caffeineGoals = caffeineGoalViewModel.goal.collectAsState().value
-//            val doCaffeine = caffeineGoalViewModel.isCaffeineChecked.collectAsState().value
-
-            if(isLoadingCaffeine){
+            if (isLoadingCaffeine) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            else if (caffeineGoals.isNotEmpty()) {
+            } else if (caffeineGoals.isNotEmpty()) {
                 GoalSection(
                     title = stringResource(id = R.string.my_caffeine_goal),
-                    goals = listOf(stringResource(id = R.string.oneday) + " " + caffeineGoals.joinToString{it.goal} + "잔 이하"),
+                    goals = listOf(stringResource(id = R.string.oneday) + " " + caffeineGoals.joinToString { it.goal } + "잔 이하"),
                     fontFamily = FontFamily(Font(R.font.minsans))
                 )
             } else {
@@ -167,10 +153,8 @@ fun MyPage(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-
-            // 편집 버튼 -> 목표 설정 페이지 재사용...?
-            Row(){
-                Spacer(modifier=Modifier.fillMaxWidth(0.85f))
+            Row() {
+                Spacer(modifier = Modifier.fillMaxWidth(0.85f))
                 Box(
                     modifier = Modifier
                         .clickable { navController.navigate("alcohol-goal") }
@@ -187,7 +171,7 @@ fun MyPage(
                 }
             }
 
-            Spacer(modifier=Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick =
                 {
@@ -240,8 +224,9 @@ fun GoalSection(title: String, goals: List<String>, fontFamily: FontFamily) {
     }
 }
 
-fun checkUser(currentUser : FirebaseUser) : String {
-    return currentUser.displayName ?: "Unknown User"
+@Composable
+fun checkUser(currentUser: FirebaseUser): String {
+    return currentUser.displayName ?: stringResource(id = R.string.Unknown_user)
 }
 
 fun logout() {

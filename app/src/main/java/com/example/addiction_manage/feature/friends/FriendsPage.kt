@@ -70,12 +70,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun FriendsPage(
-    navigateToCalendar: () -> Unit,
-    navigateToHome: () -> Unit,
-    navigateToStatistic: () -> Unit,
-    navigateToFriends: () -> Unit,
     navigateToMyPage: () -> Unit,
-    selectedItem: Int,
     navController: NavController,
 ) {
     Scaffold(
@@ -129,7 +124,6 @@ fun ComparePage(
     var friendSmoking by remember { mutableStateOf(0) }
     var friendCaffeine by remember { mutableStateOf(0) }
 
-    // 사용자 데이터 처리
     LaunchedEffect(key1 = true) {
         friendDataViewModel.listenForUsers()
         alcoholViewModel.listenForAlcoholRecords()
@@ -151,10 +145,8 @@ fun ComparePage(
             smokingViewModel.getTodaySmokingRecord(smokingRecords.value)?.cigarettes ?: 0
         myCaffeine =
             caffeineViewModel.getTodayCaffeineRecord(caffeineRecords.value)?.drinks ?: 0
-
     }
 
-    // 친구 데이터 처리
     var friendNickname by remember { mutableStateOf("") }
     val friendsList = friendDataViewModel.getAllFriendsNickname(users.value) ?: emptyList()
     val friendId = friendDataViewModel.getFriendId(users.value, friendNickname)
@@ -231,9 +223,7 @@ fun ComparePage(
 
                 }
             }
-
             Spacer(modifier = Modifier.height(10.dp))
-
             Column(
                 modifier = Modifier
                     .background(color = WhiteBlue, shape = RoundedCornerShape(10.dp))
@@ -373,10 +363,9 @@ fun SelectFriends(
     friendsList: List<String>,
     addFriend: (String) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }  // 드롭다운 상태
-    var showAddFriendDialog by remember { mutableStateOf(false) } // 친구 추가 모달창
+    var expanded by remember { mutableStateOf(false) }
+    var showAddFriendDialog by remember { mutableStateOf(false) }
 
-    // AddNewFriendDialog 다이얼로그
     if (showAddFriendDialog) {
         AddNewFriendDialog(
             onDismiss = { showAddFriendDialog = false },
@@ -391,7 +380,7 @@ fun SelectFriends(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.4f),  // 모달창 크기 조절
+                .fillMaxHeight(0.4f),
             shape = RoundedCornerShape(16.dp),
             color = White,
             border = BorderStroke(2.dp, MediumBlue)
@@ -401,9 +390,8 @@ fun SelectFriends(
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // 왼쪽 정렬
+                horizontalAlignment = Alignment.Start,
             ) {
-                // 제목
                 Text(
                     text = stringResource(id = R.string.select_friends),
                     fontSize = 24.sp,
@@ -411,9 +399,7 @@ fun SelectFriends(
                     modifier = Modifier
                         .padding(start = 8.dp, bottom = 16.dp)
                 )
-
                 Box {
-                    // 드롭다운 버튼
                     OutlinedButton(
                         onClick = { expanded = !expanded },
                         border = BorderStroke(3.dp, MediumBlue),
@@ -431,8 +417,6 @@ fun SelectFriends(
                             fontSize = 18.sp
                         )
                     }
-
-                    // 드롭다운 메뉴
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
@@ -464,10 +448,7 @@ fun SelectFriends(
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
-
-                // 친구 추가 버튼
                 Button(
                     onClick = { showAddFriendDialog = true },
                     colors = ButtonDefaults.buttonColors(
@@ -484,10 +465,7 @@ fun SelectFriends(
                         fontSize = 18.sp
                     )
                 }
-
                 Spacer(modifier = Modifier.height(15.dp))
-
-                // 닫기 버튼
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -516,19 +494,18 @@ fun SelectFriends(
     }
 }
 
-// 친구 추가 누르면 나오는 모달창
 @Composable
 fun AddNewFriendDialog(
     onDismiss: () -> Unit,
     onAddFriend: (String) -> Unit
 ) {
-    var email by remember { mutableStateOf("") } // 입력값 상태
+    var email by remember { mutableStateOf("") }
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.4f), // 모달창 크기
+                .fillMaxHeight(0.4f),
             shape = RoundedCornerShape(16.dp),
             color = White,
             border = BorderStroke(2.dp, MediumBlue)
@@ -538,9 +515,8 @@ fun AddNewFriendDialog(
                     .fillMaxWidth()
                     .padding(16.dp),
                 verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start // 왼쪽 정렬
+                horizontalAlignment = Alignment.Start
             ) {
-                // 제목 : 상단 왼쪽
                 Text(
                     text = stringResource(id = R.string.add_friends),
                     fontSize = 24.sp,
@@ -548,8 +524,6 @@ fun AddNewFriendDialog(
                     modifier = Modifier
                         .padding(start = 8.dp, bottom = 16.dp)
                 )
-
-                // 입력창
                 androidx.compose.material3.OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -559,10 +533,7 @@ fun AddNewFriendDialog(
                         .padding(horizontal = 8.dp),
                     singleLine = true
                 )
-
-                Spacer(modifier = Modifier.weight(1f)) // 여백 추가
-
-                // 저장, 닫기 버튼
+                Spacer(modifier = Modifier.weight(1f))
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -571,7 +542,7 @@ fun AddNewFriendDialog(
                 ) {
                     Button(
                         onClick = {
-                            onDismiss() // 다이얼로그 닫기
+                            onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = LightGrey,
@@ -588,8 +559,8 @@ fun AddNewFriendDialog(
                     Spacer(modifier = Modifier.padding(4.dp))
                     Button(
                         onClick = {
-                            onAddFriend(email) // 입력값 전달
-                            onDismiss() // 다이얼로그 닫기
+                            onAddFriend(email)
+                            onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MediumBlue,

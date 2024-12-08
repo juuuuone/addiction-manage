@@ -71,6 +71,14 @@
     <string name="detoxify">DeToxify</string>
     <string name="login">로그인</string>
     <string name="k_signin">회원가입</string>
+    <string name="email">이메일</string>
+    <string name="password">비밀번호</string>
+    <string name="yes_id">이미 계정이 있다면? 로그인하기</string>
+    <string name="no_id">계정이 없다면? 회원가입하기</string>
+    <string name="open_mem_1">로그인하고 중독을 </string>
+    <string name="open_mem_2">DeTox</string>
+    <string name="open_mem_3"> 해보세요!</string>
+    <string name="password_check">비밀번호 확인</string>
 
 
     <string name="days1">님의</string>
@@ -85,7 +93,7 @@
     <string name="select_friends">친구 선택</string>
     <string name="add_friends">친구 추가</string>
     <string name="friends_email">친구의 E-mail</string>
-
+    <string name="Unknown_user">Unknown User</string>
 
     <string name="morning">상쾌한 아침이에요! 건강한 하루를 시작해보세요☀️</string>
     <string name="afternoon">활기찬 오후입니다! 목표를 향해 나아가고 있나요?🌞️</string>

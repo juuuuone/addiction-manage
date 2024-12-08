@@ -72,8 +72,6 @@ fun CaffeinePage(
     navigateToHome: () -> Unit
 ) {
     val viewModel = hiltViewModel<CaffeineViewModel>()
-    val currentUser = FirebaseAuth.getInstance().currentUser
-    val userId = currentUser?.uid ?: return
     var count by remember { mutableIntStateOf(0) }
     LaunchedEffect(key1 = true) {
         viewModel.listenForCaffeineRecords()
@@ -131,10 +129,10 @@ fun CaffeineRecording(
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(40.dp))
-            Text(stringResource(id=R.string.today_caffeine), color = MediumBlue, fontSize = 24.sp)
+            Text(stringResource(id = R.string.today_caffeine), color = MediumBlue, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(60.dp))
             Text(
-                text = "오늘",
+                text = stringResource(id = R.string.today),
                 fontSize = 30.sp,
                 color = MediumBlue,
                 modifier = Modifier.padding(top = 15.dp)
@@ -142,19 +140,18 @@ fun CaffeineRecording(
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                // 흡연 횟수 표시
                 Button(
-                    onClick = downCount,  // 버튼 클릭 시 count 증가
+                    onClick = downCount,
                     modifier = Modifier
                         .height(60.dp)
                         .width(60.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = WhiteBlue),
                     shape = CircleShape,
-                    contentPadding = PaddingValues()  // 내부 패딩 제거
+                    contentPadding = PaddingValues()
                 ) {
                     Box(
-                        contentAlignment = Alignment.Center,  // 내용을 중앙에 정렬
-                        modifier = Modifier.fillMaxSize()  // Box를 버튼 크기만큼 채움
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
                             text = "-",
@@ -171,25 +168,24 @@ fun CaffeineRecording(
                     modifier = Modifier.padding(top = 10.dp)
                 )
                 Text(
-                    text = " 잔",
+                    text = " ${stringResource(id = R.string.cup)}",
                     fontSize = 20.sp,
                     color = MediumBlue,
                     modifier = Modifier.padding(top = 15.dp)
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                // 흡연 횟수 증가 버튼
                 Button(
-                    onClick = upCount,  // 버튼 클릭 시 count 증가
+                    onClick = upCount,
                     modifier = Modifier
                         .height(60.dp)
                         .width(60.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = WhiteBlue),
                     shape = CircleShape,
-                    contentPadding = PaddingValues()  // 내부 패딩 제거
+                    contentPadding = PaddingValues()
                 ) {
                     Box(
-                        contentAlignment = Alignment.Center,  // 내용을 중앙에 정렬
-                        modifier = Modifier.fillMaxSize()  // Box를 버튼 크기만큼 채움
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         Text(
                             text = "+",
@@ -214,7 +210,7 @@ fun CaffeineRecording(
                 border = BorderStroke(width = 2.dp, color = MediumBlue)
             ) {
                 Text(
-                    stringResource(id=R.string.record_button),
+                    stringResource(id = R.string.record_button),
                     fontSize = 20.sp,
                     color = Black,
                     fontFamily = FontFamily(Font(R.font.minsans))

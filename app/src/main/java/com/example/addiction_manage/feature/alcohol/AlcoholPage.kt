@@ -81,7 +81,6 @@ fun AlcoholPage(
     val alcoholRecords = viewModel.alcoholRecords.collectAsState()
     LaunchedEffect(alcoholRecords.value) {
         answer = viewModel.getTodayAlcoholRecord(alcoholRecords.value)?.doDrink ?: false
-        Log.d("술 마셨나", answer.toString())
     }
 
     Scaffold(

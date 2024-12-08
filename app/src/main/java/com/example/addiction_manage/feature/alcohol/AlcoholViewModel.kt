@@ -47,7 +47,6 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     fun listenForAlcoholRecords() {
         firebaseDatabase.reference.child("Alcohol").child(uid).orderByChild("createdAt")
-//            .equalTo(today)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = mutableListOf<Alcohol>()
@@ -111,8 +110,8 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekAlcoholRecord(alcoholRecords: List<Alcohol>): List<Pair<String, Int>> {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
-        // 일주일 날짜를 초기화 (월요일부터 일요일까지)
+        val dayOfWeek = today.dayOfWeek.value % 7
+        val startOfWeek = today.minusDays(dayOfWeek.toLong())
         val weekDates = (0..6).map { offset ->
             val date = startOfWeek.plusDays(offset.toLong())
             date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -122,7 +121,6 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
             val recordDate =
                 LocalDate.parse(record.createdAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             val recordDateString = recordDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
             if (recordDateString in weekData) {
                 weekData[recordDateString] =
                     weekData[recordDateString]!! + if (record.doDrink) 1 else 0
@@ -133,11 +131,10 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekTotalAlcoholRecord(alcoholRecords: List<Alcohol>): Int {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
-        val endOfWeek = today.with(java.time.DayOfWeek.SATURDAY)
-
+        val dayOfWeek = today.dayOfWeek.value % 7
+        val startOfWeek = today.minusDays(dayOfWeek.toLong())
+        val endOfWeek = startOfWeek.plusDays(6)
         var count = 0
-
         alcoholRecords.filter { record ->
             val recordDate =
                 LocalDate.parse(record.createdAt, DateTimeFormatter.ofPattern("yyyy-MM-dd"))

@@ -67,27 +67,10 @@ fun MainApp() {
 
             composable(route = "home") {
                 HomePage(
-                    navigateToCalendar = {
-                        selectedItem = 0
-                        navController.navigate(route = "calendar")
-                    },
-                    navigateToHome = {
-                        selectedItem = 1
-                        navController.navigate(route = "home")
-                    },
-                    navigateToStatistic = {
-                        selectedItem = 2
-                        navController.navigate(route = "statistic")
-                    },
-                    navigateToFriends = {
-                        selectedItem = 3
-                        navController.navigate(route = "friends")
-                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
                     navigateToAlcohol = { navController.navigate(route = "alcohol") },
                     navigateToCaffeine = { navController.navigate(route = "caffeine") },
                     navigateToSmoking = { navController.navigate(route = "smoking") },
-                    selectedItem = selectedItem,
                     navController = navController
                 )
             }
@@ -116,47 +99,13 @@ fun MainApp() {
             }
             composable(route = "statistic") {
                 StatisticPage(
-                    navigateToCalendar = {
-                        selectedItem = 0
-                        navController.navigate(route = "calendar")
-                    },
-                    navigateToHome = {
-                        selectedItem = 1
-                        navController.navigate(route = "home")
-                    },
-                    navigateToStatistic = {
-                        selectedItem = 2
-                        navController.navigate(route = "statistic")
-                    },
-                    navigateToFriends = {
-                        selectedItem = 3
-                        navController.navigate(route = "friends")
-                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
-                    selectedItem = selectedItem,
                     navController = navController
                 )
             }
             composable(route = "friends") {
                 FriendsPage(
-                    navigateToCalendar = {
-                        selectedItem = 0
-                        navController.navigate(route = "calendar")
-                    },
-                    navigateToHome = {
-                        selectedItem = 1
-                        navController.navigate(route = "home")
-                    },
-                    navigateToStatistic = {
-                        selectedItem = 2
-                        navController.navigate(route = "statistic")
-                    },
-                    navigateToFriends = {
-                        selectedItem = 3
-                        navController.navigate(route = "friends")
-                    },
                     navigateToMyPage = { navController.navigate(route = "mypage") },
-                    selectedItem = selectedItem,
                     navController = navController
                 )
             }
