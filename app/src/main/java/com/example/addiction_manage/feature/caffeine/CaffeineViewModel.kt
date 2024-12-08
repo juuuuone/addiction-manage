@@ -109,7 +109,8 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekCaffeineRecord(caffeineRecords: List<Caffeine>): List<Pair<String, Int>> {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
+        val startOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
+        val endOfWeek = today.with(java.time.DayOfWeek.SATURDAY)
         // 일주일 날짜를 초기화 (월요일부터 일요일까지)
         val weekDates = (0..6).map { offset ->
             val date = startOfWeek.plusDays(offset.toLong())
@@ -130,8 +131,8 @@ class CaffeineViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekTotalCaffeineRecord(caffeineRecords: List<Caffeine>): Int {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
-        val endOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
+        val startOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
+        val endOfWeek = today.with(java.time.DayOfWeek.SATURDAY)
         var count = 0
 
         caffeineRecords.filter { record ->

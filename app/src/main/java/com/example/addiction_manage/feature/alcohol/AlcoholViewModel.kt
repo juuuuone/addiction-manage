@@ -111,7 +111,7 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekAlcoholRecord(alcoholRecords: List<Alcohol>): List<Pair<String, Int>> {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
+        val startOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
         // 일주일 날짜를 초기화 (월요일부터 일요일까지)
         val weekDates = (0..6).map { offset ->
             val date = startOfWeek.plusDays(offset.toLong())
@@ -133,8 +133,9 @@ class AlcoholViewModel @Inject constructor() : ViewModel() {
 
     fun getWeekTotalAlcoholRecord(alcoholRecords: List<Alcohol>): Int {
         val today = LocalDate.now()
-        val startOfWeek = today.with(java.time.DayOfWeek.MONDAY)
-        val endOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
+        val startOfWeek = today.with(java.time.DayOfWeek.SUNDAY)
+        val endOfWeek = today.with(java.time.DayOfWeek.SATURDAY)
+
         var count = 0
 
         alcoholRecords.filter { record ->
